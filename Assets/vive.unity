@@ -283,9 +283,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monomerPrefab: {fileID: 1277873200651518, guid: 7919525faac8ce040ba763a5f7bc7976,
     type: 2}
+  dimerPrefab: {fileID: 1262608129830738, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
+    type: 2}
   numMonomers: 50
   pairingVelocity: 0.05
   rotationVelocity: 50
+  shouldDimerise: 1
 --- !u!1 &1418861760
 GameObject:
   m_ObjectHideFlags: 0

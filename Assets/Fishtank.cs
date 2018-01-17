@@ -1,15 +1,18 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Valve.VR.InteractionSystem;
 
 public class Fishtank : MonoBehaviour {
 
 	public GameObject monomerPrefab;
+	public GameObject dimerPrefab;
 	public int numMonomers = 50;
 	private Dictionary<GameObject, GameObject> pairs;
 	public float pairingVelocity = .05f;
 	public int rotationVelocity = 50;
 	private Bounds bounds;
+	public bool shouldDimerise = true;
 
 	void FindPairs()
 	{
@@ -46,12 +49,30 @@ public class Fishtank : MonoBehaviour {
 	void PushMonomersTogether()
 	{
 		var monomers = GameObject.FindGameObjectsWithTag("monomer");
+		var lh = Player.instance.leftHand;
+		var rh = Player.instance.rightHand;
 		foreach (var monomer in monomers)
 		{
+			var thisMonomerAttached = lh && lh.currentAttachedObject == monomer || rh && rh.currentAttachedObject == monomer;
+			if (thisMonomerAttached || !monomer)
+			{
+				continue;
+			}
 			var partner = pairs[monomer];
 			var dimerPos = partner.transform.Find("dimerPos");
 			var targetPos = dimerPos.position;
 			var targetRotation = dimerPos.rotation;
+
+			var distanceFromTarget = Vector3.Distance(monomer.transform.position, targetPos);
+
+			var partnerAttached = lh && lh.currentAttachedObject == partner || rh && rh.currentAttachedObject == partner;
+			if (distanceFromTarget < .01f && !partnerAttached && partner && shouldDimerise)
+			{
+				var dimer = Instantiate(dimerPrefab, monomer.transform.position, monomer.transform.rotation, transform);
+				dimer.name = "dimer from " + monomer.name + " and " + partner.name;
+				Destroy(monomer);
+				Destroy(partner);
+			}
 			
 			monomer.transform.position = Vector3.MoveTowards(monomer.transform.position, targetPos, Time.deltaTime * pairingVelocity);
 			monomer.transform.rotation = Quaternion.RotateTowards(monomer.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
