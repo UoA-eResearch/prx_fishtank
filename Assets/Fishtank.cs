@@ -7,7 +7,6 @@ public class Fishtank : MonoBehaviour {
 	public GameObject monomerPrefab;
 	public int numMonomers = 50;
 	private Dictionary<GameObject, GameObject> pairs;
-	private Dictionary<GameObject, bool> isTop;
 	public float pairingVelocity = .05f;
 	public int rotationVelocity = 50;
 	private Bounds bounds;
@@ -15,7 +14,6 @@ public class Fishtank : MonoBehaviour {
 	void FindPairs()
 	{
 		pairs = new Dictionary<GameObject, GameObject>();
-		isTop = new Dictionary<GameObject, bool>();
 		var monomers = GameObject.FindGameObjectsWithTag("monomer");
 		Debug.Log("There are " + monomers.Length + " monomers around");
 		foreach (var a in monomers)
@@ -39,11 +37,9 @@ public class Fishtank : MonoBehaviour {
 					}
 				}
 			}
-			Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
+			//Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
 			pairs[a] = match;
 			pairs[match] = a;
-			isTop[a] = true;
-			isTop[match] = false;
 		}
 	}
 
@@ -53,30 +49,13 @@ public class Fishtank : MonoBehaviour {
 		foreach (var monomer in monomers)
 		{
 			var partner = pairs[monomer];
-			var targetPos = partner.transform.position;
-			var offset = new Vector3(.0141f, -.0025f, .0066f);
-			var rotationalOffset = new Vector3(0, 180, 0);
+			var dimerPos = partner.transform.Find("dimerPos");
+			var targetPos = dimerPos.position;
+			var targetRotation = dimerPos.rotation;
 			
-			if (isTop[monomer])
-			{
-				targetPos += offset;
-			}
-			else
-			{
-				targetPos -= offset;
-			}
 			monomer.transform.position = Vector3.MoveTowards(monomer.transform.position, targetPos, Time.deltaTime * pairingVelocity);
-			var partnersRotation = partner.transform.rotation.eulerAngles;
-			if (isTop[monomer])
-			{
-				var targetRotation = partnersRotation + rotationalOffset;
-				monomer.transform.rotation = Quaternion.RotateTowards(monomer.transform.rotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotationVelocity);
-			}
-			else
-			{
-				var targetRotation = Vector3.zero;
-				monomer.transform.rotation = Quaternion.RotateTowards(monomer.transform.rotation, Quaternion.Euler(targetRotation), Time.deltaTime * rotationVelocity);
-			}
+			monomer.transform.rotation = Quaternion.RotateTowards(monomer.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
+
 			if (!bounds.Contains(monomer.transform.position))
 			{
 				// Wayward monomer
