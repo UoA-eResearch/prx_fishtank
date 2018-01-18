@@ -54,7 +54,7 @@ public class Fishtank : MonoBehaviour {
 		foreach (var monomer in monomers)
 		{
 			var thisMonomerAttached = lh && lh.currentAttachedObject == monomer || rh && rh.currentAttachedObject == monomer;
-			if (thisMonomerAttached || !monomer)
+			if (thisMonomerAttached || !monomer || !pairs.ContainsKey(monomer))
 			{
 				continue;
 			}
