@@ -18,7 +18,7 @@ public class Fishtank : MonoBehaviour {
 	{
 		pairs = new Dictionary<GameObject, GameObject>();
 		var monomers = GameObject.FindGameObjectsWithTag("monomer");
-		Debug.Log("There are " + monomers.Length + " monomers around");
+		//Debug.Log("There are " + monomers.Length + " monomers around");
 		foreach (var a in monomers)
 		{
 			if (pairs.ContainsKey(a))
@@ -70,6 +70,7 @@ public class Fishtank : MonoBehaviour {
 			{
 				var dimer = Instantiate(dimerPrefab, monomer.transform.position, monomer.transform.rotation, transform);
 				dimer.name = "dimer from " + monomer.name + " and " + partner.name;
+				Debug.Log(dimer.name);
 				Destroy(monomer);
 				Destroy(partner);
 			}
