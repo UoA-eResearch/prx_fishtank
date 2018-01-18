@@ -281,7 +281,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a9c0759ccb2aa3a40905e18ce925cfea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  monomerPrefab: {fileID: 1277873200651518, guid: 7919525faac8ce040ba763a5f7bc7976,
+  monomerPrefab: {fileID: 1213113439581324, guid: 50835fc1252cf2142b60d9ac690bfe3b,
     type: 2}
   dimerPrefab: {fileID: 1262608129830738, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
     type: 2}

@@ -59,20 +59,22 @@ public class Fishtank : MonoBehaviour {
 				continue;
 			}
 			var partner = pairs[monomer];
-			var dimerPos = partner.transform.Find("dimerPos");
-			var targetPos = dimerPos.position;
-			var targetRotation = dimerPos.rotation;
+			var partnerPos = partner.transform.Find("partnerPos");
+			var targetPos = partnerPos.position;
+			var targetRotation = partnerPos.rotation;
 
 			var distanceFromTarget = Vector3.Distance(monomer.transform.position, targetPos);
 
 			var partnerAttached = lh && lh.currentAttachedObject == partner || rh && rh.currentAttachedObject == partner;
 			if (distanceFromTarget < .01f && !partnerAttached && partner && shouldDimerise && monomer.GetInstanceID() > partner.GetInstanceID())
 			{
-				var dimer = Instantiate(dimerPrefab, monomer.transform.position, monomer.transform.rotation, transform);
+				var dimerPos = monomer.transform.Find("dimerPos");
+				var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
 				dimer.name = "dimer from " + monomer.name + " and " + partner.name;
 				Debug.Log(dimer.name);
 				Destroy(monomer);
 				Destroy(partner);
+				continue;
 			}
 			
 			monomer.transform.position = Vector3.MoveTowards(monomer.transform.position, targetPos, Time.deltaTime * pairingVelocity);
