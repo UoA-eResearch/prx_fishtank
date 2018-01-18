@@ -21,9 +21,9 @@ GameObject:
   - component: {fileID: 4334436948720404}
   - component: {fileID: 33003008534860332}
   - component: {fileID: 23499237104396612}
-  - component: {fileID: 64405768996528512}
   - component: {fileID: 114897242267737254}
   - component: {fileID: 114838308654371508}
+  - component: {fileID: 65368520436949402}
   m_Layer: 0
   m_Name: Monomer1
   m_TagString: monomer
@@ -41,7 +41,6 @@ GameObject:
   - component: {fileID: 4272272207474858}
   - component: {fileID: 33960773643088894}
   - component: {fileID: 23208697868212844}
-  - component: {fileID: 64438686750974080}
   m_Layer: 0
   m_Name: dimerPos
   m_TagString: Untagged
@@ -154,34 +153,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1546810697353674}
   m_Mesh: {fileID: 4300012, guid: 47cd9dc74f4460149bb671f188a4f37f, type: 3}
---- !u!64 &64405768996528512
-MeshCollider:
+--- !u!65 &65368520436949402
+BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1277873200651518}
   m_Material: {fileID: 0}
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 2
-  m_Convex: 1
-  m_InflateMesh: 1
-  m_SkinWidth: 1.00000005e-20
-  m_Mesh: {fileID: 4300012, guid: 47cd9dc74f4460149bb671f188a4f37f, type: 3}
---- !u!64 &64438686750974080
-MeshCollider:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1546810697353674}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 0
-  serializedVersion: 2
-  m_Convex: 1
-  m_InflateMesh: 1
-  m_SkinWidth: 1.00000005e-20
-  m_Mesh: {fileID: 4300012, guid: 47cd9dc74f4460149bb671f188a4f37f, type: 3}
+  m_Size: {x: 0.63966453, y: 0.41713443, z: 0.40699434}
+  m_Center: {x: 0.05849427, y: 0.004070431, z: 0.009185024}
 --- !u!114 &114838308654371508
 MonoBehaviour:
   m_ObjectHideFlags: 1

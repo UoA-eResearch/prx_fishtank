@@ -6,10 +6,11 @@ using Valve.VR.InteractionSystem;
 public class BreakDimer : MonoBehaviour {
 
 	public GameObject monomerPrefab;
+	public bool shouldMonomerise = true;
 
 	void OnHandHoverBegin(Hand hand)
 	{
-		if (gameObject == hand.otherHand.currentAttachedObject)
+		if (gameObject == hand.otherHand.currentAttachedObject && shouldMonomerise)
 		{
 			hand.otherHand.DetachObject(hand.otherHand.currentAttachedObject);
 			hand.DetachObject(hand.currentAttachedObject);
