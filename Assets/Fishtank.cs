@@ -66,7 +66,7 @@ public class Fishtank : MonoBehaviour {
 			var distanceFromTarget = Vector3.Distance(monomer.transform.position, targetPos);
 
 			var partnerAttached = lh && lh.currentAttachedObject == partner || rh && rh.currentAttachedObject == partner;
-			if (distanceFromTarget < .01f && !partnerAttached && partner && shouldDimerise)
+			if (distanceFromTarget < .01f && !partnerAttached && partner && shouldDimerise && monomer.GetInstanceID() > partner.GetInstanceID())
 			{
 				var dimer = Instantiate(dimerPrefab, monomer.transform.position, monomer.transform.rotation, transform);
 				dimer.name = "dimer from " + monomer.name + " and " + partner.name;
