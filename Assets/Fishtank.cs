@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
+using UnityEngine.UI;
 
 public class Fishtank : MonoBehaviour {
 
@@ -13,6 +14,8 @@ public class Fishtank : MonoBehaviour {
 	public int rotationVelocity = 50;
 	private Bounds bounds;
 	public bool shouldDimerise = true;
+	public Slider phSlider;
+
 
 	void FindPairs()
 	{
@@ -90,6 +93,11 @@ public class Fishtank : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
+		
+		phSlider.onValueChanged.AddListener (delegate {
+			PHValueChanged ();
+		});
+
 		bounds = gameObject.GetComponent<Collider>().bounds;
 		var b = bounds.extents;
 		for (int i = 0; i < numMonomers; i++)
@@ -100,7 +108,19 @@ public class Fishtank : MonoBehaviour {
 			monomer.transform.rotation = Random.rotation;
 			monomer.name = "monomer_" + i;	
 		}
-		InvokeRepeating("FindPairs", 0, .1f);
+
+	}
+
+
+	void PHValueChanged(){
+		var phValue = phSlider.value;
+
+		Debug.Log ("Changed to: " + phValue);
+
+		if (phValue > 6) {
+			Debug.Log ("Start Dimerisation");
+			InvokeRepeating("FindPairs", 0, .1f);
+		}
 	}
 	
 	// Update is called once per frame
