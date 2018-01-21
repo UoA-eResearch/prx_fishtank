@@ -7,6 +7,7 @@ public class Fishtank : MonoBehaviour {
 
 	public GameObject monomerPrefab;
 	public GameObject dimerPrefab;
+	public GameObject ringPrefab;
 	public int numMonomers = 50;
 	private Dictionary<GameObject, GameObject> pairs;
 	public float pairingVelocity = .05f;
@@ -15,10 +16,12 @@ public class Fishtank : MonoBehaviour {
 	public bool shouldDimerise = true;
 	private string[] tags;
 	public float pairingInterval = .1f;
+	private List<GameObject> masterDimers;
 
 	void FindPairs()
 	{
 		pairs = new Dictionary<GameObject, GameObject>();
+		masterDimers = new List<GameObject>();
 		foreach (var tag in tags) {
 			var gos = GameObject.FindGameObjectsWithTag(tag);
 			//Debug.Log("There are " + gos.Length + " " + tag + " around");
@@ -33,6 +36,7 @@ public class Fishtank : MonoBehaviour {
 				var match = a;
 				if (tag == "dimer")
 				{
+					bool hasAll = true;
 					foreach (Transform child in a.transform)
 					{
 						if (child.name.StartsWith("ring"))
@@ -54,16 +58,21 @@ public class Fishtank : MonoBehaviour {
 							if (minDistance == float.PositiveInfinity)
 							{
 								Debug.LogError("Unable to find a dimer for " + child.name + " in " + a.name + "!");
+								hasAll = false;
 							}
 							else
 							{
 								pairs[child.gameObject] = match;
 								pairs[match] = child.gameObject;
-								Debug.Log(a.name + " has chosen " + match.name + " to fit into " + child.name);
+								Debug.Log(a.name + " has chosen " + match.name + " to fit into " + child.name + " with dist " + minDistance);
 							}
 						}
 					}
 					pairs[a] = a;
+					if (hasAll)
+					{
+						masterDimers.Add(a);
+					}
 				}
 				else
 				{
@@ -135,11 +144,43 @@ public class Fishtank : MonoBehaviour {
 					continue;
 				}
 
-				if (distanceFromTarget > .01f)
-				{
-					go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
-					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
+				if (masterDimers.Contains(go)) {
+					try
+					{
+						float totalDist = 0;
+						foreach (Transform child in go.transform)
+						{
+							if (child.name.StartsWith("ring"))
+							{
+								var childTarget = pairs[child.gameObject];
+								var childDist = Vector3.Distance(child.position, childTarget.transform.position);
+								totalDist += childDist;
+							}
+						}
+						Debug.Log(go.name + " is a master dimer, and the sum of it's child ring targets is " + totalDist);
+						if (totalDist < .01f)
+						{
+							var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
+							ring.name = "ring from " + go.name;
+							Debug.Log(ring.name);
+							Destroy(go);
+							foreach (Transform child in go.transform)
+							{
+								if (child.name.StartsWith("ring"))
+								{
+									var childTarget = pairs[child.gameObject];
+									Destroy(childTarget);
+								}
+							}
+						}
+					}
+					catch (KeyNotFoundException e) {
+						// Incomplete ring, not interested here
+					}
 				}
+				
+				go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
+				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
 
 				if (!bounds.Contains(go.transform.position))
 				{
