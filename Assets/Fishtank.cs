@@ -13,83 +13,147 @@ public class Fishtank : MonoBehaviour {
 	public int rotationVelocity = 50;
 	private Bounds bounds;
 	public bool shouldDimerise = true;
+	private string[] tags;
+	public float pairingInterval = .1f;
 
 	void FindPairs()
 	{
 		pairs = new Dictionary<GameObject, GameObject>();
-		var monomers = GameObject.FindGameObjectsWithTag("monomer");
-		//Debug.Log("There are " + monomers.Length + " monomers around");
-		foreach (var a in monomers)
-		{
-			if (pairs.ContainsKey(a))
+		foreach (var tag in tags) {
+			var gos = GameObject.FindGameObjectsWithTag(tag);
+			//Debug.Log("There are " + gos.Length + " " + tag + " around");
+			foreach (var a in gos)
 			{
-				// Already know the pair for this
-				continue;
-			}
-			var minDistance = float.PositiveInfinity;
-			var match = a;
-			foreach (var b in monomers)
-			{
-				if (a != b && !pairs.ContainsKey(b)) // Prevent love triangles
+				if (pairs.ContainsKey(a))
 				{
-					float dist = Vector3.Distance(a.transform.position, b.transform.position);
-					if (dist < minDistance)
+					// Already know the pair for this
+					continue;
+				}
+				float minDistance = float.PositiveInfinity;
+				var match = a;
+				if (tag == "dimer")
+				{
+					foreach (Transform child in a.transform)
 					{
-						minDistance = dist;
-						match = b;
+						if (child.name.StartsWith("ring"))
+						{
+							minDistance = float.PositiveInfinity;
+							match = child.gameObject;
+							foreach (var b in gos)
+							{
+								if (a != b && !pairs.ContainsKey(b))
+								{
+									float dist = Vector3.Distance(child.transform.position, b.transform.position);
+									if (dist < minDistance)
+									{
+										minDistance = dist;
+										match = b;
+									}
+								}
+							}
+							if (minDistance == float.PositiveInfinity)
+							{
+								Debug.LogError("Unable to find a dimer for " + child.name + " in " + a.name + "!");
+							}
+							else
+							{
+								pairs[child.gameObject] = match;
+								pairs[match] = child.gameObject;
+								Debug.Log(a.name + " has chosen " + match.name + " to fit into " + child.name);
+							}
+						}
+					}
+					pairs[a] = a;
+				}
+				else
+				{
+					minDistance = float.PositiveInfinity;
+					match = a;
+					foreach (var b in gos)
+					{
+						if (a != b && !pairs.ContainsKey(b)) // Prevent love triangles
+						{
+							float dist = Vector3.Distance(a.transform.position, b.transform.position);
+							if (dist < minDistance)
+							{
+								minDistance = dist;
+								match = b;
+							}
+						}
+					}
+					if (minDistance == float.PositiveInfinity)
+					{
+						Debug.LogError("Unable to find a partner for " + a.name + "!");
+					}
+					else
+					{
+						//Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
+						pairs[a] = match;
+						pairs[match] = a;
 					}
 				}
 			}
-			//Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
-			pairs[a] = match;
-			pairs[match] = a;
 		}
 	}
 
-	void PushMonomersTogether()
+	void PushTogether()
 	{
-		var monomers = GameObject.FindGameObjectsWithTag("monomer");
-		var lh = Player.instance.leftHand;
-		var rh = Player.instance.rightHand;
-		foreach (var monomer in monomers)
+		foreach (var tag in tags)
 		{
-			var thisMonomerAttached = lh && lh.currentAttachedObject == monomer || rh && rh.currentAttachedObject == monomer;
-			if (thisMonomerAttached || !monomer || !pairs.ContainsKey(monomer))
+			var gos = GameObject.FindGameObjectsWithTag(tag);
+			var lh = Player.instance.leftHand;
+			var rh = Player.instance.rightHand;
+			foreach (var go in gos)
 			{
-				continue;
-			}
-			var partner = pairs[monomer];
-			var partnerPos = partner.transform.Find("partnerPos");
-			var targetPos = partnerPos.position;
-			var targetRotation = partnerPos.rotation;
+				var thisGoAttached = lh && lh.currentAttachedObject == go || rh && rh.currentAttachedObject == go;
+				if (thisGoAttached || !go || !pairs.ContainsKey(go))
+				{
+					continue;
+				}
+				var partner = pairs[go];
 
-			var distanceFromTarget = Vector3.Distance(monomer.transform.position, targetPos);
+				var targetPos = partner.transform.position;
+				var targetRotation = partner.transform.rotation;
+				if (tag == "monomer")
+				{
+					var partnerPos = partner.transform.Find("partnerPos");
+					targetPos = partnerPos.position;
+					targetRotation = partnerPos.rotation;
+				}
 
-			var partnerAttached = lh && lh.currentAttachedObject == partner || rh && rh.currentAttachedObject == partner;
-			if (distanceFromTarget < .01f && !partnerAttached && partner && shouldDimerise && monomer.GetInstanceID() > partner.GetInstanceID())
-			{
-				var dimerPos = monomer.transform.Find("dimerPos");
-				var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
-				dimer.name = "dimer from " + monomer.name + " and " + partner.name;
-				Debug.Log(dimer.name);
-				Destroy(monomer);
-				Destroy(partner);
-				continue;
-			}
-			
-			monomer.transform.position = Vector3.MoveTowards(monomer.transform.position, targetPos, Time.deltaTime * pairingVelocity);
-			monomer.transform.rotation = Quaternion.RotateTowards(monomer.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
+				var distanceFromTarget = Vector3.Distance(go.transform.position, targetPos);
 
-			if (!bounds.Contains(monomer.transform.position))
-			{
-				// Wayward monomer
-				monomer.transform.position = Vector3.MoveTowards(monomer.transform.position, bounds.center, Time.deltaTime * pairingVelocity);
+				var partnerAttached = lh && lh.currentAttachedObject == partner || rh && rh.currentAttachedObject == partner;
+				if (distanceFromTarget < .01f && !partnerAttached && partner && shouldDimerise && go.GetInstanceID() > partner.GetInstanceID() && tag == "monomer")
+				{
+					var dimerPos = go.transform.Find("dimerPos");
+					var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
+					dimer.name = "dimer from " + go.name + " and " + partner.name;
+					Debug.Log(dimer.name);
+					Destroy(go);
+					Destroy(partner);
+					continue;
+				}
+
+				if (distanceFromTarget > .01f)
+				{
+					go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
+				}
+
+				if (!bounds.Contains(go.transform.position))
+				{
+					// Wayward monomer
+					go.transform.position = Vector3.MoveTowards(go.transform.position, bounds.center, Time.deltaTime * pairingVelocity);
+				}
 			}
 		}
 	}
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+	{
+		tags = new string[] { "monomer", "dimer" };
 		bounds = gameObject.GetComponent<Collider>().bounds;
 		var b = bounds.extents;
 		for (int i = 0; i < numMonomers; i++)
@@ -100,11 +164,11 @@ public class Fishtank : MonoBehaviour {
 			monomer.transform.rotation = Random.rotation;
 			monomer.name = "monomer_" + i;	
 		}
-		InvokeRepeating("FindPairs", 0, .1f);
+		InvokeRepeating("FindPairs", 0, pairingInterval);
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		PushMonomersTogether();
+		PushTogether();
 	}
 }

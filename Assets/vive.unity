@@ -283,7 +283,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   monomerPrefab: {fileID: 1213113439581324, guid: 50835fc1252cf2142b60d9ac690bfe3b,
     type: 2}
-  dimerPrefab: {fileID: 1262608129830738, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
+  dimerPrefab: {fileID: 1097768174719004, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
     type: 2}
   numMonomers: 50
   pairingVelocity: 0.05

@@ -17,7 +17,7 @@ public class BreakDimer : MonoBehaviour {
 			hand.DetachObject(hand.currentAttachedObject);
 			Debug.Log(hand.otherHand.name + " is hovering over " + gameObject.name + " which is attached to " + hand.name);
 			// Make a monomer and attach it to the hand. This replaces the dimer you were just holding.
-			var monomerPos = transform.Find("monomerPos");
+			var monomerPos = transform.Find("monomer1");
 			var monomer1 = Instantiate(monomerPrefab, monomerPos.position, monomerPos.rotation, transform.parent);
 			var partnerPos = monomer1.transform.Find("partnerPos");
 			var monomer2 = Instantiate(monomerPrefab, partnerPos.position, partnerPos.rotation, transform.parent);
