@@ -16,7 +16,6 @@ public class Fishtank : MonoBehaviour {
 	public bool shouldDimerise = true;
 	public Slider phSlider;
 
-
 	void FindPairs()
 	{
 		pairs = new Dictionary<GameObject, GameObject>();
@@ -57,7 +56,7 @@ public class Fishtank : MonoBehaviour {
 		foreach (var monomer in monomers)
 		{
 			var thisMonomerAttached = lh && lh.currentAttachedObject == monomer || rh && rh.currentAttachedObject == monomer;
-			if (thisMonomerAttached || !monomer)
+			if (thisMonomerAttached || !monomer || !pairs.ContainsKey(monomer))
 			{
 				continue;
 			}
@@ -93,10 +92,11 @@ public class Fishtank : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		
+
 		phSlider.onValueChanged.AddListener (delegate {
 			PHValueChanged ();
 		});
+
 
 		bounds = gameObject.GetComponent<Collider>().bounds;
 		var b = bounds.extents;
@@ -108,8 +108,9 @@ public class Fishtank : MonoBehaviour {
 			monomer.transform.rotation = Random.rotation;
 			monomer.name = "monomer_" + i;	
 		}
-
+		InvokeRepeating("FindPairs", 0, .1f);
 	}
+
 
 
 	void PHValueChanged(){
@@ -119,9 +120,10 @@ public class Fishtank : MonoBehaviour {
 
 		if (phValue > 6) {
 			Debug.Log ("Start Dimerisation");
-			InvokeRepeating("FindPairs", 0, .1f);
+			//InvokeRepeating("FindPairs", 0, .1f);
 		}
 	}
+
 	
 	// Update is called once per frame
 	void Update () {

@@ -19,7 +19,6 @@ public class BreakDimer : MonoBehaviour {
 			// Make a monomer and attach it to the hand. This replaces the dimer you were just holding.
 			var monomerPos = transform.Find("monomerPos");
 			var monomer1 = Instantiate(monomerPrefab, monomerPos.position, monomerPos.rotation, transform.parent);
-			hand.otherHand.AttachObject(monomer1);
 			var partnerPos = monomer1.transform.Find("partnerPos");
 			var monomer2 = Instantiate(monomerPrefab, partnerPos.position, partnerPos.rotation, transform.parent);
 			var names = gameObject.name.Split();
@@ -27,6 +26,34 @@ public class BreakDimer : MonoBehaviour {
 			monomer2.name = names[4];
 			Debug.Log("Destroying " + gameObject.name);
 			Destroy(gameObject);
+
+			var distanceToM1 = Vector3.Distance(monomer1.transform.position, hand.otherHand.hoverSphereTransform.position);
+			var distanceToM2 = Vector3.Distance(monomer2.transform.position, hand.otherHand.hoverSphereTransform.position);
+			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachOthers;
+			if (distanceToM1 < distanceToM2)
+			{
+				hand.otherHand.AttachObject(monomer1, attachmentFlags);
+			}
+			else
+			{
+				hand.otherHand.AttachObject(monomer2, attachmentFlags);
+			}
+		}
+	}
+
+	private void Update()
+	{
+		var lh = Player.instance.leftHand;
+		var rh = Player.instance.rightHand;
+		if (lh && lh.currentAttachedObject == null && lh.hoverLocked)
+		{
+			Debug.LogError("Left hand hoverlocked!!! Forcing off");
+			lh.HoverUnlock(null);
+		}
+		if (rh && rh.currentAttachedObject == null && rh.hoverLocked)
+		{
+			Debug.LogError("Right hand hoverlocked!!! Forcing off");
+			rh.HoverUnlock(null);
 		}
 	}
 }
