@@ -120,6 +120,7 @@ public class Fishtank : MonoBehaviour {
 					continue;
 				}
 				var partner = pairs[go];
+				if (!partner) continue;
 
 				var targetPos = partner.transform.position;
 				var targetRotation = partner.transform.rotation;
@@ -152,7 +153,17 @@ public class Fishtank : MonoBehaviour {
 						{
 							if (child.name.StartsWith("ring"))
 							{
+								if (!pairs.ContainsKey(child.gameObject))
+								{
+									totalDist += float.PositiveInfinity;
+									break;
+								}
 								var childTarget = pairs[child.gameObject];
+								if (!childTarget)
+								{
+									totalDist += float.PositiveInfinity;
+									break;
+								}
 								var childDist = Vector3.Distance(child.position, childTarget.transform.position);
 								totalDist += childDist;
 								var childTargetHeld = lh && lh.currentAttachedObject == childTarget || rh && rh.currentAttachedObject == childTarget;
@@ -182,6 +193,10 @@ public class Fishtank : MonoBehaviour {
 					}
 					catch (KeyNotFoundException e) {
 						// Incomplete ring, not interested here
+					}
+					catch (MissingReferenceException e)
+					{
+						// Something was destroyed
 					}
 				}
 				
