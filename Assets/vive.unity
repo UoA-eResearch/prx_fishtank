@@ -355,7 +355,7 @@ MonoBehaviour:
     type: 2}
   ringPrefab: {fileID: 1314551590984416, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   numMonomers: 60
-  pairingVelocity: 0.35
+  pairingVelocity: 0.05
   rotationVelocity: 50
   shouldDimerise: 1
   pairingInterval: 0.1
