@@ -36,7 +36,49 @@ public class Fishtank : MonoBehaviour {
 				}
 				float minDistance = float.PositiveInfinity;
 				var match = a;
-				if (tag == "dimer")
+				if (tag == "ring")
+				{
+					foreach (var b in gos)
+					{
+						if (a != b)
+						{
+							var partnerPos = b.transform.Find("partnerPos").gameObject;
+							float dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
+							if (dist < minDistance && !pairs.ContainsKey(partnerPos))
+							{
+								var isCyclic = false;
+								var next = b;
+								while (pairs.ContainsKey(next))
+								{
+									next = pairs[next];
+									if (next == a)
+									{
+										isCyclic = true;
+										Debug.Log(a.name + " was interested in " + b.name + " but they have a pointer to me somewhere in their chain");
+										break;
+									}
+								}
+								if (!isCyclic)
+								{
+									minDistance = dist;
+									match = b;
+								}
+							}
+						}
+					}
+					if (minDistance == float.PositiveInfinity)
+					{
+						Debug.LogError("Unable to find a partner for " + a.name + "!");
+					}
+					else
+					{
+						pairs[a] = match;
+						var partnerPos = match.transform.Find("partnerPos").gameObject;
+						pairs[partnerPos] = a;
+						Debug.Log(a.name + " is choosing " + match.name + " as target");
+					}
+				}
+				else if (tag == "dimer")
 				{
 					bool hasAll = true;
 					foreach (Transform child in a.transform)
@@ -126,7 +168,7 @@ public class Fishtank : MonoBehaviour {
 
 				var targetPos = partner.transform.position;
 				var targetRotation = partner.transform.rotation;
-				if (tag == "monomer")
+				if (tag == "monomer" || tag == "ring")
 				{
 					var partnerPos = partner.transform.Find("partnerPos");
 					targetPos = partnerPos.position;
@@ -217,7 +259,7 @@ public class Fishtank : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
 	{
-		tags = new string[] { "monomer", "dimer" };
+		tags = new string[] { "monomer", "dimer", "ring" };
 
 		phSlider.onValueChanged.AddListener (delegate {
 			PHValueChanged ();
