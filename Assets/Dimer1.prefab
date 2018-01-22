@@ -25,6 +25,7 @@ GameObject:
   - component: {fileID: 114881386268475852}
   - component: {fileID: 114517365559859954}
   - component: {fileID: 65588514933538540}
+  - component: {fileID: 114615748335464460}
   m_Layer: 0
   m_Name: Dimer1
   m_TagString: dimer
@@ -261,6 +262,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93b6a877adcbf94c89a9d6e0c0e844d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114615748335464460
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1262608129830738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 783750eec4c41da428b7651515146d14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocityAverageFrames: 5
+  angularVelocityAverageFrames: 11
+  estimateOnAwake: 0
 --- !u!114 &114881386268475852
 MonoBehaviour:
   m_ObjectHideFlags: 1
