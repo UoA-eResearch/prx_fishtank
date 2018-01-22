@@ -56,7 +56,7 @@ public class BreakDimer : MonoBehaviour {
 			Vector3 velocity = velEst.GetVelocityEstimate ();
 			Debug.Log ("Velocity: " + velocity + velocity.magnitude);
 
-			if (velocity.magnitude > 1.0 && dimerAttached) {
+			if (velocity.magnitude > 2.0 && dimerAttached) {
 				breakDimer(hand);
 				dimerAttached = false;
 			}
