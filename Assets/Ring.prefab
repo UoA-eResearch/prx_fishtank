@@ -39,6 +39,7 @@ GameObject:
   - component: {fileID: 65311637666035512}
   - component: {fileID: 114133895727301288}
   - component: {fileID: 114864354974993022}
+  - component: {fileID: 114831056366379486}
   m_Layer: 0
   m_Name: Ring
   m_TagString: Untagged
@@ -205,6 +206,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93b6a877adcbf94c89a9d6e0c0e844d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114831056366379486
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1492668432920186}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2351c750b624f1942bd7615f1981dc65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dimerPrefab: {fileID: 1097768174719004, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
+    type: 2}
+  shouldBreak: 1
 --- !u!114 &114864354974993022
 MonoBehaviour:
   m_ObjectHideFlags: 1

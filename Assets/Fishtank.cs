@@ -57,14 +57,14 @@ public class Fishtank : MonoBehaviour {
 							}
 							if (minDistance == float.PositiveInfinity)
 							{
-								Debug.LogError("Unable to find a dimer for " + child.name + " in " + a.name + "!");
+								//Debug.LogError("Unable to find a dimer for " + child.name + " in " + a.name + "!");
 								hasAll = false;
 							}
 							else
 							{
 								pairs[child.gameObject] = match;
 								pairs[match] = child.gameObject;
-								Debug.Log(a.name + " has chosen " + match.name + " to fit into " + child.name + " with dist " + minDistance);
+								//Debug.Log(a.name + " has chosen " + match.name + " to fit into " + child.name + " with dist " + minDistance);
 							}
 						}
 					}
@@ -155,14 +155,20 @@ public class Fishtank : MonoBehaviour {
 								var childTarget = pairs[child.gameObject];
 								var childDist = Vector3.Distance(child.position, childTarget.transform.position);
 								totalDist += childDist;
+								var childTargetHeld = lh && lh.currentAttachedObject == childTarget || rh && rh.currentAttachedObject == childTarget;
+								if (childTargetHeld)
+								{
+									totalDist += float.PositiveInfinity;
+								}
 							}
 						}
-						Debug.Log(go.name + " is a master dimer, and the sum of it's child ring targets is " + totalDist);
+						//Debug.Log(go.name + " is a master dimer, and the sum of it's child ring targets is " + totalDist);
 						if (totalDist < .01f)
 						{
 							var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
 							ring.name = "ring from " + go.name;
 							Debug.Log(ring.name);
+							masterDimers.Remove(go);
 							Destroy(go);
 							foreach (Transform child in go.transform)
 							{
@@ -207,9 +213,26 @@ public class Fishtank : MonoBehaviour {
 		}
 		InvokeRepeating("FindPairs", 0, pairingInterval);
 	}
-	
+
+	private void FixHoverlock()
+	{
+		var lh = Player.instance.leftHand;
+		var rh = Player.instance.rightHand;
+		if (lh && lh.currentAttachedObject == null && lh.hoverLocked)
+		{
+			Debug.LogError("Left hand hoverlocked!!! Forcing off");
+			lh.HoverUnlock(null);
+		}
+		if (rh && rh.currentAttachedObject == null && rh.hoverLocked)
+		{
+			Debug.LogError("Right hand hoverlocked!!! Forcing off");
+			rh.HoverUnlock(null);
+		}
+	}
+
 	// Update is called once per frame
 	void Update () {
 		PushTogether();
+		FixHoverlock();
 	}
 }

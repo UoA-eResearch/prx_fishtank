@@ -6,11 +6,11 @@ using Valve.VR.InteractionSystem;
 public class BreakDimer : MonoBehaviour {
 
 	public GameObject monomerPrefab;
-	public bool shouldMonomerise = true;
+	public bool shouldBreak = true;
 
 	void OnHandHoverBegin(Hand hand)
 	{
-		if (gameObject == hand.otherHand.currentAttachedObject && shouldMonomerise)
+		if (gameObject == hand.otherHand.currentAttachedObject && shouldBreak)
 		{
 			// Drop whatever you're holding
 			hand.otherHand.DetachObject(hand.otherHand.currentAttachedObject);
@@ -19,11 +19,10 @@ public class BreakDimer : MonoBehaviour {
 			// Make a monomer and attach it to the hand. This replaces the dimer you were just holding.
 			var monomerPos = transform.Find("monomer1");
 			var monomer1 = Instantiate(monomerPrefab, monomerPos.position, monomerPos.rotation, transform.parent);
+			monomer1.name = "monomer_" + monomer1.GetInstanceID();
 			var partnerPos = monomer1.transform.Find("partnerPos");
 			var monomer2 = Instantiate(monomerPrefab, partnerPos.position, partnerPos.rotation, transform.parent);
-			var names = gameObject.name.Split();
-			monomer1.name = names[2];
-			monomer2.name = names[4];
+			monomer2.name = "monomer_" + monomer2.GetInstanceID();
 			Debug.Log("Destroying " + gameObject.name);
 			Destroy(gameObject);
 
@@ -41,19 +40,4 @@ public class BreakDimer : MonoBehaviour {
 		}
 	}
 
-	private void Update()
-	{
-		var lh = Player.instance.leftHand;
-		var rh = Player.instance.rightHand;
-		if (lh && lh.currentAttachedObject == null && lh.hoverLocked)
-		{
-			Debug.LogError("Left hand hoverlocked!!! Forcing off");
-			lh.HoverUnlock(null);
-		}
-		if (rh && rh.currentAttachedObject == null && rh.hoverLocked)
-		{
-			Debug.LogError("Right hand hoverlocked!!! Forcing off");
-			rh.HoverUnlock(null);
-		}
-	}
 }
