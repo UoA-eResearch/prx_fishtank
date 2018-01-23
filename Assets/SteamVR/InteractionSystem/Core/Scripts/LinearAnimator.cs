@@ -6,6 +6,7 @@
 
 using UnityEngine;
 using System.Collections;
+using UnityEngine.UI;
 
 namespace Valve.VR.InteractionSystem
 {
@@ -41,10 +42,16 @@ namespace Valve.VR.InteractionSystem
 		{
 			if ( currentLinearMapping != linearMapping.value )
 			{
-				currentLinearMapping = linearMapping.value;
-				animator.enabled = true;
-				animator.Play( 0, 0, currentLinearMapping );
+                currentLinearMapping = linearMapping.value;
+                //animator.enabled = true;
+				//animator.Play( 0, 0, currentLinearMapping );
 				framesUnchanged = 0;
+
+                var mappedToPH = (currentLinearMapping - 0.0f) / (1.0f - 0.0f) * (12.0f - 3.0f) + 3.0f;
+                mappedToPH = Mathf.Round(mappedToPH * 10f) / 10f;
+                var displayValue = GameObject.Find("TitleCanvas");
+                var text = displayValue.GetComponentInChildren<Text>();
+                text.text = "PH value: " + mappedToPH;
 			}
 			else
 			{
@@ -54,6 +61,7 @@ namespace Valve.VR.InteractionSystem
 					animator.enabled = false;
 				}
 			}
-		}
-	}
+        }
+        
+    }
 }
