@@ -18,9 +18,13 @@ public class Fishtank : MonoBehaviour {
 	private string[] tags;
 	public float pairingInterval = .1f;
 	private List<GameObject> masterDimers;
+	private PHSlider phSlider;
+	private float phValue;
 
 	void FindPairs()
 	{
+		phValue = phSlider.GetPhValue();
+		Debug.Log ("PH value " + phValue);
 		pairs = new Dictionary<GameObject, GameObject>();
 		masterDimers = new List<GameObject>();
 		foreach (var tag in tags) {
@@ -37,111 +41,93 @@ public class Fishtank : MonoBehaviour {
 				var match = a;
 				if (tag == "ring")
 				{
-					foreach (var b in gos)
-					{
-						if (a != b)
-						{
-							var partnerPos = b.transform.Find("partnerPos").gameObject;
-							float dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
-							if (dist < minDistance && !pairs.ContainsKey(partnerPos))
-							{
-								var isCyclic = false;
-								var next = b;
-								while (pairs.ContainsKey(next))
-								{
-									next = pairs[next];
-									if (next == a)
-									{
-										isCyclic = true;
-										Debug.Log(a.name + " was interested in " + b.name + " but they have a pointer to me somewhere in their chain");
-										break;
+					if (phValue < 7.0f) {
+						foreach (var b in gos) {
+							if (a != b) {
+								var partnerPos = b.transform.Find ("partnerPos").gameObject;
+								float dist = Vector3.Distance (a.transform.position, partnerPos.transform.position);
+								if (dist < minDistance && !pairs.ContainsKey (partnerPos)) {
+									var isCyclic = false;
+									var next = b;
+									while (pairs.ContainsKey (next)) {
+										next = pairs [next];
+										if (next == a) {
+											isCyclic = true;
+											Debug.Log (a.name + " was interested in " + b.name + " but they have a pointer to me somewhere in their chain");
+											break;
+										}
 									}
-								}
-								if (!isCyclic)
-								{
-									minDistance = dist;
-									match = b;
-								}
-							}
-						}
-					}
-					if (minDistance == float.PositiveInfinity)
-					{
-						Debug.LogError("Unable to find a partner for " + a.name + "!");
-					}
-					else
-					{
-						pairs[a] = match;
-						var partnerPos = match.transform.Find("partnerPos").gameObject;
-						pairs[partnerPos] = a;
-						Debug.Log(a.name + " is choosing " + match.name + " as target");
-					}
-				}
-				else if (tag == "dimer")
-				{
-					bool hasAll = true;
-					foreach (Transform child in a.transform)
-					{
-						if (child.name.StartsWith("ring"))
-						{
-							minDistance = float.PositiveInfinity;
-							match = child.gameObject;
-							foreach (var b in gos)
-							{
-								if (a != b && !pairs.ContainsKey(b))
-								{
-									float dist = Vector3.Distance(child.transform.position, b.transform.position);
-									if (dist < minDistance)
-									{
+									if (!isCyclic) {
 										minDistance = dist;
 										match = b;
 									}
 								}
 							}
-							if (minDistance == float.PositiveInfinity)
-							{
-								//Debug.LogError("Unable to find a dimer for " + child.name + " in " + a.name + "!");
-								hasAll = false;
-							}
-							else
-							{
-								pairs[child.gameObject] = match;
-								pairs[match] = child.gameObject;
-								//Debug.Log(a.name + " has chosen " + match.name + " to fit into " + child.name + " with dist " + minDistance);
-							}
+						}
+						if (minDistance == float.PositiveInfinity) {
+							Debug.LogError ("Unable to find a partner for " + a.name + "!");
+						} else {
+							pairs [a] = match;
+							var partnerPos = match.transform.Find ("partnerPos").gameObject;
+							pairs [partnerPos] = a;
+							Debug.Log (a.name + " is choosing " + match.name + " as target");
 						}
 					}
-					pairs[a] = a;
-					if (hasAll)
-					{
-						masterDimers.Add(a);
+				}
+				else if (tag == "dimer")
+				{
+					if (phValue < 11.0f) {
+						bool hasAll = true;
+						foreach (Transform child in a.transform) {
+							if (child.name.StartsWith ("ring")) {
+								minDistance = float.PositiveInfinity;
+								match = child.gameObject;
+								foreach (var b in gos) {
+									if (a != b && !pairs.ContainsKey (b)) {
+										float dist = Vector3.Distance (child.transform.position, b.transform.position);
+										if (dist < minDistance) {
+											minDistance = dist;
+											match = b;
+										}
+									}
+								}
+								if (minDistance == float.PositiveInfinity) {
+									//Debug.LogError("Unable to find a dimer for " + child.name + " in " + a.name + "!");
+									hasAll = false;
+								} else {
+									pairs [child.gameObject] = match;
+									pairs [match] = child.gameObject;
+									//Debug.Log(a.name + " has chosen " + match.name + " to fit into " + child.name + " with dist " + minDistance);
+								}
+							}
+						}
+						pairs [a] = a;
+						if (hasAll) {
+							masterDimers.Add (a);
+						}
 					}
 				}
 				else
 				{
-					minDistance = float.PositiveInfinity;
-					match = a;
-					foreach (var b in gos)
-					{
-						if (a != b && !pairs.ContainsKey(b)) // Prevent love triangles
-						{
-							float dist = Vector3.Distance(a.transform.position, b.transform.position);
-							if (dist < minDistance)
-							{
-								minDistance = dist;
-								match = b;
+					if (phValue < 13.0f) {
+						minDistance = float.PositiveInfinity;
+						match = a;
+						foreach (var b in gos) {
+							if (a != b && !pairs.ContainsKey (b)) { // Prevent love triangles
+								float dist = Vector3.Distance (a.transform.position, b.transform.position);
+								if (dist < minDistance) {
+									minDistance = dist;
+									match = b;
+								}
 							}
 						}
-					}
-					if (minDistance == float.PositiveInfinity)
-					{
-						Debug.LogError("Unable to find a partner for " + a.name + "!");
-					}
-					else
-					{
-						//Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
-						pairs[a] = match;
-						pairs[match] = a;
+						if (minDistance == float.PositiveInfinity) {
+							Debug.LogError ("Unable to find a partner for " + a.name + "!");
+						} else {
+							//Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
+							pairs [a] = match;
+							pairs [match] = a;
+						}
 					}
 				}
 			}
@@ -258,11 +244,9 @@ public class Fishtank : MonoBehaviour {
 	// Use this for initialization
 	void Start ()
 	{
-		tags = new string[] { "monomer", "dimer", "ring" };
+		phSlider = gameObject.GetComponent<PHSlider> ();
 
-		phSlider.onValueChanged.AddListener (delegate {
-			PHValueChanged ();
-		});
+		tags = new string[] { "monomer", "dimer", "ring" };
 		
 		bounds = gameObject.GetComponent<Collider>().bounds;
 		var b = bounds.extents;
