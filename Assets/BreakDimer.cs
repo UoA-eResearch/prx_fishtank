@@ -9,6 +9,10 @@ public class BreakDimer : MonoBehaviour {
 	public bool shouldBreak = true;
 	private VelocityEstimator velEst;
 	private bool dimerAttached = false;
+    private GameObject monomer1;
+    private GameObject monomer2;
+    private Transform monomerPos;
+    private Transform partnerPos;
 
 	void Awake(){
 		velEst = GetComponent<VelocityEstimator> ();
@@ -20,15 +24,8 @@ public class BreakDimer : MonoBehaviour {
 		hand.otherHand.DetachObject(hand.otherHand.currentAttachedObject);
 		hand.DetachObject(hand.currentAttachedObject);
 		Debug.Log(hand.otherHand.name + " is hovering over " + gameObject.name + " which is attached to " + hand.name);
-		// Make a monomer and attach it to the hand. This replaces the dimer you were just holding.
-		var monomerPos = transform.Find("monomer1");
-		var monomer1 = Instantiate(monomerPrefab, monomerPos.position, monomerPos.rotation, transform.parent);
-		monomer1.name = "monomer_" + monomer1.GetInstanceID();
-		var partnerPos = monomer1.transform.Find("partnerPos");
-		var monomer2 = Instantiate(monomerPrefab, partnerPos.position, partnerPos.rotation, transform.parent);
-		monomer2.name = "monomer_" + monomer2.GetInstanceID();
-		Debug.Log("Destroying " + gameObject.name);
-		Destroy(gameObject);
+
+        breakApartDimer();
 
 		var distanceToM1 = Vector3.Distance(monomer1.transform.position, hand.otherHand.hoverSphereTransform.position);
 		var distanceToM2 = Vector3.Distance(monomer2.transform.position, hand.otherHand.hoverSphereTransform.position);
@@ -42,6 +39,21 @@ public class BreakDimer : MonoBehaviour {
 			hand.otherHand.AttachObject(monomer2, attachmentFlags);
 		}
 	}
+
+    public void breakApartDimer()
+    {
+        // Make a monomer and attach it to the hand. This replaces the dimer you were just holding.
+        monomerPos = transform.Find("monomer1");
+        monomer1 = Instantiate(monomerPrefab, monomerPos.position, monomerPos.rotation, transform.parent);
+        monomer1.name = "monomer_" + monomer1.GetInstanceID();
+        partnerPos = monomer1.transform.Find("partnerPos");
+        monomer2 = Instantiate(monomerPrefab, partnerPos.position, partnerPos.rotation, transform.parent);
+        monomer2.name = "monomer_" + monomer2.GetInstanceID();
+        Debug.Log("Destroying " + gameObject.name);
+        Destroy(gameObject);
+    }
+
+ 
 
 	void OnHandHoverBegin(Hand hand)
 	{

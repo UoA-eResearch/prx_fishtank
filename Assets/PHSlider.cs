@@ -34,7 +34,7 @@ public class PHSlider : MonoBehaviour
         {
             currentLinearMapping = linearMapping.value;
 
-            var mappedToPH = (currentLinearMapping - 0.0f) / (1.0f - 0.0f) * (12.0f - 3.0f) + 3.0f;
+            var mappedToPH = (currentLinearMapping - 0.0f) / (1.0f - 0.0f) * (14.0f - 3.0f) + 3.0f;
             mappedToPH = Mathf.Round(mappedToPH * 10f) / 10f;
             phText.text = "PH value: " + mappedToPH;
 			phValue = mappedToPH;

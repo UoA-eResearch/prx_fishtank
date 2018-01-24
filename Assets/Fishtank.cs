@@ -20,6 +20,9 @@ public class Fishtank : MonoBehaviour {
 	private List<GameObject> masterDimers;
 	private PHSlider phSlider;
 	private float phValue;
+    public float phMonomer2Dimer;
+    public float phDimer2Ring;
+    public float phRing2Stack;
 
 	void FindPairs()
 	{
@@ -40,8 +43,12 @@ public class Fishtank : MonoBehaviour {
 				float minDistance = float.PositiveInfinity;
 				var match = a;
 				if (tag == "ring")
-				{
-					if (phValue < 7.0f) {
+                {
+                    if (phValue > phDimer2Ring)
+                    {
+                        a.GetComponent<BreakRing>().breakApartRing();
+                    }
+                    if (phValue < phRing2Stack) {
 						foreach (var b in gos) {
 							if (a != b) {
 								var partnerPos = b.transform.Find ("partnerPos").gameObject;
@@ -75,8 +82,12 @@ public class Fishtank : MonoBehaviour {
 					}
 				}
 				else if (tag == "dimer")
-				{
-					if (phValue < 11.0f) {
+                {
+                    if (phValue > phMonomer2Dimer)
+                    {
+                        a.GetComponent<BreakDimer>().breakApartDimer();
+                    }
+                    if (phValue < phDimer2Ring) {
 						bool hasAll = true;
 						foreach (Transform child in a.transform) {
 							if (child.name.StartsWith ("ring")) {
@@ -107,9 +118,9 @@ public class Fishtank : MonoBehaviour {
 						}
 					}
 				}
-				else
+				else //if monomer
 				{
-					if (phValue < 13.0f) {
+                    if (phValue <= phMonomer2Dimer) {
 						minDistance = float.PositiveInfinity;
 						match = a;
 						foreach (var b in gos) {
@@ -149,7 +160,10 @@ public class Fishtank : MonoBehaviour {
 					continue;
 				}
 				var partner = pairs[go];
-				if (!partner) continue;
+                if (!partner) {
+
+                    continue;
+                }
 
 				var targetPos = partner.transform.position;
 				var targetRotation = partner.transform.rotation;
