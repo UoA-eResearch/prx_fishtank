@@ -46,7 +46,7 @@ public class Fishtank : MonoBehaviour {
                 {
                     if (phValue > phDimer2Ring)
                     {
-                        a.GetComponent<BreakRing>().breakApartRing();
+                        a.GetComponent<BreakRing>().breakRing();
                     }
                     if (phValue < phRing2Stack) {
 						foreach (var b in gos) {
