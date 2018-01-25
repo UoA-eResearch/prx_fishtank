@@ -20,15 +20,17 @@ public class Fishtank : MonoBehaviour
 	public float pairingInterval = .1f;
 	private List<GameObject> masterDimers;
 	private PHSlider phSlider;
-	private int phValue;
-	public float phMonomer2Dimer;
-	public float phDimer2Ring;
-	public float phRing2Stack;
-	private int probability;
+	private int phValue = 8;
+	public int phMonomer2Dimer;
+	public int phDimer2Ring;
+	public int phRing2Stack;
+	private int probabilityBind;
+	private int probabilityBreak;
 
 	void FindPairs()
 	{
 		assignProbability ();
+		Debug.Log ("Prob for" + phValue + "is " + probabilityBind + probabilityBreak);
 		phValue = phSlider.GetPhValue();
 		//Debug.Log("PH value " + phValue);
 		pairs = new Dictionary<GameObject, GameObject>();
@@ -49,11 +51,11 @@ public class Fishtank : MonoBehaviour
 				bool isDonor = true;
 				if (tag == "ring")
 				{
-					if (phValue >= phDimer2Ring && Random.Range(1,101) <= probability)
+					if (phValue >= phDimer2Ring && Random.Range(1,101) <= probabilityBreak)
 					{
 						a.GetComponent<BreakRing>().breakRing(null);
 					}
-					if (phValue <= phRing2Stack && Random.Range(1,101) <= probability) {
+					if (phValue <= phRing2Stack && Random.Range(1,101) <= probabilityBind)
 					{
 						foreach (var b in gos)
 						{
@@ -117,48 +119,38 @@ public class Fishtank : MonoBehaviour
 				else if (tag == "dimer")
 				{
 					
-					if (phValue > phMonomer2Dimer)
+					if (phValue >= phMonomer2Dimer && Random.Range (1, 101) <= probabilityBreak)
 					{
 						a.GetComponent<BreakDimer>().breakApartDimer();
 					}
-					if (phValue <= phDimer2Ring && Random.Range(1,101) <= probability) {
-					{
+					if (phValue <= phDimer2Ring && Random.Range (1, 101) <= probabilityBind) {
 						bool hasAll = true;
-						foreach (Transform child in a.transform)
-						{
-							if (child.name.StartsWith("ring"))
-							{
+						foreach (Transform child in a.transform) {
+							if (child.name.StartsWith ("ring")) {
 								minDistance = float.PositiveInfinity;
 								match = child.gameObject;
-								foreach (var b in gos)
-								{
-									if (a != b && !pairs.ContainsKey(b))
-									{
-										float dist = Vector3.Distance(child.transform.position, b.transform.position);
-										if (dist < minDistance)
-										{
+								foreach (var b in gos) {
+									if (a != b && !pairs.ContainsKey (b)) {
+										float dist = Vector3.Distance (child.transform.position, b.transform.position);
+										if (dist < minDistance) {
 											minDistance = dist;
 											match = b;
 										}
 									}
 								}
-								if (minDistance == float.PositiveInfinity)
-								{
+								if (minDistance == float.PositiveInfinity) {
 									//Debug.LogError("Unable to find a dimer for " + child.name + " in " + a.name + "!");
 									hasAll = false;
-								}
-								else
-								{
-									pairs[child.gameObject] = match;
-									pairs[match] = child.gameObject;
+								} else {
+									pairs [child.gameObject] = match;
+									pairs [match] = child.gameObject;
 									//Debug.Log(a.name + " has chosen " + match.name + " to fit into " + child.name + " with dist " + minDistance);
 								}
 							}
 						}
-						pairs[a] = a;
-						if (hasAll)
-						{
-							masterDimers.Add(a);
+						pairs [a] = a;
+						if (hasAll) {
+							masterDimers.Add (a);
 						}
 					}
 				}
@@ -360,25 +352,32 @@ public class Fishtank : MonoBehaviour
 		switch (phSlider.GetPhValue()) {
 			
 		case 9:
-			probability = 50;
+			probabilityBind = 70;
+			probabilityBreak = 30;
 			break;
 		case 8:
-			probability = 95;
+			probabilityBind = 99;
+			probabilityBreak = 1;
 			break;
 		case 7:
-			probability = 25;
+			probabilityBind = 10;
+			probabilityBreak = 90;
 			break;
 		case 6:
-			probability = 50;
+			probabilityBind = 30;
+			probabilityBreak = 70;
 			break;
 		case 5:
-			probability = 75;
+			probabilityBind = 50;
+			probabilityBreak = 50;
 			break;
 		case 4:
-			probability = 95;
+			probabilityBind = 95;
+			probabilityBreak = 5;
 			break;
 		case 3:
-			probability = 40;
+			probabilityBind = 40;
+			probabilityBreak = 60;
 			break;
 		}
 
