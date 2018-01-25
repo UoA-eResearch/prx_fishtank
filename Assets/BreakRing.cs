@@ -9,19 +9,18 @@ public class BreakRing : MonoBehaviour {
 	public bool shouldBreak = true;
 	private VelocityEstimator velEst;
 	private bool ringAttached = false;
-	private Hand currentHand = null;
 
 	void Awake()
 	{
 		velEst = GetComponent<VelocityEstimator>();
 	}
 
-	public void breakRing()
+	public void breakRing(Hand currentHand)
 	{
-		if (currentHand) {
+		if (currentHand != null) {
 			// Drop whatever you're holding
-			currentHand.otherHand.DetachObject (currentHand.otherHand.currentAttachedObject);
-			currentHand.DetachObject (currentHand.currentAttachedObject);
+			currentHand.otherHand.DetachObject(currentHand.otherHand.currentAttachedObject);
+			currentHand.DetachObject(currentHand.currentAttachedObject);
 			Debug.Log (currentHand.otherHand.name + " is hovering over " + gameObject.name + " which is attached to " + currentHand.name);
 		}
 
@@ -62,8 +61,7 @@ public class BreakRing : MonoBehaviour {
 	{
 		if (gameObject == hand.otherHand.currentAttachedObject && shouldBreak)
 		{
-			currentHand = hand;
-			breakRing();
+			breakRing(hand);
 		}
 	}
 
@@ -76,8 +74,7 @@ public class BreakRing : MonoBehaviour {
 
 			if (velocity.magnitude > 2.0 && ringAttached)
 			{
-				currentHand = hand;
-				breakRing();
+				breakRing(hand);
 				ringAttached = false;
 			}
 		}
@@ -91,7 +88,6 @@ public class BreakRing : MonoBehaviour {
 
 	void OnDetachedFromHand()
 	{
-		currentHand = null;
 		ringAttached = false;
 		velEst.FinishEstimatingVelocity();
 	}
