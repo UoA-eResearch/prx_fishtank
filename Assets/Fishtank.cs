@@ -28,7 +28,7 @@ public class Fishtank : MonoBehaviour
 	void FindPairs()
 	{
 		phValue = phSlider.GetPhValue();
-		Debug.Log("PH value " + phValue);
+		//Debug.Log("PH value " + phValue);
 		pairs = new Dictionary<GameObject, GameObject>();
 		masterDimers = new List<GameObject>();
 		foreach (var tag in tags)
@@ -203,14 +203,21 @@ public class Fishtank : MonoBehaviour
 			foreach (var go in gos)
 			{
 				var thisGoAttached = lh && lh.currentAttachedObject == go || rh && rh.currentAttachedObject == go;
-				if (thisGoAttached || !go || !pairs.ContainsKey(go))
+				if (thisGoAttached || !go)
 				{
+					continue;
+				}
+				if (!pairs.ContainsKey(go))
+				{
+					var randomPos = go.transform.position + new Vector3(Random.value, Random.value, Random.value) - Vector3.one / 2;
+					var randomRot = Random.rotation;
+					go.transform.position = Vector3.MoveTowards(go.transform.position, randomPos, Time.deltaTime * pairingVelocity);
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, randomRot, Time.deltaTime * rotationVelocity);
 					continue;
 				}
 				var partner = pairs[go];
 				if (!partner)
 				{
-
 					continue;
 				}
 
@@ -294,14 +301,17 @@ public class Fishtank : MonoBehaviour
 					}
 				}
 
-				go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
-				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
-
-				if (!bounds.Contains(go.transform.position))
+				if (distanceFromTarget > .001f)
+				{
+					go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
+				}
+				else if (!bounds.Contains(go.transform.position))
 				{
 					// Wayward monomer
 					go.transform.position = Vector3.MoveTowards(go.transform.position, bounds.center, Time.deltaTime * pairingVelocity);
 				}
+				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
+				
 			}
 		}
 	}
