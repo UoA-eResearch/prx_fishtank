@@ -10,7 +10,7 @@ public class PHSlider : MonoBehaviour
 
     public LinearMapping linearMapping;
     private float currentLinearMapping = float.NaN;
-	private float phValue;
+	private int phValue;
 	private GameObject phCanvas;
 	private Text phText;
 
@@ -35,13 +35,12 @@ public class PHSlider : MonoBehaviour
             currentLinearMapping = linearMapping.value;
 
             var mappedToPH = (currentLinearMapping - 0.0f) / (1.0f - 0.0f) * (9.0f - 3.0f) + 3.0f;
-            mappedToPH = Mathf.Round(mappedToPH * 1f) / 1f;
-            phText.text = "PH value: " + mappedToPH;
-			phValue = mappedToPH;
+			phValue = Mathf.RoundToInt (mappedToPH);
+            phText.text = "PH value: " + phValue;
         }
     }
 
-	public float GetPhValue(){
+	public int GetPhValue(){
 		return phValue;
 	}
 }

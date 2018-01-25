@@ -20,13 +20,15 @@ public class Fishtank : MonoBehaviour
 	public float pairingInterval = .1f;
 	private List<GameObject> masterDimers;
 	private PHSlider phSlider;
-	private float phValue;
-	public float phMonomer2Dimer;
-	public float phDimer2Ring;
-	public float phRing2Stack;
+	private int phValue;
+    public float phMonomer2Dimer;
+    public float phDimer2Ring;
+    public float phRing2Stack;
+	private int probability;
 
 	void FindPairs()
 	{
+		assignProbability ();
 		phValue = phSlider.GetPhValue();
 		//Debug.Log("PH value " + phValue);
 		pairs = new Dictionary<GameObject, GameObject>();
@@ -46,21 +48,17 @@ public class Fishtank : MonoBehaviour
 				var match = a;
 				bool isDonor = true;
 				if (tag == "ring")
-				{
-					if (phValue > phDimer2Ring)
-					{
-						a.GetComponent<BreakRing>().breakRing(null);
-					}
-					if (phValue < phRing2Stack)
-					{
-						foreach (var b in gos)
-						{
-							if (a != b)
-							{
-								var partnerPos = b.transform.Find("partnerPos").gameObject;
-								float dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
-								if (dist < minDistance && !pairs.ContainsKey(partnerPos))
-								{
+                {
+					if (phValue >= phDimer2Ring && Random.Range(1,101) <= probability)
+                    {
+                        a.GetComponent<BreakRing>().breakRing(null);
+                    }
+					if (phValue <= phRing2Stack && Random.Range(1,101) <= probability) {
+						foreach (var b in gos) {
+							if (a != b) {
+								var partnerPos = b.transform.Find ("partnerPos").gameObject;
+								float dist = Vector3.Distance (a.transform.position, partnerPos.transform.position);
+								if (dist < minDistance && !pairs.ContainsKey (partnerPos)) {
 									var isCyclic = false;
 									var next = b;
 									while (pairs.ContainsKey(next))
@@ -113,13 +111,13 @@ public class Fishtank : MonoBehaviour
 					}
 				}
 				else if (tag == "dimer")
-				{
-					if (phValue > phMonomer2Dimer)
-					{
-						a.GetComponent<BreakDimer>().breakApartDimer();
-					}
-					if (phValue < phDimer2Ring)
-					{
+                {
+					
+                    if (phValue > phMonomer2Dimer)
+                    {
+                        a.GetComponent<BreakDimer>().breakApartDimer();
+                    }
+					if (phValue <= phDimer2Ring && Random.Range(1,101) <= probability) {
 						bool hasAll = true;
 						foreach (Transform child in a.transform)
 						{
@@ -350,6 +348,35 @@ public class Fishtank : MonoBehaviour
 			Debug.LogError("Right hand hoverlocked!!! Forcing off");
 			rh.HoverUnlock(null);
 		}
+	}
+
+	void assignProbability(){
+
+		switch (phSlider.GetPhValue()) {
+			
+		case 9:
+			probability = 50;
+			break;
+		case 8:
+			probability = 95;
+			break;
+		case 7:
+			probability = 25;
+			break;
+		case 6:
+			probability = 50;
+			break;
+		case 5:
+			probability = 75;
+			break;
+		case 4:
+			probability = 95;
+			break;
+		case 3:
+			probability = 40;
+			break;
+		}
+
 	}
 
 
