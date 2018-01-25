@@ -9,23 +9,29 @@ public class BreakRing : MonoBehaviour {
 	public bool shouldBreak = true;
 	private VelocityEstimator velEst;
 	private bool ringAttached = false;
+	private Hand currentHand = null;
 
 	void Awake()
 	{
 		velEst = GetComponent<VelocityEstimator>();
 	}
 
-	void breakRing(Hand hand)
+	public void breakRing()
 	{
-		// Drop whatever you're holding
-		hand.otherHand.DetachObject(hand.otherHand.currentAttachedObject);
-		hand.DetachObject(hand.currentAttachedObject);
-		Debug.Log(hand.otherHand.name + " is hovering over " + gameObject.name + " which is attached to " + hand.name);
+		if (currentHand) {
+			// Drop whatever you're holding
+			currentHand.otherHand.DetachObject (currentHand.otherHand.currentAttachedObject);
+			currentHand.DetachObject (currentHand.currentAttachedObject);
+			Debug.Log (currentHand.otherHand.name + " is hovering over " + gameObject.name + " which is attached to " + currentHand.name);
+		}
 
         // Make a dimer and attach it to the hand. This replaces the ring you were just holding.
         var dimer = Instantiate(dimerPrefab, transform.position, transform.rotation, transform.parent);
         dimer.name = "dimer_" + dimer.GetInstanceID();
-        float minDist = Vector3.Distance(dimer.transform.position, hand.otherHand.hoverSphereTransform.position);
+		float minDist = 0;
+		if (currentHand) {
+			minDist = Vector3.Distance (dimer.transform.position, currentHand.otherHand.hoverSphereTransform.position);
+		}
         var match = dimer;
         foreach (Transform child in dimer.transform)
         {
@@ -33,41 +39,31 @@ public class BreakRing : MonoBehaviour {
             {
                 var childDimer = Instantiate(dimerPrefab, child.transform.position, child.transform.rotation, transform.parent);
                 childDimer.name = "dimer_" + dimer.GetInstanceID();
-                var dist = Vector3.Distance(child.transform.position, hand.otherHand.hoverSphereTransform.position);
-                if (dist < minDist)
-                {
-                    minDist = dist;
-                    match = childDimer;
-                }
+				if (currentHand) {
+					var dist = Vector3.Distance (child.transform.position, currentHand.otherHand.hoverSphereTransform.position);
+				
+					if (dist < minDist) {
+						minDist = dist;
+						match = childDimer;
+					}
+				}
             }
         }
         Destroy(gameObject);
 
-        var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachOthers;
-		hand.otherHand.AttachObject(match, attachmentFlags);
+		if (currentHand) {
+			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachOthers;
+			currentHand.otherHand.AttachObject (match, attachmentFlags);
+		}
 	}
 
-    public void breakApartRing() {
-        // Make a dimer and attach it to the hand. This replaces the ring you were just holding.
-        var dimer = Instantiate(dimerPrefab, transform.position, transform.rotation, transform.parent);
-        dimer.name = "dimer_" + dimer.GetInstanceID();
-        var match = dimer;
-        foreach (Transform child in dimer.transform)
-        {
-            if (child.name.StartsWith("ring"))
-            {
-                var childDimer = Instantiate(dimerPrefab, child.transform.position, child.transform.rotation, transform.parent);
-                childDimer.name = "dimer_" + dimer.GetInstanceID();
-            }
-        }
-        Destroy(gameObject);
-    }
 
 	void OnHandHoverBegin(Hand hand)
 	{
 		if (gameObject == hand.otherHand.currentAttachedObject && shouldBreak)
 		{
-			breakRing(hand);
+			currentHand = hand;
+			breakRing();
 		}
 	}
 
@@ -80,7 +76,8 @@ public class BreakRing : MonoBehaviour {
 
 			if (velocity.magnitude > 2.0 && ringAttached)
 			{
-				breakRing(hand);
+				currentHand = hand;
+				breakRing();
 				ringAttached = false;
 			}
 		}
@@ -94,6 +91,7 @@ public class BreakRing : MonoBehaviour {
 
 	void OnDetachedFromHand()
 	{
+		currentHand = null;
 		ringAttached = false;
 		velEst.FinishEstimatingVelocity();
 	}
