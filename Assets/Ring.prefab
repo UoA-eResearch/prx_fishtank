@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 114864354974993022}
   - component: {fileID: 114831056366379486}
   - component: {fileID: 114384419391356264}
+  - component: {fileID: 54232330661303416}
   m_Layer: 0
   m_Name: Ring
   m_TagString: ring
@@ -413,6 +414,21 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1775865815488780}
   m_Mesh: {fileID: 4300000, guid: 47cd9dc74f4460149bb671f188a4f37f, type: 3}
+--- !u!54 &54232330661303416
+Rigidbody:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1314551590984416}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 10
+  m_AngularDrag: 10
+  m_UseGravity: 0
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
 --- !u!65 &65311637666035512
 BoxCollider:
   m_ObjectHideFlags: 1
@@ -420,7 +436,7 @@ BoxCollider:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1314551590984416}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1.374763, y: 0.55383444, z: 1.3750983}
