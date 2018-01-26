@@ -20,15 +20,17 @@ public class Fishtank : MonoBehaviour
 	public float pairingInterval = .1f;
 	private List<GameObject> masterDimers;
 	private PHSlider phSlider;
-	private int phValue;
-    public float phMonomer2Dimer;
-    public float phDimer2Ring;
-    public float phRing2Stack;
-	private int probability;
+	private int phValue = 5;
+	public int phMonomer2Dimer;
+	public int phDimer2Ring;
+	public int phRing2Stack;
+	private int probabilityBind;
+	private int probabilityBreak;
 
 	void FindPairs()
 	{
 		assignProbability ();
+		Debug.Log ("Prob for" + phValue + "is " + probabilityBind + probabilityBreak);
 		phValue = phSlider.GetPhValue();
 		//Debug.Log("PH value " + phValue);
 		pairs = new Dictionary<GameObject, GameObject>();
@@ -48,17 +50,21 @@ public class Fishtank : MonoBehaviour
 				var match = a;
 				bool isDonor = true;
 				if (tag == "ring")
-                {
-					if (phValue >= phDimer2Ring && Random.Range(1,101) <= probability)
-                    {
-                        a.GetComponent<BreakRing>().breakRing(null);
-                    }
-					if (phValue <= phRing2Stack && Random.Range(1,101) <= probability) {
-						foreach (var b in gos) {
-							if (a != b) {
-								var partnerPos = b.transform.Find ("partnerPos").gameObject;
-								float dist = Vector3.Distance (a.transform.position, partnerPos.transform.position);
-								if (dist < minDistance && !pairs.ContainsKey (partnerPos)) {
+				{
+					if (phValue >= phDimer2Ring && Random.Range(1,101) <= probabilityBreak)
+					{
+						a.GetComponent<BreakRing>().breakRing(null);
+					}
+					if (phValue <= phRing2Stack && Random.Range(1,101) <= probabilityBind)
+					{
+						foreach (var b in gos)
+						{
+							if (a != b)
+							{
+								var partnerPos = b.transform.Find("partnerPos").gameObject;
+								float dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
+								if (dist < minDistance && !pairs.ContainsKey(partnerPos))
+								{
 									var isCyclic = false;
 									var next = b;
 									while (pairs.ContainsKey(next))
@@ -111,49 +117,40 @@ public class Fishtank : MonoBehaviour
 					}
 				}
 				else if (tag == "dimer")
-                {
+				{
 					
-                    if (phValue > phMonomer2Dimer)
-                    {
-                        a.GetComponent<BreakDimer>().breakApartDimer();
-                    }
-					if (phValue <= phDimer2Ring && Random.Range(1,101) <= probability) {
+					if (phValue >= phMonomer2Dimer && Random.Range (1, 101) <= probabilityBreak)
+					{
+						a.GetComponent<BreakDimer>().breakApartDimer();
+					}
+					if (phValue <= phDimer2Ring && Random.Range (1, 101) <= probabilityBind) {
 						bool hasAll = true;
-						foreach (Transform child in a.transform)
-						{
-							if (child.name.StartsWith("ring"))
-							{
+						foreach (Transform child in a.transform) {
+							if (child.name.StartsWith ("ring")) {
 								minDistance = float.PositiveInfinity;
 								match = child.gameObject;
-								foreach (var b in gos)
-								{
-									if (a != b && !pairs.ContainsKey(b))
-									{
-										float dist = Vector3.Distance(child.transform.position, b.transform.position);
-										if (dist < minDistance)
-										{
+								foreach (var b in gos) {
+									if (a != b && !pairs.ContainsKey (b)) {
+										float dist = Vector3.Distance (child.transform.position, b.transform.position);
+										if (dist < minDistance) {
 											minDistance = dist;
 											match = b;
 										}
 									}
 								}
-								if (minDistance == float.PositiveInfinity)
-								{
+								if (minDistance == float.PositiveInfinity) {
 									//Debug.LogError("Unable to find a dimer for " + child.name + " in " + a.name + "!");
 									hasAll = false;
-								}
-								else
-								{
-									pairs[child.gameObject] = match;
-									pairs[match] = child.gameObject;
+								} else {
+									pairs [child.gameObject] = match;
+									pairs [match] = child.gameObject;
 									//Debug.Log(a.name + " has chosen " + match.name + " to fit into " + child.name + " with dist " + minDistance);
 								}
 							}
 						}
-						pairs[a] = a;
-						if (hasAll)
-						{
-							masterDimers.Add(a);
+						pairs [a] = a;
+						if (hasAll) {
+							masterDimers.Add (a);
 						}
 					}
 				}
@@ -309,7 +306,7 @@ public class Fishtank : MonoBehaviour
 					go.transform.position = Vector3.MoveTowards(go.transform.position, bounds.center, Time.deltaTime * pairingVelocity);
 				}
 				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
-				
+
 			}
 		}
 	}
@@ -317,6 +314,8 @@ public class Fishtank : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		gameObject.GetComponent<Renderer> ().material.color = colo;
+
 		phSlider = gameObject.GetComponent<PHSlider>();
 
 		tags = new string[] { "monomer", "dimer", "ring" };
@@ -351,29 +350,70 @@ public class Fishtank : MonoBehaviour
 	}
 
 	void assignProbability(){
-
+		Color col;
 		switch (phSlider.GetPhValue()) {
 			
 		case 9:
-			probability = 50;
+			probabilityBind = 70;
+			probabilityBreak = 30;
+
+			col = Color.cyan;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 8:
-			probability = 95;
+			probabilityBind = 99;
+			probabilityBreak = 1;
+
+			col = Color.blue;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 7:
-			probability = 25;
+			probabilityBind = 10;
+			probabilityBreak = 90;
+
+			col = Color.gray;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 6:
-			probability = 50;
+			probabilityBind = 30;
+			probabilityBreak = 70;
+
+			col = Color.green;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 5:
-			probability = 75;
+			probabilityBind = 50;
+			probabilityBreak = 50;
+
+			col = Color.magenta;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 4:
-			probability = 95;
+			probabilityBind = 95;
+			probabilityBreak = 5;
+
+			col = Color.red;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 3:
-			probability = 40;
+			probabilityBind = 40;
+			probabilityBreak = 60;
+
+			col = Color.yellow;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
 		}
 

@@ -31,9 +31,8 @@ public class BreakRing : MonoBehaviour
 		dimer.GetComponent<Rigidbody>().AddForce(-dimer.transform.forward, ForceMode.Impulse);
 		dimer.name = "dimer_" + dimer.GetInstanceID();
 		float minDist = 0;
-		if (currentHand)
-		{
-			minDist = Vector3.Distance(dimer.transform.position, currentHand.otherHand.hoverSphereTransform.position);
+		if (currentHand != null) {
+			minDist = Vector3.Distance (dimer.transform.position, currentHand.otherHand.hoverSphereTransform.position);
 		}
 		var match = dimer;
 		foreach (Transform child in dimer.transform)
@@ -43,7 +42,7 @@ public class BreakRing : MonoBehaviour
 				var childDimer = Instantiate(dimerPrefab, child.transform.position, child.transform.rotation, transform.parent);
 				childDimer.GetComponent<Rigidbody>().AddForce(-childDimer.transform.forward, ForceMode.Impulse);
 				childDimer.name = "dimer_" + dimer.GetInstanceID();
-				if (currentHand)
+				if (currentHand != null)
 				{
 					var dist = Vector3.Distance(child.transform.position, currentHand.otherHand.hoverSphereTransform.position);
 
@@ -57,8 +56,7 @@ public class BreakRing : MonoBehaviour
 		}
 		Destroy(gameObject);
 
-		if (currentHand)
-		{
+		if (currentHand != null) {
 			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachOthers;
 			currentHand.otherHand.AttachObject(match, attachmentFlags);
 		}
