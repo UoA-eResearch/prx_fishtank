@@ -20,7 +20,7 @@ public class Fishtank : MonoBehaviour
 	public float pairingInterval = .1f;
 	private List<GameObject> masterDimers;
 	private PHSlider phSlider;
-	private int phValue = 5;
+	private int phValue;
 	public int phMonomer2Dimer;
 	public int phDimer2Ring;
 	public int phRing2Stack;
@@ -314,7 +314,6 @@ public class Fishtank : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
-		gameObject.GetComponent<Renderer> ().material.color = colo;
 
 		phSlider = gameObject.GetComponent<PHSlider>();
 

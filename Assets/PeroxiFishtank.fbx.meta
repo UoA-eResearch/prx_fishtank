@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 47cd9dc74f4460149bb671f188a4f37f
-timeCreated: 1516141121
+timeCreated: 1516931064
 licenseType: Free
 ModelImporter:
   serializedVersion: 21
@@ -44,13 +44,6 @@ ModelImporter:
     4300008: Dimer1
     4300010: Monomer2
     4300012: Monomer1
-    6400000: Dimer1
-    6400002: Dimer2
-    6400004: DimerStackedOn2
-    6400006: Monomer1
-    6400008: Monomer2
-    6400010: Ring_MeshPart0
-    6400012: Ring_MeshPart1
   materials:
     importMaterials: 1
     materialName: 0
@@ -80,7 +73,7 @@ ModelImporter:
     lODScreenPercentages: []
     globalScale: 1
     meshCompression: 0
-    addColliders: 1
+    addColliders: 0
     importVisibility: 1
     importBlendShapes: 1
     importCameras: 1
