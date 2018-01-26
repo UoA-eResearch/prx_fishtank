@@ -20,7 +20,7 @@ public class Fishtank : MonoBehaviour
 	public float pairingInterval = .1f;
 	private List<GameObject> masterDimers;
 	private PHSlider phSlider;
-	private int phValue = 8;
+	private int phValue = 5;
 	public int phMonomer2Dimer;
 	public int phDimer2Ring;
 	public int phRing2Stack;
@@ -306,7 +306,7 @@ public class Fishtank : MonoBehaviour
 					go.transform.position = Vector3.MoveTowards(go.transform.position, bounds.center, Time.deltaTime * pairingVelocity);
 				}
 				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
-				
+
 			}
 		}
 	}
@@ -314,6 +314,8 @@ public class Fishtank : MonoBehaviour
 	// Use this for initialization
 	void Start()
 	{
+		gameObject.GetComponent<Renderer> ().material.color = colo;
+
 		phSlider = gameObject.GetComponent<PHSlider>();
 
 		tags = new string[] { "monomer", "dimer", "ring" };
@@ -348,36 +350,70 @@ public class Fishtank : MonoBehaviour
 	}
 
 	void assignProbability(){
-
+		Color col;
 		switch (phSlider.GetPhValue()) {
 			
 		case 9:
 			probabilityBind = 70;
 			probabilityBreak = 30;
+
+			col = Color.cyan;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 8:
 			probabilityBind = 99;
 			probabilityBreak = 1;
+
+			col = Color.blue;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 7:
 			probabilityBind = 10;
 			probabilityBreak = 90;
+
+			col = Color.gray;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 6:
 			probabilityBind = 30;
 			probabilityBreak = 70;
+
+			col = Color.green;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 5:
 			probabilityBind = 50;
 			probabilityBreak = 50;
+
+			col = Color.magenta;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 4:
 			probabilityBind = 95;
 			probabilityBreak = 5;
+
+			col = Color.red;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
+
 		case 3:
 			probabilityBind = 40;
 			probabilityBreak = 60;
+
+			col = Color.yellow;
+			col.a = 0.1f;
+			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
 		}
 
