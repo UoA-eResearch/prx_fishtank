@@ -21,11 +21,11 @@ GameObject:
   - component: {fileID: 4892711493544112}
   - component: {fileID: 33846452532808544}
   - component: {fileID: 23963851537319916}
-  - component: {fileID: 114527036147244690}
   - component: {fileID: 65768424207821308}
-  - component: {fileID: 54111510065917578}
-  - component: {fileID: 114015763040705892}
-  - component: {fileID: 114925502746800856}
+  - component: {fileID: 114198986440568966}
+  - component: {fileID: 54944887642698322}
+  - component: {fileID: 114656648200094392}
+  - component: {fileID: 114772762168871246}
   m_Layer: 0
   m_Name: Monomer1
   m_TagString: monomer
@@ -225,16 +225,16 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1213113439581324}
   m_Mesh: {fileID: 4300012, guid: 47cd9dc74f4460149bb671f188a4f37f, type: 3}
---- !u!54 &54111510065917578
+--- !u!54 &54944887642698322
 Rigidbody:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1213113439581324}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 10
-  m_AngularDrag: 10
+  m_AngularDrag: 0.05
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -252,7 +252,7 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.63966453, y: 0.41713434, z: 0.40699428}
   m_Center: {x: 0.05849427, y: 0.00407043, z: 0.009185022}
---- !u!114 &114015763040705892
+--- !u!114 &114198986440568966
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -266,7 +266,7 @@ MonoBehaviour:
   velocityAverageFrames: 5
   angularVelocityAverageFrames: 11
   estimateOnAwake: 0
---- !u!114 &114527036147244690
+--- !u!114 &114656648200094392
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -277,7 +277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93b6a877adcbf94c89a9d6e0c0e844d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114925502746800856
+--- !u!114 &114772762168871246
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
