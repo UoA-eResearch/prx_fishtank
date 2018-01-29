@@ -332,7 +332,7 @@ MonoBehaviour:
   m_PhysicalUnit: 3
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
-  m_DynamicPixelsPerUnit: 1
+  m_DynamicPixelsPerUnit: 4
 --- !u!223 &169092649
 Canvas:
   m_ObjectHideFlags: 0
@@ -608,7 +608,13 @@ Prefab:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 54232330661303416, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114384419391356264, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114831056366379486, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114864354974993022, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114133895727301288, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 65311637666035512, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &537061220 stripped
@@ -933,7 +939,11 @@ Prefab:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 54111510065917578, guid: 50835fc1252cf2142b60d9ac690bfe3b, type: 2}
+    - {fileID: 65768424207821308, guid: 50835fc1252cf2142b60d9ac690bfe3b, type: 2}
+    - {fileID: 114726447444696372, guid: 50835fc1252cf2142b60d9ac690bfe3b, type: 2}
+    - {fileID: 114527036147244690, guid: 50835fc1252cf2142b60d9ac690bfe3b, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 50835fc1252cf2142b60d9ac690bfe3b, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &649525886 stripped
@@ -973,8 +983,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.13, y: -0.378}
-  m_SizeDelta: {x: 230, y: 290.434}
+  m_AnchoredPosition: {x: 1.891, y: 0.0096}
+  m_SizeDelta: {x: 506.9946, y: 386.8622}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &733337186
 MonoBehaviour:
@@ -997,27 +1007,35 @@ MonoBehaviour:
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_FontData:
     m_Font: {fileID: 10102, guid: 0000000000000000e000000000000000, type: 0}
-    m_FontSize: 17
+    m_FontSize: 14
     m_FontStyle: 0
     m_BestFit: 0
     m_MinSize: 0
-    m_MaxSize: 131
+    m_MaxSize: 146
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: 'This gene encodes a mitochondrial protein with antioxidant function.
-
-    Its binding states change according to the ph value.
-
-
-    Adjust the ph value by touching the slider with one controller and moving it left
-    and right.
-
-
-    Break proteins apart by grabbing and pulling or shaking them.'
+  m_Text: "Peroxiredoxins (Prxs, EC 1.11.1.15; pronounced per-oxy- red-ox-in) are
+    a ubiquitous family of highly abundant antioxidant enzymes that protect all cells
+    from free radical damage. They have an intriguing repertoire of self-assembled
+    structures which helps modulate their activity inside cells and also provides
+    an exciting scaffolding opportunity in vitro for nanotechnology applications.\r\n\r\nThis
+    visualisation shows the assembly of monomers into dimers, dimers into rings, and
+    rings into nanotubes. You can teleport with either touchpad, and you can adjust
+    the pH by grabbing the handle above one of your controllers with the opposite
+    controller (using the trigger on the underside) and moving it left or right. The
+    pH controls the degree of assembly. You can pick up a monomer, dimer or ring,
+    and you can break it into its smaller components by pulling it apart with two
+    hands or shaking it while holding it (if it's a dimer or a ring).\r\n\r\nYou can
+    re-order rings, or re-pair monomers by simply moving them closer - as monomers/dimers/rings
+    will aim to pair with the closest object of the same type.\r\n\r\nThis simulation
+    was developed by Nick Young and Bianca Haux at the Centre for eResearch at the
+    University of Auckland in collaboration with David Doak, Norwich University of
+    the Arts, Juliet Gerrard, and Michael Barnett from the University of Auckland
+    School of Biological Sciences. The source code is accessible at\r\nhttps://github.com/UoA-eResearch/prx_fishtank.\r\n"
 --- !u!222 &733337187
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1402,7 +1420,13 @@ Prefab:
       propertyPath: m_Name
       value: Stack Ring 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 54232330661303416, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114384419391356264, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114831056366379486, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114864354974993022, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114133895727301288, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 65311637666035512, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &1242813180 stripped
@@ -1549,7 +1573,13 @@ Prefab:
       propertyPath: m_Name
       value: Stack Ring 2
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 54232330661303416, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114384419391356264, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114831056366379486, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114864354974993022, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 114133895727301288, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 65311637666035512, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &1313628777 stripped
@@ -1612,7 +1642,13 @@ Prefab:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 114517365559859954, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}
+    - {fileID: 114881386268475852, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}
+    - {fileID: 114537728098462574, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}
+    - {fileID: 65588514933538540, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}
+    - {fileID: 114558126956725644, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}
+    - {fileID: 54146216682161820, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &1361854567 stripped
@@ -2111,7 +2147,11 @@ Prefab:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 65768424207821308, guid: 50835fc1252cf2142b60d9ac690bfe3b, type: 2}
+    - {fileID: 54111510065917578, guid: 50835fc1252cf2142b60d9ac690bfe3b, type: 2}
+    - {fileID: 114726447444696372, guid: 50835fc1252cf2142b60d9ac690bfe3b, type: 2}
+    - {fileID: 114527036147244690, guid: 50835fc1252cf2142b60d9ac690bfe3b, type: 2}
   m_ParentPrefab: {fileID: 100100000, guid: 50835fc1252cf2142b60d9ac690bfe3b, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &1569501611 stripped
@@ -2632,8 +2672,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -3, y: 1.72}
-  m_SizeDelta: {x: 230, y: 22}
+  m_AnchoredPosition: {x: -2.8487, y: 1.7105}
+  m_SizeDelta: {x: 260.252, y: 23.8907}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &2098861595
 MonoBehaviour:
@@ -2667,7 +2707,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: Peroxiredoxin 3
+  m_Text: Self assembly of peroxiredoxin
 --- !u!222 &2098861596
 CanvasRenderer:
   m_ObjectHideFlags: 0
