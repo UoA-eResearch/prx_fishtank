@@ -22,9 +22,10 @@ GameObject:
   - component: {fileID: 33846452532808544}
   - component: {fileID: 23963851537319916}
   - component: {fileID: 114527036147244690}
-  - component: {fileID: 114726447444696372}
   - component: {fileID: 65768424207821308}
   - component: {fileID: 54111510065917578}
+  - component: {fileID: 114015763040705892}
+  - component: {fileID: 114925502746800856}
   m_Layer: 0
   m_Name: Monomer1
   m_TagString: monomer
@@ -251,6 +252,20 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 0.63966453, y: 0.41713434, z: 0.40699428}
   m_Center: {x: 0.05849427, y: 0.00407043, z: 0.009185022}
+--- !u!114 &114015763040705892
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1213113439581324}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 783750eec4c41da428b7651515146d14, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  velocityAverageFrames: 5
+  angularVelocityAverageFrames: 11
+  estimateOnAwake: 0
 --- !u!114 &114527036147244690
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -262,7 +277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93b6a877adcbf94c89a9d6e0c0e844d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114726447444696372
+--- !u!114 &114925502746800856
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -270,7 +285,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1213113439581324}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf2408384fca76d489f9a970c630a30a, type: 3}
+  m_Script: {fileID: 11500000, guid: ffefbea063cab884ca33e5a449e5c22c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   attachmentFlags: 12
@@ -298,7 +313,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   snapAttachEaseInTime: 0.15
   attachEaseInAttachmentNames: []
-  attached: 0
   onPickUp:
     m_PersistentCalls:
       m_Calls: []

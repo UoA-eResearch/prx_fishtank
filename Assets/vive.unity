@@ -500,7 +500,7 @@ Transform:
   m_GameObject: {fileID: 469725995}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1, z: 1}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 2}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -521,7 +521,7 @@ MonoBehaviour:
   dimerPrefab: {fileID: 1097768174719004, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
     type: 2}
   ringPrefab: {fileID: 1314551590984416, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
-  numMonomers: 60
+  numMonomers: 120
   pairingVelocity: 0.05
   rotationVelocity: 50
   shouldDimerise: 1

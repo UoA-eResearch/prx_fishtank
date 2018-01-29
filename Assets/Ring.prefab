@@ -54,10 +54,10 @@ GameObject:
   - component: {fileID: 4882022039556238}
   - component: {fileID: 65311637666035512}
   - component: {fileID: 114133895727301288}
-  - component: {fileID: 114864354974993022}
   - component: {fileID: 114831056366379486}
   - component: {fileID: 114384419391356264}
   - component: {fileID: 54232330661303416}
+  - component: {fileID: 114926415956367266}
   m_Layer: 0
   m_Name: Ring
   m_TagString: ring
@@ -580,7 +580,7 @@ MonoBehaviour:
   dimerPrefab: {fileID: 1097768174719004, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
     type: 2}
   shouldBreak: 1
---- !u!114 &114864354974993022
+--- !u!114 &114926415956367266
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -588,7 +588,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1314551590984416}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf2408384fca76d489f9a970c630a30a, type: 3}
+  m_Script: {fileID: 11500000, guid: ffefbea063cab884ca33e5a449e5c22c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   attachmentFlags: 12
@@ -616,7 +616,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   snapAttachEaseInTime: 0.15
   attachEaseInAttachmentNames: []
-  attached: 0
   onPickUp:
     m_PersistentCalls:
       m_Calls: []
