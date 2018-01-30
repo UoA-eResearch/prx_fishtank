@@ -30,7 +30,7 @@ public class Fishtank : MonoBehaviour
 	void FindPairs()
 	{
 		assignProbability ();
-		Debug.Log ("Prob for" + phValue + "is " + probabilityBind + probabilityBreak);
+		//Debug.Log ("Prob for" + phValue + "is " + probabilityBind + probabilityBreak);
 		phValue = phSlider.GetPhValue();
 		//Debug.Log("PH value " + phValue);
 		pairs = new Dictionary<GameObject, GameObject>();

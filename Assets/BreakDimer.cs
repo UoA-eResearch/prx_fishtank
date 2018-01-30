@@ -14,10 +14,12 @@ public class BreakDimer : MonoBehaviour
 	private GameObject monomer2;
 	private Transform monomerPos;
 	private Transform partnerPos;
+	private Transform fishtank;
 
 	void Awake()
 	{
 		velEst = GetComponent<VelocityEstimator>();
+		fishtank = transform.parent;
 	}
 
 	void breakDimer(Hand hand)
@@ -46,11 +48,11 @@ public class BreakDimer : MonoBehaviour
 	{
 		// Make a monomer and attach it to the hand. This replaces the dimer you were just holding.
 		monomerPos = transform.Find("monomer1");
-		monomer1 = Instantiate(monomerPrefab, monomerPos.position, monomerPos.rotation, transform.parent);
+		monomer1 = Instantiate(monomerPrefab, monomerPos.position, monomerPos.rotation, fishtank);
 		monomer1.GetComponent<Rigidbody>().AddForce(-monomer1.transform.forward, ForceMode.Impulse);
 		monomer1.name = "monomer_" + monomer1.GetInstanceID();
 		partnerPos = monomer1.transform.Find("partnerPos");
-		monomer2 = Instantiate(monomerPrefab, partnerPos.position, partnerPos.rotation, transform.parent);
+		monomer2 = Instantiate(monomerPrefab, partnerPos.position, partnerPos.rotation, fishtank);
 		monomer2.GetComponent<Rigidbody>().AddForce(-monomer2.transform.forward, ForceMode.Impulse);
 		monomer2.name = "monomer_" + monomer2.GetInstanceID();
 		Debug.Log("Destroying " + gameObject.name);
@@ -72,7 +74,7 @@ public class BreakDimer : MonoBehaviour
 		if (gameObject == hand.currentAttachedObject && shouldBreak)
 		{
 			Vector3 velocity = velEst.GetVelocityEstimate();
-			Debug.Log("Velocity: " + velocity + velocity.magnitude);
+			//Debug.Log("Velocity: " + velocity + velocity.magnitude);
 
 			if (velocity.magnitude > 2.0 && dimerAttached)
 			{
