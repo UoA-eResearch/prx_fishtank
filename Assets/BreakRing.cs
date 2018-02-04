@@ -30,7 +30,7 @@ public class BreakRing : MonoBehaviour
 
 		// Make a dimer and attach it to the hand. This replaces the ring you were just holding.
 		var dimer = Instantiate(dimerPrefab, transform.position, transform.rotation, fishtank);
-		dimer.GetComponent<Rigidbody>().AddForce(-dimer.transform.forward, ForceMode.Impulse);
+		dimer.GetComponent<Rigidbody>().AddForce(-dimer.transform.forward * Random.RandomRange(0.01f, 0.02f), ForceMode.Impulse);
 		dimer.name = "dimer_" + dimer.GetInstanceID();
 		float minDist = 0;
 		if (currentHand != null) {
@@ -42,7 +42,7 @@ public class BreakRing : MonoBehaviour
 			if (child.name.StartsWith("ring"))
 			{
 				var childDimer = Instantiate(dimerPrefab, child.transform.position, child.transform.rotation, fishtank);
-				childDimer.GetComponent<Rigidbody>().AddForce(-childDimer.transform.forward, ForceMode.Impulse);
+				childDimer.GetComponent<Rigidbody>().AddForce(-childDimer.transform.forward * Random.RandomRange(0.01f, 0.02f), ForceMode.Impulse);
 				childDimer.name = "dimer_" + dimer.GetInstanceID();
 				if (currentHand != null)
 				{
@@ -80,7 +80,7 @@ public class BreakRing : MonoBehaviour
 			Vector3 velocity = velEst.GetVelocityEstimate();
 			//Debug.Log("Velocity: " + velocity + velocity.magnitude);
 
-			if (velocity.magnitude > 2.0 && ringAttached)
+			if (velocity.magnitude > 3.0 && ringAttached)
 			{
 				breakRing(hand);
 				ringAttached = false;

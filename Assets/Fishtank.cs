@@ -12,20 +12,27 @@ public class Fishtank : MonoBehaviour
 	public GameObject ringPrefab;
 	public int numMonomers = 50;
 	private Dictionary<GameObject, GameObject> pairs;
+	private Dictionary<GameObject, GameObject> pairsDonor;
 	public float pairingVelocity = .05f;
 	public int rotationVelocity = 50;
 	private Bounds bounds;
 	public bool shouldDimerise = true;
 	private string[] tags;
-	public float pairingInterval = .1f;
+	public float pairingInterval = 0.1f;
 	private List<GameObject> masterDimers;
 	private PHSlider phSlider;
 	private int phValue;
 	public int phMonomer2Dimer;
 	public int phDimer2Ring;
 	public int phRing2Stack;
-	private int probabilityBind;
-	private int probabilityBreak;
+	private int probabilityDimerMake;
+	private int probabilityDimerBreak;
+	private int probabilityRingMake;
+	private int probabilityRingBreak;
+	private int probabilityStackMake;
+	private float fishtankAlpha = 0.01f;
+   
+
 
 	void FindPairs()
 	{
@@ -34,6 +41,7 @@ public class Fishtank : MonoBehaviour
 		phValue = phSlider.GetPhValue();
 		//Debug.Log("PH value " + phValue);
 		pairs = new Dictionary<GameObject, GameObject>();
+		pairsDonor = new Dictionary<GameObject, GameObject>();
 		masterDimers = new List<GameObject>();
 		foreach (var tag in tags)
 		{
@@ -41,29 +49,31 @@ public class Fishtank : MonoBehaviour
 			//Debug.Log("There are " + gos.Length + " " + tag + " around");
 			foreach (var a in gos)
 			{
-				if (pairs.ContainsKey(a))
+				if (pairs.ContainsKey(a) /*|| pairsDonor.ContainsKey(a)*/)
 				{
 					// Already know the pair for this
 					continue;
 				}
 				float minDistance = float.PositiveInfinity;
 				var match = a;
-				bool isDonor = true;
+				bool isDonor = false; //default behaviour is !isDonor - my go moves to other go's partnerPos
 				if (tag == "ring")
 				{
-					if (phValue >= phDimer2Ring && Random.Range(1,101) <= probabilityBreak)
+					if (/*phValue >= phDimer2Ring && */Random.Range(1,101) <= probabilityRingBreak)
 					{
 						a.GetComponent<BreakRing>().breakRing(null);
 					}
-					if (phValue <= phRing2Stack && Random.Range(1,101) <= probabilityBind)
+					if (/*phValue <= phRing2Stack && */Random.Range(1,101) <= probabilityStackMake)
 					{
 						foreach (var b in gos)
 						{
 							if (a != b)
 							{
+								// look in acceptor<-donor direction
 								var partnerPos = b.transform.Find("partnerPos").gameObject;
+								//Debug.Log(b.name + " is b " + b.transform.Find("partnerPos").gameObject.name + " is partnerPos ");
 								float dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
-								if (dist < minDistance && !pairs.ContainsKey(partnerPos))
+								if (dist < minDistance && !pairsDonor.ContainsKey(b))
 								{
 									var isCyclic = false;
 									var next = b;
@@ -73,7 +83,34 @@ public class Fishtank : MonoBehaviour
 										if (next == a)
 										{
 											isCyclic = true;
-											Debug.Log(a.name + " was interested in " + b.name + " but they have a pointer to me somewhere in their chain");
+											Debug.Log(a.name + " was interested in being ACCEPTOR from " + b.name + " but they have a pointer to me somewhere in their chain");
+											break;
+										}
+									}
+									if (!isCyclic)
+									{
+										minDistance = dist;
+										match = b;
+										isDonor = false;
+										//Debug.DrawLine(a.transform.position, b.transform.position, Color.cyan, 0.2f);
+									}
+								}
+
+								// look in donor->acceptor direction
+								var myPartnerPos = a.transform.Find("partnerPos").gameObject;
+								dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
+
+								if (dist < minDistance && !pairs.ContainsKey(b))
+								{
+									var isCyclic = false;
+									var next = b;
+									while (pairsDonor.ContainsKey(next))
+									{
+										next = pairsDonor[next];
+										if (next == a)
+										{
+											isCyclic = true;
+											Debug.Log(a.name + " was interested in being DONOR to " + b.name + " but they have a pointer to them somewhere in their chain");
 											break;
 										}
 									}
@@ -82,16 +119,10 @@ public class Fishtank : MonoBehaviour
 										minDistance = dist;
 										match = b;
 										isDonor = true;
+										//Debug.DrawLine(a.transform.position, b.transform.position, Color.magenta, 0.2f);
 									}
 								}
-								var myPartnerPos = a.transform.Find("partnerPos").gameObject;
-								dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
-								if (dist < minDistance && !pairs.ContainsKey(myPartnerPos))
-								{
-									minDistance = dist;
-									match = b;
-									isDonor = false;
-								}
+								
 							}
 						}
 						if (minDistance == float.PositiveInfinity)
@@ -100,30 +131,36 @@ public class Fishtank : MonoBehaviour
 						}
 						else
 						{
-							if (isDonor)
+							if (!isDonor)
 							{
 								pairs[a] = match;
+								pairsDonor[match] = a;
 								var partnerPos = match.transform.Find("partnerPos").gameObject;
-								pairs[partnerPos] = a;
+								//pairs[partnerPos] = a;
+								Debug.DrawLine(a.transform.position, partnerPos.transform.position, Color.cyan, 0.2f);
+								Debug.Log(a.name + " as ACCEPTOR is choosing " + match.name + " as target");
 							}
 							else
 							{
 								pairs[match] = a;
+								pairsDonor[a] = match;
 								var myPartnerPos = a.transform.Find("partnerPos").gameObject;
-								pairs[myPartnerPos] = match;
+								//pairs[myPartnerPos] = match;
+								Debug.DrawLine(match.transform.position, myPartnerPos.transform.position, Color.magenta, 0.2f);
+								Debug.Log(a.name + " as DONOR is choosing " + match.name + " as target");
 							}
-							Debug.Log(a.name + " is choosing " + match.name + " as target");
+							//Debug.Log(a.name + " is choosing " + match.name + " as target");
 						}
 					}
 				}
 				else if (tag == "dimer")
 				{
 					
-					if (phValue >= phMonomer2Dimer && Random.Range (1, 101) <= probabilityBreak)
+					if (/*phValue >= phMonomer2Dimer && */Random.Range (1, 101) <= probabilityDimerBreak)
 					{
 						a.GetComponent<BreakDimer>().breakApartDimer();
 					}
-					if (phValue <= phDimer2Ring && Random.Range (1, 101) <= probabilityBind) {
+					if (/*phValue <= phDimer2Ring && */Random.Range (1, 101) <= probabilityRingMake) {
 						bool hasAll = true;
 						foreach (Transform child in a.transform) {
 							if (child.name.StartsWith ("ring")) {
@@ -156,7 +193,7 @@ public class Fishtank : MonoBehaviour
 				}
 				else //if monomer
 				{
-					if (phValue <= phMonomer2Dimer)
+					if (/*phValue <= phMonomer2Dimer*/ Random.Range(1, 101) <= probabilityDimerMake)
 					{
 						minDistance = float.PositiveInfinity;
 						match = a;
@@ -178,7 +215,7 @@ public class Fishtank : MonoBehaviour
 						}
 						else
 						{
-							//Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
+							 //Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
 							pairs[a] = match;
 							pairs[match] = a;
 						}
@@ -202,27 +239,66 @@ public class Fishtank : MonoBehaviour
 				{
 					continue;
 				}
-				if (!pairs.ContainsKey(go))
+				if (!pairs.ContainsKey(go) /*&& !pairsDonor.ContainsKey(go)*//*|| masterDimers.Contains(go)*/)
 				{
+					// unpaired gos wander
+					AddRandomMotion(go);
+					/*
 					var randomPos = go.transform.position + new Vector3(Random.value, Random.value, Random.value) - Vector3.one / 2;
 					var randomRot = Random.rotation;
-					go.transform.position = Vector3.MoveTowards(go.transform.position, randomPos, Time.deltaTime * pairingVelocity);
-					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, randomRot, Time.deltaTime * rotationVelocity);
+					//go.transform.position = Vector3.MoveTowards(go.transform.position, randomPos, Time.deltaTime * pairingVelocity);
+					go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * Time.deltaTime * Random.RandomRange(1.0f, 5.0f), ForceMode.Impulse);
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, randomRot, Time.deltaTime * rotationVelocity);          
+					//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(-0.5f, 0.8f) * rotationVelocity)
+					*/
 					continue;
 				}
 				var partner = pairs[go];
 				if (!partner)
 				{
-					continue;
+					Debug.Log("----->" + go.name + " has no partner? ");
+					if (tag != "ring")
+					{
+						continue;
+					}
+					else
+					{
+						Debug.Log("----->" + go.name + " has no partner? ");
+						if (!pairsDonor[go])
+						{
+							continue;
+						}
+						else
+						{
+							// ring with donor only (end of chain)
+							Debug.Log("----->" + go.name + " has a pairsDonor and should move to them? ");
+							continue;
+						}
+					}
+						
 				}
 
 				var targetPos = partner.transform.position;
 				var targetRotation = partner.transform.rotation;
-				if (tag == "monomer" || tag == "ring")
+
+				if (tag == "monomer")
 				{
 					var partnerPos = partner.transform.Find("partnerPos");
 					targetPos = partnerPos.position;
 					targetRotation = partnerPos.rotation;
+				}
+
+				if (tag == "ring")
+				{
+					/*
+					var partnerPos = partner.transform.Find("partnerPos");
+					targetPos = partnerPos.position;
+					targetRotation = partnerPos.rotation;
+					*/
+
+					var partnerPos = partner.transform.Find("partnerPos").gameObject;
+					targetPos = partnerPos.transform.position;
+					targetRotation = partnerPos.transform.rotation;
 				}
 
 				var distanceFromTarget = Vector3.Distance(go.transform.position, targetPos);
@@ -233,7 +309,7 @@ public class Fishtank : MonoBehaviour
 					var dimerPos = go.transform.Find("dimerPos");
 					var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
 					dimer.name = "dimer from " + go.name + " and " + partner.name;
-					Debug.Log(dimer.name);
+					//Debug.Log(dimer.name);
 					Destroy(go);
 					Destroy(partner);
 					continue;
@@ -269,11 +345,11 @@ public class Fishtank : MonoBehaviour
 							}
 						}
 						//Debug.Log(go.name + " is a master dimer, and the sum of it's child ring targets is " + totalDist);
-						if (totalDist < .01f)
+						if (totalDist < 0.01f)
 						{
 							var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
 							ring.name = "ring from " + go.name;
-							Debug.Log(ring.name);
+							//Debug.Log(ring.name);
 							masterDimers.Remove(go);
 							Destroy(go);
 							foreach (Transform child in go.transform)
@@ -285,6 +361,9 @@ public class Fishtank : MonoBehaviour
 								}
 							}
 						}
+						//master dimers have pairs but do not try to move towards them
+						//but making master dimers wander seems to compromise ring formation
+						//AddRandomMotion(go);
 					}
 					catch (KeyNotFoundException e)
 					{
@@ -296,16 +375,31 @@ public class Fishtank : MonoBehaviour
 					}
 				}
 
-				if (distanceFromTarget > .001f)
+				if (!bounds.Contains(go.transform.position))
+				{
+					// Wayward go monomer/dimer/ring
+					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.RandomRange(0.1f, 0.5f), ForceMode.Impulse);
+				}
+				else if (distanceFromTarget < 0.02f)
 				{
 					go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
 				}
-				else if (!bounds.Contains(go.transform.position))
+				else //if (Random.Range(1, 101) <= 80)
 				{
-					// Wayward monomer
-					go.transform.position = Vector3.MoveTowards(go.transform.position, bounds.center, Time.deltaTime * pairingVelocity);
+					float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f);
+					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere*0.01f)) * Time.deltaTime * Random.RandomRange(0.0f, maxPush), ForceMode.Impulse);
 				}
-				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * rotationVelocity);
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
+				/*
+				{
+				targetPos = transform.InverseTransformPoint(targetPos);
+				var requiredTorqueX = (targetPos.x / targetPos.magnitude);
+				var requiredTorqueY = (targetPos.y / targetPos.magnitude);
+				float rotationTorque = 0.01f;
+				go.GetComponent<Rigidbody>().AddRelativeTorque(((rotationTorque) * requiredTorqueY), ((rotationTorque) * requiredTorqueX) * -1, 0f, ForceMode.Impulse);
+				}
+				*/
+				
 
 			}
 		}
@@ -348,82 +442,134 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
+	private void AddRandomMotion(GameObject go)
+	{
+		
+		if (!bounds.Contains(go.transform.position)) // duplicate code needs tidying
+		{
+			// Wayward go monomer/dimer/ring
+			//go.transform.position = Vector3.MoveTowards(go.transform.position, bounds.center, Time.deltaTime * pairingVelocity);
+			go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.RandomRange(0.1f, 0.5f), ForceMode.Impulse);
+		}
+		else
+		{
+			go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * Time.deltaTime * Random.RandomRange(1.0f, 2.0f), ForceMode.Impulse);
+		}
+		
+		go.GetComponent<Rigidbody>().AddRelativeTorque(0.0001f * Random.onUnitSphere, ForceMode.Impulse);
+	}
+
 	void assignProbability(){
 		Color col;
+		col.a = fishtankAlpha;
+		col = Color.cyan;
+
 		switch (phSlider.GetPhValue()) {
 			
 		case 9:
-			probabilityBind = 70;
-			probabilityBreak = 30;
-
+			probabilityDimerMake = 1;
+			probabilityDimerBreak = 50;
+			probabilityRingMake = 0;
+			probabilityRingBreak = 100;
+			probabilityStackMake = 0;
 			col = Color.cyan;
-			col.a = 0.1f;
-			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
 
 		case 8:
-			probabilityBind = 99;
-			probabilityBreak = 1;
-
+			//probabilityBind = 99;
+			//probabilityBreak = 1;
+			probabilityDimerMake = 10;
+			probabilityDimerBreak = 1;
+			probabilityRingMake = 0;
+			probabilityRingBreak = 100;
+			probabilityStackMake = 0;
 			col = Color.blue;
-			col.a = 0.1f;
-			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
 
 		case 7:
-			probabilityBind = 10;
-			probabilityBreak = 90;
-
+			//probabilityBind = 10;
+			//probabilityBreak = 90;
+			//probabilityBind = 50;
+			//probabilityBreak = 50;
+			probabilityDimerMake = 100;
+			probabilityDimerBreak = 0;
+			probabilityRingMake = 10;
+			probabilityRingBreak = 5;
+			probabilityStackMake = 1;
 			col = Color.gray;
-			col.a = 0.1f;
-			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
 
 		case 6:
-			probabilityBind = 30;
-			probabilityBreak = 70;
-
+			//probabilityBind = 30;
+			//probabilityBreak = 70;
+			//probabilityBind = 50;
+			//probabilityBreak = 50;
+			probabilityDimerMake = 100;
+			probabilityDimerBreak = 0;
+			probabilityRingMake = 50;
+			probabilityRingBreak = 2;
+			probabilityStackMake = 1;
 			col = Color.green;
-			col.a = 0.1f;
-			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
 
 		case 5:
-			probabilityBind = 50;
-			probabilityBreak = 50;
-
+			//probabilityBind = 50;
+			//probabilityBreak = 50;
+			probabilityDimerMake = 100;
+			probabilityDimerBreak = 0;
+			probabilityRingMake = 50;
+			probabilityRingBreak = 1;
+			probabilityStackMake = 1;
 			col = Color.magenta;
-			col.a = 0.1f;
-			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
 
 		case 4:
-			probabilityBind = 95;
-			probabilityBreak = 5;
-
+			//probabilityBind = 95;
+			//probabilityBreak = 5;
+			probabilityDimerMake = 100;
+			probabilityDimerBreak = 0;
+			probabilityRingMake = 100;
+			probabilityRingBreak = 1;
+			probabilityStackMake = 50;
 			col = Color.red;
-			col.a = 0.1f;
-			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
 
 		case 3:
-			probabilityBind = 40;
-			probabilityBreak = 60;
-
+			//probabilityBind = 40;
+			//probabilityBreak = 60;
+			probabilityDimerMake = 100;
+			probabilityDimerBreak = 0;
+			probabilityRingMake = 100;
+			probabilityRingBreak = 0;
+			probabilityStackMake = 100;
 			col = Color.yellow;
-			col.a = 0.1f;
-			gameObject.GetComponent<Renderer> ().material.color = col;
 			break;
 		}
+		col.a = fishtankAlpha;
+		gameObject.GetComponent<Renderer> ().material.color = col;
 
 	}
 
-
+	void ClampRigidBodyDynamics()
+	{
+		// hack to calm down physics explosions
+		foreach (var tag in tags)
+		{
+			var gos = GameObject.FindGameObjectsWithTag(tag);
+			//Debug.Log("There are " + gos.Length + " " + tag + " around");
+			foreach (var go in gos)
+			{
+				go.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(go.GetComponent<Rigidbody>().velocity, 2.0f);
+				go.GetComponent<Rigidbody>().angularVelocity = Vector3.ClampMagnitude(go.GetComponent<Rigidbody>().angularVelocity, 6.0f);
+			}
+		}
+	}
 
 	// Update is called once per frame
 	void Update()
 	{
 		PushTogether();
 		FixHoverlock();
+		ClampRigidBodyDynamics();
 	}
 }
