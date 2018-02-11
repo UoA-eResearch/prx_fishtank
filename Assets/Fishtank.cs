@@ -16,7 +16,6 @@ public class Fishtank : MonoBehaviour
 	public float pairingVelocity = .05f;
 	public int rotationVelocity = 50;
 	private Bounds bounds;
-	public bool shouldDimerise = true;
 	private string[] tags;
 	public float pairingInterval = 0.1f;
 	private List<GameObject> masterDimers;
@@ -49,31 +48,39 @@ public class Fishtank : MonoBehaviour
 			//Debug.Log("There are " + gos.Length + " " + tag + " around");
 			foreach (var a in gos)
 			{
-				if (pairs.ContainsKey(a) /*|| pairsDonor.ContainsKey(a)*/)
+				
+				if (tag == "dimer" && pairs.ContainsKey(a))
 				{
 					// Already know the pair for this
 					continue;
 				}
+				
 				float minDistance = float.PositiveInfinity;
 				var match = a;
-				bool isDonor = false; //default behaviour is !isDonor - my go moves to other go's partnerPos
+				bool isDonor = false; //default behaviour is !isDonor - i.e. my go (acceptor) moves to other go's partnerPos (donor)
+				bool foundMatch = false;
 				if (tag == "ring")
 				{
-					if (/*phValue >= phDimer2Ring && */Random.Range(1,101) <= probabilityRingBreak)
+					if (Random.Range(1,100) <= probabilityRingBreak)
 					{
 						a.GetComponent<BreakRing>().breakRing(null);
 					}
-					if (/*phValue <= phRing2Stack && */Random.Range(1,101) <= probabilityStackMake)
+					else if (Random.Range(1,100) <= probabilityStackMake)
 					{
+						//var partnerPosA = a.transform.Find("partnerPos").gameObject;
+						//Debug.DrawLine(a.transform, a.transform.Find("partnerPos").gameObject.position);
 						foreach (var b in gos)
 						{
 							if (a != b)
 							{
+								
 								// look in acceptor<-donor direction
 								var partnerPos = b.transform.Find("partnerPos").gameObject;
 								//Debug.Log(b.name + " is b " + b.transform.Find("partnerPos").gameObject.name + " is partnerPos ");
 								float dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
-								if (dist < minDistance && !pairsDonor.ContainsKey(b))
+								//Vector3 dir = (partnerPos.transform.position - a.transform.position).normalized;
+								float testPairDot = Vector3.Dot(a.transform.up, b.transform.up);
+								if (dist < minDistance && (testPairDot > 0.0f) && !pairsDonor.ContainsKey(b))
 								{
 									var isCyclic = false;
 									var next = b;
@@ -91,35 +98,42 @@ public class Fishtank : MonoBehaviour
 									{
 										minDistance = dist;
 										match = b;
+										foundMatch = true;
 										isDonor = false;
 										//Debug.DrawLine(a.transform.position, b.transform.position, Color.cyan, 0.2f);
 									}
 								}
 
-								// look in donor->acceptor direction
-								var myPartnerPos = a.transform.Find("partnerPos").gameObject;
-								dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
-
-								if (dist < minDistance && !pairs.ContainsKey(b))
+								//if (!foundMatch)
 								{
-									var isCyclic = false;
-									var next = b;
-									while (pairsDonor.ContainsKey(next))
+									// look in donor->acceptor direction
+									var myPartnerPos = a.transform.Find("partnerPos").gameObject;
+									dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
+									//dir = (b.transform.position - myPartnerPos.transform.position).normalized;
+									testPairDot = Vector3.Dot(a.transform.up, b.transform.up);
+
+									if (dist < minDistance && (testPairDot > 0.0f) && !pairs.ContainsKey(b))
 									{
-										next = pairsDonor[next];
-										if (next == a)
+										var isCyclic = false;
+										var next = b;
+										while (pairsDonor.ContainsKey(next))
 										{
-											isCyclic = true;
-											Debug.Log(a.name + " was interested in being DONOR to " + b.name + " but they have a pointer to them somewhere in their chain");
-											break;
+											next = pairsDonor[next];
+											if (next == a)
+											{
+												isCyclic = true;
+												Debug.Log(a.name + " was interested in being DONOR to " + b.name + " but they have a pointer to them somewhere in their chain");
+												break;
+											}
 										}
-									}
-									if (!isCyclic)
-									{
-										minDistance = dist;
-										match = b;
-										isDonor = true;
-										//Debug.DrawLine(a.transform.position, b.transform.position, Color.magenta, 0.2f);
+										if (!isCyclic)
+										{
+											minDistance = dist;
+											match = b;
+											foundMatch = true;
+											isDonor = true;
+											//Debug.DrawLine(a.transform.position, b.transform.position, Color.magenta, 0.2f);
+										}
 									}
 								}
 								
@@ -127,7 +141,7 @@ public class Fishtank : MonoBehaviour
 						}
 						if (minDistance == float.PositiveInfinity)
 						{
-							Debug.LogError("Unable to find a partner for " + a.name + "!");
+							//Debug.LogError("Unable to find a partner for " + a.name + "!");
 						}
 						else
 						{
@@ -137,16 +151,21 @@ public class Fishtank : MonoBehaviour
 								pairsDonor[match] = a;
 								var partnerPos = match.transform.Find("partnerPos").gameObject;
 								//pairs[partnerPos] = a;
-								Debug.DrawLine(a.transform.position, partnerPos.transform.position, Color.cyan, 0.2f);
+								Vector3 pairTransform = (partnerPos.transform.position - a.transform.position);
+								Debug.DrawLine ((a.transform.position + (0.75f * pairTransform)), partnerPos.transform.position, Color.blue, 0.2f);
+								Debug.DrawLine (a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.cyan, 0.2f);
 								Debug.Log(a.name + " as ACCEPTOR is choosing " + match.name + " as target");
 							}
-							else
+							else // isDonor
 							{
 								pairs[match] = a;
 								pairsDonor[a] = match;
 								var myPartnerPos = a.transform.Find("partnerPos").gameObject;
 								//pairs[myPartnerPos] = match;
-								Debug.DrawLine(match.transform.position, myPartnerPos.transform.position, Color.magenta, 0.2f);
+								Vector3 pairTransform = (match.transform.position - myPartnerPos.transform.position);
+								//Debug.DrawLine(match.transform.position, myPartnerPos.transform.position, Color.magenta, 0.2f);
+								Debug.DrawLine(myPartnerPos.transform.position, myPartnerPos.transform.position + (0.25f * pairTransform), Color.red, 0.2f);
+								Debug.DrawLine(myPartnerPos.transform.position + (0.25f * pairTransform), match.transform.position, Color.magenta, 0.2f);
 								Debug.Log(a.name + " as DONOR is choosing " + match.name + " as target");
 							}
 							//Debug.Log(a.name + " is choosing " + match.name + " as target");
@@ -156,11 +175,11 @@ public class Fishtank : MonoBehaviour
 				else if (tag == "dimer")
 				{
 					
-					if (/*phValue >= phMonomer2Dimer && */Random.Range (1, 101) <= probabilityDimerBreak)
+					if (Random.Range (1, 100) <= probabilityDimerBreak)
 					{
 						a.GetComponent<BreakDimer>().breakApartDimer();
 					}
-					if (/*phValue <= phDimer2Ring && */Random.Range (1, 101) <= probabilityRingMake) {
+					else if (Random.Range (1, 100) <= probabilityRingMake) {
 						bool hasAll = true;
 						foreach (Transform child in a.transform) {
 							if (child.name.StartsWith ("ring")) {
@@ -191,9 +210,9 @@ public class Fishtank : MonoBehaviour
 						}
 					}
 				}
-				else //if monomer
+				else if (tag == "monomer")
 				{
-					if (/*phValue <= phMonomer2Dimer*/ Random.Range(1, 101) <= probabilityDimerMake)
+					if (Random.Range(1, 100) <= probabilityDimerMake)
 					{
 						minDistance = float.PositiveInfinity;
 						match = a;
@@ -211,7 +230,7 @@ public class Fishtank : MonoBehaviour
 						}
 						if (minDistance == float.PositiveInfinity)
 						{
-							Debug.LogError("Unable to find a partner for " + a.name + "!");
+							//Debug.LogError("Unable to find a partner for " + a.name + "!");
 						}
 						else
 						{
@@ -220,6 +239,10 @@ public class Fishtank : MonoBehaviour
 							pairs[match] = a;
 						}
 					}
+				}
+				else
+				{
+					Debug.LogError("Untagged GameObject!");
 				}
 			}
 		}
@@ -237,169 +260,214 @@ public class Fishtank : MonoBehaviour
 				var thisGoAttached = lh && lh.currentAttachedObject == go || rh && rh.currentAttachedObject == go;
 				if (thisGoAttached || !go)
 				{
+					//go is being held by player
 					continue;
 				}
-				if (!pairs.ContainsKey(go) /*&& !pairsDonor.ContainsKey(go)*//*|| masterDimers.Contains(go)*/)
+				// check for unpaired gos which should drift
+				if (!pairs.ContainsKey(go))
 				{
-					// unpaired gos wander
-					AddRandomMotion(go);
-					/*
-					var randomPos = go.transform.position + new Vector3(Random.value, Random.value, Random.value) - Vector3.one / 2;
-					var randomRot = Random.rotation;
-					//go.transform.position = Vector3.MoveTowards(go.transform.position, randomPos, Time.deltaTime * pairingVelocity);
-					go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * Time.deltaTime * Random.RandomRange(1.0f, 5.0f), ForceMode.Impulse);
-					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, randomRot, Time.deltaTime * rotationVelocity);          
-					//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(-0.5f, 0.8f) * rotationVelocity)
-					*/
-					continue;
-				}
-				var partner = pairs[go];
-				if (!partner)
-				{
-					Debug.Log("----->" + go.name + " has no partner? ");
-					if (tag != "ring")
+					if (tag == "monomer" || tag == "dimer")
 					{
+						// unpaired monomer or dimer (no pair) => should drift
+						AddRandomMotion(go);
 						continue;
 					}
-					else
+					else if (!pairsDonor.ContainsKey(go))
 					{
-						Debug.Log("----->" + go.name + " has no partner? ");
-						if (!pairsDonor[go])
+						// unpaired ring (no pair or pairDonor) => should drift
+						AddRandomMotion(go);
+						continue;
+					}
+				}
+				//var partner = pairs[go];
+				GameObject partner;
+				if (pairs.TryGetValue(go, out partner))
+				{
+					//partner = pairs[go];
+					var targetPos = partner.transform.position;
+					var targetRotation = partner.transform.rotation;
+
+					if (tag == "monomer")
+					{
+						var partnerPos = partner.transform.Find("partnerPos");
+						targetPos = partnerPos.position;
+						targetRotation = partnerPos.rotation;
+					}
+
+					if (tag == "ring")
+					{
+						/*
+						var partnerPos = partner.transform.Find("partnerPos");
+						targetPos = partnerPos.position;
+						targetRotation = partnerPos.rotation;
+						*/
+
+						var partnerPos = partner.transform.Find("partnerPos").gameObject;
+						targetPos = partnerPos.transform.position;
+						targetRotation = partnerPos.transform.rotation;
+						if (pairs.ContainsKey(go) && !pairsDonor.ContainsKey(go))
+						{
+							Debug.Log("----->" + go.name + " is a RING on the ACCEPTOR end of a stack");
+						}
+						if (pairs.ContainsKey(go) && pairsDonor.ContainsKey(go))
+						{
+							Debug.Log("----->" + go.name + " is a RING in the MIDDLE of a stack");
+						}
+						if (!pairs.ContainsKey(go) && pairsDonor.ContainsKey(go))
+						{
+							//never get here because inside - if (pairs.TryGetValue(go, out partner))
+							Debug.Log("----->" + go.name + " is a RING on the DONOR end of a stack");
+						}
+					}
+
+					var distanceFromTarget = Vector3.Distance(go.transform.position, targetPos);
+
+					var partnerAttached = lh && lh.currentAttachedObject == partner || rh && rh.currentAttachedObject == partner;
+					if (distanceFromTarget < .01f && !partnerAttached && partner && go.GetInstanceID() > partner.GetInstanceID() && tag == "monomer")
+					{
+						var dimerPos = go.transform.Find("dimerPos");
+						var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
+						dimer.name = "dimer from " + go.name + " and " + partner.name;
+						//Debug.Log(dimer.name);
+						Destroy(go);
+						Destroy(partner);
+						continue;
+					}
+
+					if (masterDimers.Contains(go))
+					{
+						try
+						{
+							float totalDist = 0;
+							foreach (Transform child in go.transform)
+							{
+								if (child.name.StartsWith("ring"))
+								{
+									if (!pairs.ContainsKey(child.gameObject))
+									{
+										totalDist += float.PositiveInfinity;
+										break;
+									}
+									var childTarget = pairs[child.gameObject];
+									if (!childTarget)
+									{
+										totalDist += float.PositiveInfinity;
+										break;
+									}
+									var childDist = Vector3.Distance(child.position, childTarget.transform.position);
+									totalDist += childDist;
+									var childTargetHeld = lh && lh.currentAttachedObject == childTarget || rh && rh.currentAttachedObject == childTarget;
+									if (childTargetHeld)
+									{
+										totalDist += float.PositiveInfinity;
+									}
+								}
+							}
+							//Debug.Log(go.name + " is a master dimer, and the sum of it's child ring targets is " + totalDist);
+							if (totalDist < 0.01f)
+							{
+								var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
+								ring.name = "ring from " + go.name;
+								//Debug.Log(ring.name);
+								masterDimers.Remove(go);
+								Destroy(go);
+								foreach (Transform child in go.transform)
+								{
+									if (child.name.StartsWith("ring"))
+									{
+										var childTarget = pairs[child.gameObject];
+										Destroy(childTarget);
+									}
+								}
+							}
+							//master dimers have pairs but do not try to move towards them
+							//but making master dimers wander seems to compromise ring formation
+							//AddRandomMotion(go);
+						}
+						catch (KeyNotFoundException e)
+						{
+							// Incomplete ring, not interested here
+						}
+						catch (MissingReferenceException e)
+						{
+							// Something was destroyed
+						}
+					}
+
+					if (!bounds.Contains(go.transform.position))
+					{
+						// monomer/dimer/ring is outside tank bounds
+						go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(0.1f, 0.5f), ForceMode.Impulse);
+					}
+					else if (distanceFromTarget > 0.02f) // use rigidbody forces to push paired game objects together
+					{
+						float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f);
+						go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.RandomRange(0.0f, maxPush), ForceMode.Impulse);
+					}
+					else // close to target transform - manipulate my transform directly (not through rigidbody)
+					{
+						go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
+					}
+
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
+
+					/*
+					{
+					targetPos = transform.InverseTransformPoint(targetPos);
+					var requiredTorqueX = (targetPos.x / targetPos.magnitude);
+					var requiredTorqueY = (targetPos.y / targetPos.magnitude);
+					float rotationTorque = 0.01f;
+					go.GetComponent<Rigidbody>().AddRelativeTorque(((rotationTorque) * requiredTorqueY), ((rotationTorque) * requiredTorqueX) * -1, 0f, ForceMode.Impulse);
+					}
+					*/
+				} else
+				{
+					{
+						Debug.Log("----->" + go.name + " has no partner");
+						if (tag != "ring")
 						{
 							continue;
 						}
 						else
 						{
-							// ring with donor only (end of chain)
-							Debug.Log("----->" + go.name + " has a pairsDonor and should move to them? ");
-							continue;
-						}
-					}
-						
-				}
-
-				var targetPos = partner.transform.position;
-				var targetRotation = partner.transform.rotation;
-
-				if (tag == "monomer")
-				{
-					var partnerPos = partner.transform.Find("partnerPos");
-					targetPos = partnerPos.position;
-					targetRotation = partnerPos.rotation;
-				}
-
-				if (tag == "ring")
-				{
-					/*
-					var partnerPos = partner.transform.Find("partnerPos");
-					targetPos = partnerPos.position;
-					targetRotation = partnerPos.rotation;
-					*/
-
-					var partnerPos = partner.transform.Find("partnerPos").gameObject;
-					targetPos = partnerPos.transform.position;
-					targetRotation = partnerPos.transform.rotation;
-				}
-
-				var distanceFromTarget = Vector3.Distance(go.transform.position, targetPos);
-
-				var partnerAttached = lh && lh.currentAttachedObject == partner || rh && rh.currentAttachedObject == partner;
-				if (distanceFromTarget < .01f && !partnerAttached && partner && shouldDimerise && go.GetInstanceID() > partner.GetInstanceID() && tag == "monomer")
-				{
-					var dimerPos = go.transform.Find("dimerPos");
-					var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
-					dimer.name = "dimer from " + go.name + " and " + partner.name;
-					//Debug.Log(dimer.name);
-					Destroy(go);
-					Destroy(partner);
-					continue;
-				}
-
-				if (masterDimers.Contains(go))
-				{
-					try
-					{
-						float totalDist = 0;
-						foreach (Transform child in go.transform)
-						{
-							if (child.name.StartsWith("ring"))
+							Debug.Log("-----> RING " + go.name + " has no pairs partner");
+							if (pairsDonor.ContainsKey(go))
 							{
-								if (!pairs.ContainsKey(child.gameObject))
-								{
-									totalDist += float.PositiveInfinity;
-									break;
+								// ring with donor only (end of chain)
+								Debug.Log("----->" + go.name + " has a pairsDonor and should move to them? ");
+								Debug.Log("----->" + go.name + " is a RING on the DONOR end of a stack");
+
+								{ // duplicated movement code - added for movement of end DONOR ring - needs refactoring
+
+									var partnerAcceptor = pairsDonor[go];
+									var partnerPos = partnerAcceptor.transform.Find("partnerPos").gameObject;
+									var targetPos = partnerPos.transform.position;
+									var targetRotation = partnerPos.transform.rotation;
+									var distanceFromTarget = Vector3.Distance(go.transform.position, targetPos);
+
+									if (!bounds.Contains(go.transform.position))
+									{
+										// monomer/dimer/ring is outside tank bounds
+										go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(0.1f, 0.5f), ForceMode.Impulse);
+									}
+									else if (distanceFromTarget > 0.02f) // use rigidbody forces to push paired game objects together
+									{
+										float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f);
+										go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.RandomRange(0.0f, maxPush), ForceMode.Impulse);
+									}
+									else // close to target transform - manipulate my transform directly (not through rigidbody)
+									{
+										go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
+									}
+
+									go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
 								}
-								var childTarget = pairs[child.gameObject];
-								if (!childTarget)
-								{
-									totalDist += float.PositiveInfinity;
-									break;
-								}
-								var childDist = Vector3.Distance(child.position, childTarget.transform.position);
-								totalDist += childDist;
-								var childTargetHeld = lh && lh.currentAttachedObject == childTarget || rh && rh.currentAttachedObject == childTarget;
-								if (childTargetHeld)
-								{
-									totalDist += float.PositiveInfinity;
-								}
+								continue;
 							}
 						}
-						//Debug.Log(go.name + " is a master dimer, and the sum of it's child ring targets is " + totalDist);
-						if (totalDist < 0.01f)
-						{
-							var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
-							ring.name = "ring from " + go.name;
-							//Debug.Log(ring.name);
-							masterDimers.Remove(go);
-							Destroy(go);
-							foreach (Transform child in go.transform)
-							{
-								if (child.name.StartsWith("ring"))
-								{
-									var childTarget = pairs[child.gameObject];
-									Destroy(childTarget);
-								}
-							}
-						}
-						//master dimers have pairs but do not try to move towards them
-						//but making master dimers wander seems to compromise ring formation
-						//AddRandomMotion(go);
-					}
-					catch (KeyNotFoundException e)
-					{
-						// Incomplete ring, not interested here
-					}
-					catch (MissingReferenceException e)
-					{
-						// Something was destroyed
-					}
-				}
 
-				if (!bounds.Contains(go.transform.position))
-				{
-					// Wayward go monomer/dimer/ring
-					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.RandomRange(0.1f, 0.5f), ForceMode.Impulse);
+					}
 				}
-				else if (distanceFromTarget < 0.02f)
-				{
-					go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
-				}
-				else //if (Random.Range(1, 101) <= 80)
-				{
-					float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f);
-					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere*0.01f)) * Time.deltaTime * Random.RandomRange(0.0f, maxPush), ForceMode.Impulse);
-				}
-					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
-				/*
-				{
-				targetPos = transform.InverseTransformPoint(targetPos);
-				var requiredTorqueX = (targetPos.x / targetPos.magnitude);
-				var requiredTorqueY = (targetPos.y / targetPos.magnitude);
-				float rotationTorque = 0.01f;
-				go.GetComponent<Rigidbody>().AddRelativeTorque(((rotationTorque) * requiredTorqueY), ((rotationTorque) * requiredTorqueX) * -1, 0f, ForceMode.Impulse);
-				}
-				*/
-				
 
 			}
 		}

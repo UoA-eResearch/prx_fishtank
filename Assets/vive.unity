@@ -726,10 +726,9 @@ MonoBehaviour:
   dimerPrefab: {fileID: 1097768174719004, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
     type: 2}
   ringPrefab: {fileID: 1314551590984416, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
-  numMonomers: 240
+  numMonomers: 120
   pairingVelocity: 0.05
   rotationVelocity: 50
-  shouldDimerise: 1
   pairingInterval: 0.1
   phMonomer2Dimer: 10
   phDimer2Ring: 9
