@@ -35,6 +35,7 @@ public class Fishtank : MonoBehaviour
 
 	void FindPairs()
 	{
+		//print(Time.realtimeSinceStartup);
 		assignProbability ();
 		//Debug.Log ("Prob for" + phValue + "is " + probabilityBind + probabilityBreak);
 		phValue = phSlider.GetPhValue();
@@ -58,7 +59,8 @@ public class Fishtank : MonoBehaviour
 				float minDistance = float.PositiveInfinity;
 				var match = a;
 				bool isDonor = false; //default behaviour is !isDonor - i.e. my go (acceptor) moves to other go's partnerPos (donor)
-				bool foundMatch = false;
+				bool foundMatchDonor = false;
+				bool foundMatchAcceptor = false;
 				if (tag == "ring")
 				{
 					if (Random.Range(1,100) <= probabilityRingBreak)
@@ -73,46 +75,68 @@ public class Fishtank : MonoBehaviour
 						{
 							if (a != b)
 							{
-								
-								// look in acceptor<-donor direction
-								var partnerPos = b.transform.Find("partnerPos").gameObject;
-								//Debug.Log(b.name + " is b " + b.transform.Find("partnerPos").gameObject.name + " is partnerPos ");
-								float dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
-								//Vector3 dir = (partnerPos.transform.position - a.transform.position).normalized;
-								float testPairDot = Vector3.Dot(a.transform.up, b.transform.up);
-								if (dist < minDistance && (testPairDot > 0.0f) && !pairsDonor.ContainsKey(b))
+								GameObject partnerPos;
+								Vector3 b2a;
+								float testPairAlignDot;
+								float testPairRelateDot;
+								float dist;
+
+								if (!pairs.ContainsKey(a))
 								{
-									var isCyclic = false;
-									var next = b;
-									while (pairs.ContainsKey(next))
+									// look in acceptor(a)<-donor(b) direction
+									partnerPos = b.transform.Find("partnerPos").gameObject;
+									//Debug.Log(b.name + " is b " + b.transform.Find("partnerPos").gameObject.name + " is partnerPos ");
+									dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
+									b2a = (a.transform.position - b.transform.position).normalized;
+									testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+									testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
+									Debug.Log("a = " + a.name + " b = " + b.name + " testPairAlignDot =  " + testPairAlignDot + " testPairRelateDot =  " + testPairRelateDot);
+									if (dist < minDistance && (testPairAlignDot > 0.0f) && (testPairRelateDot > 0.0f) && !pairsDonor.ContainsKey(b))
 									{
-										next = pairs[next];
-										if (next == a)
+										var isCyclic = false;
+										var next = b;
+										while (pairs.ContainsKey(next))
 										{
-											isCyclic = true;
-											Debug.Log(a.name + " was interested in being ACCEPTOR from " + b.name + " but they have a pointer to me somewhere in their chain");
-											break;
+											next = pairs[next];
+											if (next == a)
+											{
+												isCyclic = true;
+												Debug.Log(a.name + " was interested in being ACCEPTOR from " + b.name + " but they have a pointer to me somewhere in their chain");
+												break;
+											}
+										}
+										if (!isCyclic)
+										{
+											minDistance = dist;
+											match = b;
+											foundMatchDonor = true;
+											isDonor = false;
+											//Debug.DrawLine(a.transform.position, b.transform.position, Color.cyan, 0.2f);
 										}
 									}
-									if (!isCyclic)
+									if (foundMatchDonor)
 									{
-										minDistance = dist;
-										match = b;
-										foundMatch = true;
-										isDonor = false;
-										//Debug.DrawLine(a.transform.position, b.transform.position, Color.cyan, 0.2f);
+										pairs[a] = match;
+										pairsDonor[match] = a;
+										partnerPos = match.transform.Find("partnerPos").gameObject;
+										//pairs[partnerPos] = a;
+										Vector3 pairTransform = (partnerPos.transform.position - a.transform.position);
+										Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos.transform.position, Color.blue, 0.2f);
+										Debug.DrawLine(a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.cyan, 0.2f);
+										Debug.Log(a.name + " as ACCEPTOR is choosing " + match.name + " as donor");
 									}
 								}
-
-								//if (!foundMatch)
+								
+								if (!pairsDonor.ContainsKey(a))
 								{
-									// look in donor->acceptor direction
+									// look in donor(a)->acceptor(b) direction
 									var myPartnerPos = a.transform.Find("partnerPos").gameObject;
 									dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
-									//dir = (b.transform.position - myPartnerPos.transform.position).normalized;
-									testPairDot = Vector3.Dot(a.transform.up, b.transform.up);
+									b2a = (a.transform.position - b.transform.position).normalized;
+									testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+									testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
 
-									if (dist < minDistance && (testPairDot > 0.0f) && !pairs.ContainsKey(b))
+									if (dist < minDistance && (testPairAlignDot > 0.0f) && (testPairRelateDot < 0.0f) && !pairs.ContainsKey(b))
 									{
 										var isCyclic = false;
 										var next = b;
@@ -130,11 +154,24 @@ public class Fishtank : MonoBehaviour
 										{
 											minDistance = dist;
 											match = b;
-											foundMatch = true;
+											foundMatchAcceptor = true;
 											isDonor = true;
 											//Debug.DrawLine(a.transform.position, b.transform.position, Color.magenta, 0.2f);
 										}
 									}
+									if (foundMatchAcceptor)
+									{
+										pairs[match] = a;
+										pairsDonor[a] = match;
+										//var myPartnerPos = a.transform.Find("partnerPos").gameObject;
+										//pairs[myPartnerPos] = match;
+										Vector3 pairTransform = (match.transform.position - myPartnerPos.transform.position);
+										//Debug.DrawLine(match.transform.position, myPartnerPos.transform.position, Color.magenta, 0.2f);
+										Debug.DrawLine(myPartnerPos.transform.position, myPartnerPos.transform.position + (0.25f * pairTransform), Color.red, 0.2f);
+										Debug.DrawLine(myPartnerPos.transform.position + (0.25f * pairTransform), match.transform.position, Color.magenta, 0.2f);
+										Debug.Log(a.name + " as DONOR is choosing " + match.name + " as acceptor");
+									}
+									
 								}
 								
 							}
@@ -147,26 +184,11 @@ public class Fishtank : MonoBehaviour
 						{
 							if (!isDonor)
 							{
-								pairs[a] = match;
-								pairsDonor[match] = a;
-								var partnerPos = match.transform.Find("partnerPos").gameObject;
-								//pairs[partnerPos] = a;
-								Vector3 pairTransform = (partnerPos.transform.position - a.transform.position);
-								Debug.DrawLine ((a.transform.position + (0.75f * pairTransform)), partnerPos.transform.position, Color.blue, 0.2f);
-								Debug.DrawLine (a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.cyan, 0.2f);
-								Debug.Log(a.name + " as ACCEPTOR is choosing " + match.name + " as target");
+
 							}
 							else // isDonor
 							{
-								pairs[match] = a;
-								pairsDonor[a] = match;
-								var myPartnerPos = a.transform.Find("partnerPos").gameObject;
-								//pairs[myPartnerPos] = match;
-								Vector3 pairTransform = (match.transform.position - myPartnerPos.transform.position);
-								//Debug.DrawLine(match.transform.position, myPartnerPos.transform.position, Color.magenta, 0.2f);
-								Debug.DrawLine(myPartnerPos.transform.position, myPartnerPos.transform.position + (0.25f * pairTransform), Color.red, 0.2f);
-								Debug.DrawLine(myPartnerPos.transform.position + (0.25f * pairTransform), match.transform.position, Color.magenta, 0.2f);
-								Debug.Log(a.name + " as DONOR is choosing " + match.name + " as target");
+
 							}
 							//Debug.Log(a.name + " is choosing " + match.name + " as target");
 						}
@@ -307,11 +329,11 @@ public class Fishtank : MonoBehaviour
 						targetRotation = partnerPos.transform.rotation;
 						if (pairs.ContainsKey(go) && !pairsDonor.ContainsKey(go))
 						{
-							Debug.Log("----->" + go.name + " is a RING on the ACCEPTOR end of a stack");
+							//Debug.Log("----->" + go.name + " is a RING on the ACCEPTOR end of a stack");
 						}
 						if (pairs.ContainsKey(go) && pairsDonor.ContainsKey(go))
 						{
-							Debug.Log("----->" + go.name + " is a RING in the MIDDLE of a stack");
+							//Debug.Log("----->" + go.name + " is a RING in the MIDDLE of a stack");
 						}
 						if (!pairs.ContainsKey(go) && pairsDonor.ContainsKey(go))
 						{
@@ -328,7 +350,7 @@ public class Fishtank : MonoBehaviour
 						var dimerPos = go.transform.Find("dimerPos");
 						var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
 						dimer.name = "dimer from " + go.name + " and " + partner.name;
-						//Debug.Log(dimer.name);
+						
 						Destroy(go);
 						Destroy(partner);
 						continue;
@@ -403,13 +425,16 @@ public class Fishtank : MonoBehaviour
 					{
 						float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f);
 						go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.RandomRange(0.0f, maxPush), ForceMode.Impulse);
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
 					}
 					else // close to target transform - manipulate my transform directly (not through rigidbody)
 					{
+						//Debug.Log(dimer.name);
 						go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.1f) * rotationVelocity);
 					}
 
-					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
+					//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
 
 					/*
 					{
@@ -423,19 +448,19 @@ public class Fishtank : MonoBehaviour
 				} else
 				{
 					{
-						Debug.Log("----->" + go.name + " has no partner");
+						//Debug.Log("----->" + go.name + " has no partner");
 						if (tag != "ring")
 						{
 							continue;
 						}
 						else
 						{
-							Debug.Log("-----> RING " + go.name + " has no pairs partner");
-							if (pairsDonor.ContainsKey(go))
+							//Debug.Log("-----> RING " + go.name + " has no pairs partner");
+							if (false)//pairsDonor.ContainsKey(go))
 							{
 								// ring with donor only (end of chain)
-								Debug.Log("----->" + go.name + " has a pairsDonor and should move to them? ");
-								Debug.Log("----->" + go.name + " is a RING on the DONOR end of a stack");
+								//Debug.Log("----->" + go.name + " has a pairsDonor and should move to them? ");
+								//Debug.Log("----->" + go.name + " is a RING on the DONOR end of a stack");
 
 								{ // duplicated movement code - added for movement of end DONOR ring - needs refactoring
 
@@ -544,8 +569,6 @@ public class Fishtank : MonoBehaviour
 			break;
 
 		case 8:
-			//probabilityBind = 99;
-			//probabilityBreak = 1;
 			probabilityDimerMake = 10;
 			probabilityDimerBreak = 1;
 			probabilityRingMake = 0;
@@ -555,10 +578,6 @@ public class Fishtank : MonoBehaviour
 			break;
 
 		case 7:
-			//probabilityBind = 10;
-			//probabilityBreak = 90;
-			//probabilityBind = 50;
-			//probabilityBreak = 50;
 			probabilityDimerMake = 100;
 			probabilityDimerBreak = 0;
 			probabilityRingMake = 10;
@@ -568,10 +587,6 @@ public class Fishtank : MonoBehaviour
 			break;
 
 		case 6:
-			//probabilityBind = 30;
-			//probabilityBreak = 70;
-			//probabilityBind = 50;
-			//probabilityBreak = 50;
 			probabilityDimerMake = 100;
 			probabilityDimerBreak = 0;
 			probabilityRingMake = 50;
@@ -581,8 +596,6 @@ public class Fishtank : MonoBehaviour
 			break;
 
 		case 5:
-			//probabilityBind = 50;
-			//probabilityBreak = 50;
 			probabilityDimerMake = 100;
 			probabilityDimerBreak = 0;
 			probabilityRingMake = 50;
@@ -592,8 +605,6 @@ public class Fishtank : MonoBehaviour
 			break;
 
 		case 4:
-			//probabilityBind = 95;
-			//probabilityBreak = 5;
 			probabilityDimerMake = 100;
 			probabilityDimerBreak = 0;
 			probabilityRingMake = 100;
@@ -603,8 +614,6 @@ public class Fishtank : MonoBehaviour
 			break;
 
 		case 3:
-			//probabilityBind = 40;
-			//probabilityBreak = 60;
 			probabilityDimerMake = 100;
 			probabilityDimerBreak = 0;
 			probabilityRingMake = 100;
