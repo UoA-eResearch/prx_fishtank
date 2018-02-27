@@ -12,7 +12,9 @@ public class Fishtank : MonoBehaviour
 	public GameObject ringPrefab;
 	public int numMonomers = 50;
 	private Dictionary<GameObject, GameObject> pairs;
+	private Dictionary<GameObject, GameObject> pairsLast;
 	private Dictionary<GameObject, GameObject> pairsDonor;
+	private Dictionary<GameObject, GameObject> pairsDonorLast;
 	public float pairingVelocity = .05f;
 	public int rotationVelocity = 50;
 	private Bounds bounds;
@@ -65,7 +67,7 @@ public class Fishtank : MonoBehaviour
 				{
 					if (Random.Range(1,100) <= probabilityRingBreak)
 					{
-						a.GetComponent<BreakRing>().breakRing(null);
+						a.GetComponent<Ring>().breakRing(null);
 					}
 					else if (Random.Range(1,100) <= probabilityStackMake)
 					{
@@ -119,6 +121,10 @@ public class Fishtank : MonoBehaviour
 										pairs[a] = match;
 										pairsDonor[match] = a;
 										partnerPos = match.transform.Find("partnerPos").gameObject;
+
+										a.GetComponent<Ring>().partnerDonor = match;
+										match.GetComponent<Ring>().partnerAcceptor = a;
+
 										//pairs[partnerPos] = a;
 										Vector3 pairTransform = (partnerPos.transform.position - a.transform.position);
 										Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos.transform.position, Color.blue, 0.2f);
@@ -163,6 +169,10 @@ public class Fishtank : MonoBehaviour
 									{
 										pairs[match] = a;
 										pairsDonor[a] = match;
+
+										a.GetComponent<Ring>().partnerAcceptor = match;
+										match.GetComponent<Ring>().partnerDonor = a;
+
 										//var myPartnerPos = a.transform.Find("partnerPos").gameObject;
 										//pairs[myPartnerPos] = match;
 										Vector3 pairTransform = (match.transform.position - myPartnerPos.transform.position);
@@ -268,6 +278,8 @@ public class Fishtank : MonoBehaviour
 				}
 			}
 		}
+		pairsLast = pairs;
+		pairsDonorLast = pairsDonor;
 	}
 
 	void PushTogether()
@@ -286,21 +298,26 @@ public class Fishtank : MonoBehaviour
 					continue;
 				}
 				// check for unpaired gos which should drift
-				if (!pairs.ContainsKey(go))
+				if (tag == "monomer" || tag == "dimer")
 				{
-					if (tag == "monomer" || tag == "dimer")
+					if (!pairs.ContainsKey(go))
 					{
 						// unpaired monomer or dimer (no pair) => should drift
 						AddRandomMotion(go);
 						continue;
 					}
-					else if (!pairsDonor.ContainsKey(go))
+				}
+				if (tag == "ring")
+				{
+					if (!pairs.ContainsKey(go) && !pairsDonor.ContainsKey(go))
 					{
 						// unpaired ring (no pair or pairDonor) => should drift
 						AddRandomMotion(go);
 						continue;
 					}
 				}
+
+
 				//var partner = pairs[go];
 				GameObject partner;
 				if (pairs.TryGetValue(go, out partner))
@@ -349,7 +366,7 @@ public class Fishtank : MonoBehaviour
 					{
 						var dimerPos = go.transform.Find("dimerPos");
 						var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
-						dimer.name = "dimer from " + go.name + " and " + partner.name;
+						dimer.name = "dimer (" + go.name + " + " + partner.name + ")";
 						
 						Destroy(go);
 						Destroy(partner);
@@ -389,7 +406,7 @@ public class Fishtank : MonoBehaviour
 							if (totalDist < 0.01f)
 							{
 								var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
-								ring.name = "ring from " + go.name;
+								ring.name = "ring [ " + go.name + "]";
 								//Debug.Log(ring.name);
 								masterDimers.Remove(go);
 								Destroy(go);
@@ -432,6 +449,12 @@ public class Fishtank : MonoBehaviour
 						//Debug.Log(dimer.name);
 						go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
 						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.1f) * rotationVelocity);
+						if (tag == "ring")
+						{
+							go.GetComponent<Ring>().dockedToDonor = true;
+							GameObject myDonor = go.GetComponent<Ring>().partnerDonor;
+							//myDonor.GetComponent<Ring>().dockedToAcceptor = true;
+						}
 					}
 
 					//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
@@ -447,50 +470,49 @@ public class Fishtank : MonoBehaviour
 					*/
 				} else
 				{
+					
+					//Debug.Log("----->" + go.name + " has no partner");
+					if (tag == "ring")
 					{
-						//Debug.Log("----->" + go.name + " has no partner");
-						if (tag != "ring")
+						//Debug.Log("-----> RING " + go.name + " has no pairs partner");
+						// following code block deals with Ring pairings in donor->acceptor direction
+						if (pairsDonor.ContainsKey(go))
 						{
+							// ring with donor only (end of chain)
+							//Debug.Log("----->" + go.name + " has a pairsDonor and should move to them? ");
+							//Debug.Log("----->" + go.name + " is a RING on the DONOR end of a stack");
+
+							{ // duplicated movement code - added for movement of end DONOR ring - needs refactoring
+
+								var partnerAcceptor = pairsDonor[go];
+								var partnerPos = partnerAcceptor.transform.Find("partnerPos").gameObject;
+								var targetPos = partnerPos.transform.position;
+								var targetRotation = partnerPos.transform.rotation;
+								var distanceFromTarget = Vector3.Distance(go.transform.position, targetPos);
+
+								if (!bounds.Contains(go.transform.position))
+								{
+									// monomer/dimer/ring is outside tank bounds
+									go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(0.1f, 0.5f), ForceMode.Impulse);
+								}
+								else if (distanceFromTarget > 0.02f) // use rigidbody forces to push paired game objects together
+								{
+									float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f);
+									go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.RandomRange(0.0f, maxPush), ForceMode.Impulse);
+								}
+								else // close to target transform - manipulate my transform directly (not through rigidbody)
+								{
+									go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
+								}
+
+								go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
+							}
 							continue;
 						}
-						else
-						{
-							//Debug.Log("-----> RING " + go.name + " has no pairs partner");
-							if (false)//pairsDonor.ContainsKey(go))
-							{
-								// ring with donor only (end of chain)
-								//Debug.Log("----->" + go.name + " has a pairsDonor and should move to them? ");
-								//Debug.Log("----->" + go.name + " is a RING on the DONOR end of a stack");
-
-								{ // duplicated movement code - added for movement of end DONOR ring - needs refactoring
-
-									var partnerAcceptor = pairsDonor[go];
-									var partnerPos = partnerAcceptor.transform.Find("partnerPos").gameObject;
-									var targetPos = partnerPos.transform.position;
-									var targetRotation = partnerPos.transform.rotation;
-									var distanceFromTarget = Vector3.Distance(go.transform.position, targetPos);
-
-									if (!bounds.Contains(go.transform.position))
-									{
-										// monomer/dimer/ring is outside tank bounds
-										go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(0.1f, 0.5f), ForceMode.Impulse);
-									}
-									else if (distanceFromTarget > 0.02f) // use rigidbody forces to push paired game objects together
-									{
-										float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f);
-										go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.RandomRange(0.0f, maxPush), ForceMode.Impulse);
-									}
-									else // close to target transform - manipulate my transform directly (not through rigidbody)
-									{
-										go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
-									}
-
-									go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
-								}
-								continue;
-							}
-						}
-
+					}
+					else
+					{
+						continue;
 					}
 				}
 
@@ -514,7 +536,7 @@ public class Fishtank : MonoBehaviour
 			var pos = transform.position + new Vector3(Random.Range(-b.x, b.x), Random.Range(-b.y, b.y), Random.Range(-b.z, b.z));
 			monomer.transform.position = pos;
 			monomer.transform.rotation = Random.rotation;
-			monomer.name = "monomer_" + i;
+			monomer.name = "monomer" + i;
 		}
 		InvokeRepeating("FindPairs", 0, pairingInterval);
 	}

@@ -597,6 +597,13 @@ MonoBehaviour:
   dimerPrefab: {fileID: 1097768174719004, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
     type: 2}
   shouldBreak: 1
+  velEst: {fileID: 0}
+  ringAttached: 0
+  fishtank: {fileID: 0}
+  partnerAcceptor: {fileID: 0}
+  partnerDonor: {fileID: 0}
+  dockedToAcceptor: 0
+  dockedToDonor: 0
 --- !u!114 &114916512091932642
 MonoBehaviour:
   m_ObjectHideFlags: 1

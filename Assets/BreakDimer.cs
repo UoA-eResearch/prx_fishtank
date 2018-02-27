@@ -50,11 +50,11 @@ public class BreakDimer : MonoBehaviour
 		monomerPos = transform.Find("monomer1");
 		monomer1 = Instantiate(monomerPrefab, monomerPos.position, monomerPos.rotation, fishtank);
 		monomer1.GetComponent<Rigidbody>().AddForce(-monomer1.transform.forward * Random.RandomRange(0.01f,0.02f), ForceMode.Impulse);
-		monomer1.name = "monomer_" + monomer1.GetInstanceID();
+		monomer1.name = "Mo_" + monomer1.GetInstanceID();
 		partnerPos = monomer1.transform.Find("partnerPos");
 		monomer2 = Instantiate(monomerPrefab, partnerPos.position, partnerPos.rotation, fishtank);
 		monomer2.GetComponent<Rigidbody>().AddForce(-monomer2.transform.forward * Random.RandomRange(0.01f,0.02f), ForceMode.Impulse);
-		monomer2.name = "monomer_" + monomer2.GetInstanceID();
+		monomer2.name = "Mo_" + monomer2.GetInstanceID();
 		Debug.Log("Destroying " + gameObject.name);
 		Destroy(gameObject);
 	}
