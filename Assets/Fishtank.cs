@@ -15,25 +15,42 @@ public class Fishtank : MonoBehaviour
 	private Dictionary<GameObject, GameObject> pairsLast;
 	private Dictionary<GameObject, GameObject> pairsDonor;
 	private Dictionary<GameObject, GameObject> pairsDonorLast;
-	public float pairingVelocity = .05f;
-	public int rotationVelocity = 50;
+
 	private Bounds bounds;
 	private string[] tags;
-	public float pairingInterval = 0.1f;
+
 	private List<GameObject> masterDimers;
 	private PHSlider phSlider;
 	private int phValue;
-	public int phMonomer2Dimer;
-	public int phDimer2Ring;
-	public int phRing2Stack;
+	//public int phMonomer2Dimer;
+	//public int phDimer2Ring;
+	//public int phRing2Stack;
 	private int probabilityDimerMake;
 	private int probabilityDimerBreak;
 	private int probabilityRingMake;
 	private int probabilityRingBreak;
 	private int probabilityStackMake;
 	private float fishtankAlpha = 0.01f;
-   
 
+	public float alignLimitDot = 0.5f;
+	public float relateLimitDot = 0.5f;
+
+	// magic numbers for pushing gos around
+	private float forceTankMin = 0.1f;
+	private float forceTankMax = 0.5f;
+	private float torqueDiffuse = 0.0001f;
+	private float forceDiffuseMin = 1.0f;
+	private float forceDiffuseMax = 2.0f;
+
+	public float pairingInterval = 0.1f;
+	public float pairingVelocity = 0.05f;
+	public int pairingRotationVelocity = 50;
+
+	public float pairingForceVelocity = 100.0f;
+	public int pairingForceRotationVelocity = 500;
+
+	public float minDistApplyRBForces = 0.02f;	// lower distance limit for using forces on RBs to push go together
+	public float stackForceDistance = 0.01f;	// distance threshold for forcing stack
 
 	void FindPairs()
 	{
@@ -93,7 +110,7 @@ public class Fishtank : MonoBehaviour
 									testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
 									testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
 									Debug.Log("a = " + a.name + " b = " + b.name + " testPairAlignDot =  " + testPairAlignDot + " testPairRelateDot =  " + testPairRelateDot);
-									if (dist < minDistance && (testPairAlignDot > 0.0f) && (testPairRelateDot > 0.0f) && !pairsDonor.ContainsKey(b))
+									if (dist < minDistance && (testPairAlignDot > alignLimitDot) && (testPairRelateDot > relateLimitDot) && !pairsDonor.ContainsKey(b))
 									{
 										var isCyclic = false;
 										var next = b;
@@ -122,6 +139,7 @@ public class Fishtank : MonoBehaviour
 										pairsDonor[match] = a;
 										partnerPos = match.transform.Find("partnerPos").gameObject;
 
+										//debug - for visibility in inspector at runtime - these are only overwritten not unset!
 										a.GetComponent<Ring>().partnerDonor = match;
 										match.GetComponent<Ring>().partnerAcceptor = a;
 
@@ -142,7 +160,7 @@ public class Fishtank : MonoBehaviour
 									testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
 									testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
 
-									if (dist < minDistance && (testPairAlignDot > 0.0f) && (testPairRelateDot < 0.0f) && !pairs.ContainsKey(b))
+									if (dist < minDistance && (testPairAlignDot > alignLimitDot) && (testPairRelateDot < -1.0f*relateLimitDot) && !pairs.ContainsKey(b))
 									{
 										var isCyclic = false;
 										var next = b;
@@ -170,6 +188,7 @@ public class Fishtank : MonoBehaviour
 										pairs[match] = a;
 										pairsDonor[a] = match;
 
+										//debug - for visibility in inspector at runtime - these are only overwritten not unset!
 										a.GetComponent<Ring>().partnerAcceptor = match;
 										match.GetComponent<Ring>().partnerDonor = a;
 
@@ -438,17 +457,17 @@ public class Fishtank : MonoBehaviour
 						// monomer/dimer/ring is outside tank bounds
 						go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(0.1f, 0.5f), ForceMode.Impulse);
 					}
-					else if (distanceFromTarget > 0.02f) // use rigidbody forces to push paired game objects together
+					else if (distanceFromTarget > minDistApplyRBForces) // use rigidbody forces to push paired game objects together
 					{
-						float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f);
-						go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.RandomRange(0.0f, maxPush), ForceMode.Impulse);
-						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
+						float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f); //
+						go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
 					}
 					else // close to target transform - manipulate my transform directly (not through rigidbody)
 					{
 						//Debug.Log(dimer.name);
 						go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
-						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.1f) * rotationVelocity);
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.1f) * pairingRotationVelocity);
 						if (tag == "ring")
 						{
 							go.GetComponent<Ring>().dockedToDonor = true;
@@ -456,23 +475,11 @@ public class Fishtank : MonoBehaviour
 							//myDonor.GetComponent<Ring>().dockedToAcceptor = true;
 						}
 					}
-
-					//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
-
-					/*
-					{
-					targetPos = transform.InverseTransformPoint(targetPos);
-					var requiredTorqueX = (targetPos.x / targetPos.magnitude);
-					var requiredTorqueY = (targetPos.y / targetPos.magnitude);
-					float rotationTorque = 0.01f;
-					go.GetComponent<Rigidbody>().AddRelativeTorque(((rotationTorque) * requiredTorqueY), ((rotationTorque) * requiredTorqueX) * -1, 0f, ForceMode.Impulse);
-					}
-					*/
 				} else
 				{
 					
 					//Debug.Log("----->" + go.name + " has no partner");
-					if (tag == "ring")
+					if (tag == "ring" && true)
 					{
 						//Debug.Log("-----> RING " + go.name + " has no pairs partner");
 						// following code block deals with Ring pairings in donor->acceptor direction
@@ -485,8 +492,11 @@ public class Fishtank : MonoBehaviour
 							{ // duplicated movement code - added for movement of end DONOR ring - needs refactoring
 
 								var partnerAcceptor = pairsDonor[go];
-								var partnerPos = partnerAcceptor.transform.Find("partnerPos").gameObject;
+
+								var partnerPos = partnerAcceptor.transform.Find("donorPos").gameObject;
+
 								var targetPos = partnerPos.transform.position;
+
 								var targetRotation = partnerPos.transform.rotation;
 								var distanceFromTarget = Vector3.Distance(go.transform.position, targetPos);
 
@@ -495,17 +505,17 @@ public class Fishtank : MonoBehaviour
 									// monomer/dimer/ring is outside tank bounds
 									go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(0.1f, 0.5f), ForceMode.Impulse);
 								}
-								else if (distanceFromTarget > 0.02f) // use rigidbody forces to push paired game objects together
+								else if (distanceFromTarget > minDistApplyRBForces) // use rigidbody forces to push paired game objects together
 								{
 									float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f);
-									go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.RandomRange(0.0f, maxPush), ForceMode.Impulse);
+									go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
 								}
 								else // close to target transform - manipulate my transform directly (not through rigidbody)
 								{
 									go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
 								}
 
-								go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.RandomRange(0.1f, 0.5f) * rotationVelocity);
+								go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
 							}
 							continue;
 						}
@@ -559,19 +569,24 @@ public class Fishtank : MonoBehaviour
 
 	private void AddRandomMotion(GameObject go)
 	{
-		
+		float torque = torqueDiffuse;
+		if (go.tag == "ring")
+		{
+			//make rings tumble more
+			torque = 0.001f;
+		}
+
 		if (!bounds.Contains(go.transform.position)) // duplicate code needs tidying
 		{
 			// Wayward go monomer/dimer/ring
-			//go.transform.position = Vector3.MoveTowards(go.transform.position, bounds.center, Time.deltaTime * pairingVelocity);
-			go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.RandomRange(0.1f, 0.5f), ForceMode.Impulse);
+			go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(forceTankMin, forceTankMax), ForceMode.Impulse);
 		}
 		else
 		{
-			go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * Time.deltaTime * Random.RandomRange(1.0f, 2.0f), ForceMode.Impulse);
+			go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * Time.deltaTime * Random.Range(forceDiffuseMin, forceDiffuseMax), ForceMode.Impulse);
 		}
-		
-		go.GetComponent<Rigidbody>().AddRelativeTorque(0.0001f * Random.onUnitSphere, ForceMode.Impulse);
+
+		go.GetComponent<Rigidbody>().AddRelativeTorque(torque * Random.onUnitSphere, ForceMode.Impulse);		
 	}
 
 	void assignProbability(){
