@@ -43,14 +43,16 @@ public class Fishtank : MonoBehaviour
 	private float forceDiffuseMax = 2.0f;
 
 	public float pairingInterval = 0.1f;
+
 	public float pairingVelocity = 0.05f;
-	public int pairingRotationVelocity = 50;
+	public int pairingRotationVelocity = 25;
 
-	public float pairingForceVelocity = 100.0f;
-	public int pairingForceRotationVelocity = 500;
+	public float minDistApplyRBForces = 0.02f;			// lower distance limit for using forces on RBs to push monomer / dimer go together
+	public float minDistApplyRBForcesRing = 0.08f;		// lower distance limit for using forces on RBs to push ring go together
+	public float stackForceDistance = 0.02f;			// distance threshold for forcing ring stack
 
-	public float minDistApplyRBForces = 0.02f;	// lower distance limit for using forces on RBs to push go together
-	public float stackForceDistance = 0.01f;	// distance threshold for forcing stack
+	public float pairingForcingVelocity = 20.0f;
+	public int pairingForcingRotationVelocity = 50;
 
 	void FindPairs()
 	{
@@ -490,38 +492,74 @@ public class Fishtank : MonoBehaviour
 						}
 					}
 
+					/*
+					if (tag == "ring")
+					{
+
+					}
+					*/
+
 					if (!bounds.Contains(go.transform.position))
 					{
 						// monomer/dimer/ring is outside tank bounds
 						go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(0.1f, 0.5f), ForceMode.Impulse);
 					}
-					else if (distanceFromTarget > minDistApplyRBForces) // use rigidbody forces to push paired game objects together
+
+					// 
+					if (tag == "monomer" || tag == "dimer")
 					{
-						float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f); //
-						go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
-						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
-					}
-					else // close to target transform - manipulate my transform directly (not through rigidbody)
-					{
-						//Debug.Log(dimer.name);
-						go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
-						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.1f) * pairingRotationVelocity);
-						if (tag == "ring")
+						if (distanceFromTarget > minDistApplyRBForces) // use rigidbody forces to push paired game objects together
 						{
-							go.GetComponent<Ring>().dockedToDonor = true;
-							GameObject myDonor = go.GetComponent<Ring>().partnerDonor;
-							//myDonor.GetComponent<Ring>().dockedToAcceptor = true;
+							float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f); //
+							go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+						}
+						else
+						{
+							//Debug.Log(dimer.name);
+							go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.1f) * pairingRotationVelocity);
 						}
 					}
-				} else
+
+					else if (tag == "ring")
+					{
+						if (distanceFromTarget > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
+						{
+							float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f); //
+							go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+						}
+						else if(distanceFromTarget > stackForceDistance)
+						{
+							go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.1f) * pairingRotationVelocity);
+						}
+						else
+						{
+							// update docked flags - not currently used except for debug in inspector
+							go.GetComponent<Ring>().dockedToDonor = true;
+							GameObject myDonor = go.GetComponent<Ring>().partnerDonor;
+							myDonor.GetComponent<Ring>().dockedToAcceptor = true;
+
+							go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingForcingVelocity);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
+						}
+					}
+					
+
+
+
+				}
+				else
 				{
 					
 					//Debug.Log("----->" + go.name + " has no partner");
-					if (tag == "ring" && true)
+					if (tag == "ring" && (pairsDonor.ContainsKey(go)))
 					{
 						//Debug.Log("-----> RING " + go.name + " has no pairs partner");
 						// following code block deals with Ring pairings in donor->acceptor direction
-						if (pairsDonor.ContainsKey(go))
+						//if (pairsDonor.ContainsKey(go))
 						{
 							// ring with donor only (end of chain)
 							//Debug.Log("----->" + go.name + " has a pairsDonor and should move to them? ");
