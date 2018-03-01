@@ -103,41 +103,62 @@ public class Fishtank : MonoBehaviour
 								if (!pairs.ContainsKey(a))
 								{
 									// look in acceptor(a)<-donor(b) direction
-									partnerPos = b.transform.Find("partnerPos").gameObject;
+									partnerPos = b.transform.Find("acceptorPos").gameObject;
 									//Debug.Log(b.name + " is b " + b.transform.Find("partnerPos").gameObject.name + " is partnerPos ");
 									dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
 									b2a = (a.transform.position - b.transform.position).normalized;
 									testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
 									testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
-									Debug.Log("a = " + a.name + " b = " + b.name + " testPairAlignDot =  " + testPairAlignDot + " testPairRelateDot =  " + testPairRelateDot);
+									//Debug.Log("a = " + a.name + " b = " + b.name + " testPairAlignDot =  " + testPairAlignDot + " testPairRelateDot =  " + testPairRelateDot);
+									
+
 									if (dist < minDistance && (testPairAlignDot > alignLimitDot) && (testPairRelateDot > relateLimitDot) && !pairsDonor.ContainsKey(b))
 									{
-										var isCyclic = false;
-										var next = b;
-										while (pairs.ContainsKey(next))
+										var bHasBetterAcceptor = false;
+										if (pairsDonorLast.ContainsKey(b))
 										{
-											next = pairs[next];
-											if (next == a)
+											// b was a donor last time
+											var competingAcceptorGo = pairsDonorLast[b];
+											var competingAcceptorDist = Vector3.Distance(competingAcceptorGo.transform.position, partnerPos.transform.position);
+											if (competingAcceptorDist < dist)
 											{
-												isCyclic = true;
-												Debug.Log(a.name + " was interested in being ACCEPTOR from " + b.name + " but they have a pointer to me somewhere in their chain");
-												break;
+												bHasBetterAcceptor = true;
+												Debug.Log(a.name + " is testing " + b.name + " as Acceptor but " + competingAcceptorGo.name + " is closer to " + b.name);
 											}
 										}
-										if (!isCyclic)
+
+										if (!bHasBetterAcceptor)
 										{
-											minDistance = dist;
-											match = b;
-											foundMatchDonor = true;
-											isDonor = false;
-											//Debug.DrawLine(a.transform.position, b.transform.position, Color.cyan, 0.2f);
+											var isCyclic = false;
+											var next = b;
+											while (pairs.ContainsKey(next))
+											{
+												next = pairs[next];
+												if (next == a)
+												{
+													isCyclic = true;
+													//Debug.Log(a.name + " was interested in being ACCEPTOR from " + b.name + " but they have a pointer to me somewhere in their chain");
+													break;
+												}
+											}
+											if (!isCyclic)
+											{
+												minDistance = dist;
+												match = b;
+												foundMatchDonor = true;
+												isDonor = false;
+												//Debug.DrawLine(a.transform.position, b.transform.position, Color.cyan, 0.2f);
+											}
 										}
+
+
 									}
+
 									if (foundMatchDonor)
 									{
 										pairs[a] = match;
 										pairsDonor[match] = a;
-										partnerPos = match.transform.Find("partnerPos").gameObject;
+										partnerPos = match.transform.Find("acceptorPos").gameObject;
 
 										//debug - for visibility in inspector at runtime - these are only overwritten not unset!
 										a.GetComponent<Ring>().partnerDonor = match;
@@ -154,7 +175,7 @@ public class Fishtank : MonoBehaviour
 								if (!pairsDonor.ContainsKey(a))
 								{
 									// look in donor(a)->acceptor(b) direction
-									var myPartnerPos = a.transform.Find("partnerPos").gameObject;
+									var myPartnerPos = a.transform.Find("acceptorPos").gameObject;
 									dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
 									b2a = (a.transform.position - b.transform.position).normalized;
 									testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
@@ -162,26 +183,43 @@ public class Fishtank : MonoBehaviour
 
 									if (dist < minDistance && (testPairAlignDot > alignLimitDot) && (testPairRelateDot < -1.0f*relateLimitDot) && !pairs.ContainsKey(b))
 									{
-										var isCyclic = false;
-										var next = b;
-										while (pairsDonor.ContainsKey(next))
+										var bHasBetterDonor = false;
+										if (pairsLast.ContainsKey(b))
 										{
-											next = pairsDonor[next];
-											if (next == a)
+											// b was an acceptor last time
+											var competingDonorGo = pairsLast[b];
+											var competingDonorPartnerPos = competingDonorGo.transform.Find("acceptorPos").gameObject;
+											var competingDonorDist = Vector3.Distance(b.transform.position, competingDonorPartnerPos.transform.position);
+											if (competingDonorDist < dist)
 											{
-												isCyclic = true;
-												Debug.Log(a.name + " was interested in being DONOR to " + b.name + " but they have a pointer to them somewhere in their chain");
-												break;
+												bHasBetterDonor = true;
+												Debug.Log(a.name + " is testing " + b.name + " as Donor but " + competingDonorGo.name + " is closer to " + b.name);
 											}
 										}
-										if (!isCyclic)
+										if (!bHasBetterDonor)
 										{
-											minDistance = dist;
-											match = b;
-											foundMatchAcceptor = true;
-											isDonor = true;
-											//Debug.DrawLine(a.transform.position, b.transform.position, Color.magenta, 0.2f);
+											var isCyclic = false;
+											var next = b;
+											while (pairsDonor.ContainsKey(next))
+											{
+												next = pairsDonor[next];
+												if (next == a)
+												{
+													isCyclic = true;
+													//Debug.Log(a.name + " was interested in being DONOR to " + b.name + " but they have a pointer to them somewhere in their chain");
+													break;
+												}
+											}
+											if (!isCyclic)
+											{
+												minDistance = dist;
+												match = b;
+												foundMatchAcceptor = true;
+												isDonor = true;
+												//Debug.DrawLine(a.transform.position, b.transform.position, Color.magenta, 0.2f);
+											}
 										}
+
 									}
 									if (foundMatchAcceptor)
 									{
@@ -198,7 +236,7 @@ public class Fishtank : MonoBehaviour
 										//Debug.DrawLine(match.transform.position, myPartnerPos.transform.position, Color.magenta, 0.2f);
 										Debug.DrawLine(myPartnerPos.transform.position, myPartnerPos.transform.position + (0.25f * pairTransform), Color.red, 0.2f);
 										Debug.DrawLine(myPartnerPos.transform.position + (0.25f * pairTransform), match.transform.position, Color.magenta, 0.2f);
-										Debug.Log(a.name + " as DONOR is choosing " + match.name + " as acceptor");
+										//Debug.Log(a.name + " as DONOR is choosing " + match.name + " as acceptor");
 									}
 									
 								}
@@ -360,7 +398,7 @@ public class Fishtank : MonoBehaviour
 						targetRotation = partnerPos.rotation;
 						*/
 
-						var partnerPos = partner.transform.Find("partnerPos").gameObject;
+						var partnerPos = partner.transform.Find("acceptorPos").gameObject;
 						targetPos = partnerPos.transform.position;
 						targetRotation = partnerPos.transform.rotation;
 						if (pairs.ContainsKey(go) && !pairsDonor.ContainsKey(go))
