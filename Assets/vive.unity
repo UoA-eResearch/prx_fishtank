@@ -726,16 +726,17 @@ MonoBehaviour:
   dimerPrefab: {fileID: 1097768174719004, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
     type: 2}
   ringPrefab: {fileID: 1314551590984416, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
-  numMonomers: 240
+  numMonomers: 180
   alignLimitDot: 0.5
   relateLimitDot: 0.5
   pairingInterval: 0.1
   pairingVelocity: 0.05
-  pairingRotationVelocity: 50
-  pairingForceVelocity: 100
-  pairingForceRotationVelocity: 500
+  pairingRotationVelocity: 40
   minDistApplyRBForces: 0.02
-  stackForceDistance: 0.01
+  minDistApplyRBForcesRing: 0.08
+  stackForceDistance: 0.02
+  pairingForcingVelocity: 20
+  pairingForcingRotationVelocity: 50
 --- !u!114 &469726001
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ public class Fishtank : MonoBehaviour
 	public GameObject monomerPrefab;
 	public GameObject dimerPrefab;
 	public GameObject ringPrefab;
-	public int numMonomers = 50;
+	public int numMonomers = 180;
 	private Dictionary<GameObject, GameObject> pairs;
 	private Dictionary<GameObject, GameObject> pairsLast;
 	private Dictionary<GameObject, GameObject> pairsDonor;
@@ -35,24 +35,27 @@ public class Fishtank : MonoBehaviour
 	public float alignLimitDot = 0.5f;
 	public float relateLimitDot = 0.5f;
 
-	// magic numbers for pushing gos around
-	private float forceTankMin = 0.1f;
+	// magic numbers for pushing gos around - entirely empirical !
+
+	private float forceTankMin = 0.1f;					// impulse force range for keeping go in tank
 	private float forceTankMax = 0.5f;
-	private float torqueDiffuse = 0.0001f;
-	private float forceDiffuseMin = 1.0f;
+
+	private float torqueDiffuse = 0.0001f;				// torque for random motion (monomer / dimer) - ring is higher in code
+	private float forceDiffuseMin = 1.0f;				// impulse forces for random motion
 	private float forceDiffuseMax = 2.0f;
 
 	public float pairingInterval = 0.1f;
 
-	public float pairingVelocity = 0.05f;
-	public int pairingRotationVelocity = 25;
+	public float pairingVelocity = 0.05f;				// translation rate for pairing using positional transform lerp
+	public int pairingRotationVelocity = 40;            // rotation rate for pairing using quaternion slerp
 
 	public float minDistApplyRBForces = 0.02f;			// lower distance limit for using forces on RBs to push monomer / dimer go together
 	public float minDistApplyRBForcesRing = 0.08f;		// lower distance limit for using forces on RBs to push ring go together
-	public float stackForceDistance = 0.02f;			// distance threshold for forcing ring stack
 
-	public float pairingForcingVelocity = 20.0f;
-	public int pairingForcingRotationVelocity = 50;
+	public float stackForceDistance = 0.02f;			// distance threshold for forcing ring stack - hack to allow some stack manipulation with motion controller
+
+	public float pairingForcingVelocity = 20.0f;        // translation rate for pairing using positional transform lerp - maintains forced ring stacking for manipulation
+	public int pairingForcingRotationVelocity = 50;     // rotation rate for pairing using quaternion slerp
 
 	void FindPairs()
 	{
