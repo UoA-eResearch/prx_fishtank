@@ -36,7 +36,26 @@ public class PHSlider : MonoBehaviour
 
             var mappedToPH = (currentLinearMapping - 0.0f) / (1.0f - 0.0f) * (9.0f - 3.0f) + 3.0f;
 			phValue = Mathf.RoundToInt (mappedToPH);
-            phText.text = "PH value: " + phValue;
+			switch (phValue)
+			{
+
+				case 9:
+					phText.text = "pH value: high";
+					break;
+
+				case 8:
+				case 7:
+				case 6:
+				case 5:
+				case 4:
+					phText.text = "pH value: " + phValue;
+					break;
+
+				case 3:
+					phText.text = "pH value: low";
+					break;
+			}
+			
         }
     }
 

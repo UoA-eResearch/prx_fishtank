@@ -26,6 +26,8 @@ GameObject:
   - component: {fileID: 54944887642698322}
   - component: {fileID: 114656648200094392}
   - component: {fileID: 114772762168871246}
+  - component: {fileID: 136920698392033670}
+  - component: {fileID: 135345262317325818}
   m_Layer: 0
   m_Name: Monomer1
   m_TagString: monomer
@@ -100,8 +102,8 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1213113439581324}
   m_LocalRotation: {x: -0.7071068, y: -0, z: -0, w: 0.7071067}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
-  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
+  m_LocalPosition: {x: 23.968119, y: -28.117558, z: -59.100647}
+  m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children:
   - {fileID: 4313734188622056}
   - {fileID: 4416953868608464}
@@ -232,9 +234,9 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1213113439581324}
   serializedVersion: 2
-  m_Mass: 10
-  m_Drag: 10
-  m_AngularDrag: 10
+  m_Mass: 1
+  m_Drag: 1
+  m_AngularDrag: 1
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -324,3 +326,28 @@ MonoBehaviour:
     m_TypeName: UnityEngine.Events.UnityEvent, UnityEngine, Version=0.0.0.0, Culture=neutral,
       PublicKeyToken=null
   snapAttachEaseInCompleted: 0
+--- !u!135 &135345262317325818
+SphereCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1213113439581324}
+  m_Material: {fileID: 13400000, guid: f4e78e0115146104bbb1a872ae1c9b74, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.14
+  m_Center: {x: -0.08, y: 0.00407043, z: 0.009185022}
+--- !u!136 &136920698392033670
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1213113439581324}
+  m_Material: {fileID: 13400000, guid: f4e78e0115146104bbb1a872ae1c9b74, type: 2}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.07
+  m_Height: 0.5
+  m_Direction: 0
+  m_Center: {x: 0.05849427, y: -0.06, z: -0.04}

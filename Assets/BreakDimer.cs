@@ -49,12 +49,12 @@ public class BreakDimer : MonoBehaviour
 		// Make a monomer and attach it to the hand. This replaces the dimer you were just holding.
 		monomerPos = transform.Find("monomer1");
 		monomer1 = Instantiate(monomerPrefab, monomerPos.position, monomerPos.rotation, fishtank);
-		monomer1.GetComponent<Rigidbody>().AddForce(-monomer1.transform.forward, ForceMode.Impulse);
-		monomer1.name = "monomer_" + monomer1.GetInstanceID();
+		monomer1.GetComponent<Rigidbody>().AddForce(-monomer1.transform.forward * Random.RandomRange(0.01f,0.02f), ForceMode.Impulse);
+		monomer1.name = "Mo_" + monomer1.GetInstanceID();
 		partnerPos = monomer1.transform.Find("partnerPos");
 		monomer2 = Instantiate(monomerPrefab, partnerPos.position, partnerPos.rotation, fishtank);
-		monomer2.GetComponent<Rigidbody>().AddForce(-monomer2.transform.forward, ForceMode.Impulse);
-		monomer2.name = "monomer_" + monomer2.GetInstanceID();
+		monomer2.GetComponent<Rigidbody>().AddForce(-monomer2.transform.forward * Random.RandomRange(0.01f,0.02f), ForceMode.Impulse);
+		monomer2.name = "Mo_" + monomer2.GetInstanceID();
 		Debug.Log("Destroying " + gameObject.name);
 		Destroy(gameObject);
 	}
@@ -76,7 +76,7 @@ public class BreakDimer : MonoBehaviour
 			Vector3 velocity = velEst.GetVelocityEstimate();
 			//Debug.Log("Velocity: " + velocity + velocity.magnitude);
 
-			if (velocity.magnitude > 2.0 && dimerAttached)
+			if (velocity.magnitude > 3.0 && dimerAttached)
 			{
 				breakDimer(hand);
 				dimerAttached = false;
