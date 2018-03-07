@@ -165,7 +165,7 @@ public class Fishtank : MonoBehaviour
 										pairsDonor[match] = a;
 										partnerPos = match.transform.Find("acceptorPos").gameObject;
 
-										//debug - for visibility in inspector at runtime - these are only overwritten not unset!
+										//debug - for visibility in inspector at runtime
 										a.GetComponent<Ring>().partnerDonor = match;
 										match.GetComponent<Ring>().partnerAcceptor = a;
 
@@ -174,6 +174,10 @@ public class Fishtank : MonoBehaviour
 										Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos.transform.position, Color.blue, 0.2f);
 										Debug.DrawLine(a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.cyan, 0.2f);
 										Debug.Log(a.name + " as ACCEPTOR is choosing " + match.name + " as donor");
+									}
+									else
+									{
+										a.GetComponent<Ring>().partnerDonor = null;
 									}
 								}
 								
@@ -231,7 +235,7 @@ public class Fishtank : MonoBehaviour
 										pairs[match] = a;
 										pairsDonor[a] = match;
 
-										//debug - for visibility in inspector at runtime - these are only overwritten not unset!
+										//debug - for visibility in inspector at runtime
 										a.GetComponent<Ring>().partnerAcceptor = match;
 										match.GetComponent<Ring>().partnerDonor = a;
 
@@ -242,6 +246,10 @@ public class Fishtank : MonoBehaviour
 										Debug.DrawLine(myPartnerPos.transform.position, myPartnerPos.transform.position + (0.25f * pairTransform), Color.red, 0.2f);
 										Debug.DrawLine(myPartnerPos.transform.position + (0.25f * pairTransform), match.transform.position, Color.magenta, 0.2f);
 										//Debug.Log(a.name + " as DONOR is choosing " + match.name + " as acceptor");
+									}
+									else
+									{
+										a.GetComponent<Ring>().partnerAcceptor = null;
 									}
 									
 								}
