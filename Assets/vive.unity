@@ -815,6 +815,7 @@ MonoBehaviour:
   minDistApplyRBForces: 0.02
   minDistApplyRBForcesRing: 0.08
   stackForceDistance: 0.02
+  ringRepelDistance: 0.25
   pairingForcingVelocity: 20
   pairingForcingRotationVelocity: 50
 --- !u!114 &469726001
@@ -2893,7 +2894,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46f8e9e70f68ee3418ad85992778c116, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 8
+  value: 0
 --- !u!4 &1680598872
 Transform:
   m_ObjectHideFlags: 0

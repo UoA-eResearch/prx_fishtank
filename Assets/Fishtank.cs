@@ -49,7 +49,9 @@ public class Fishtank : MonoBehaviour
 	public float minDistApplyRBForces = 0.02f;			// lower distance limit for using forces on RBs to push monomer / dimer go together
 	public float minDistApplyRBForcesRing = 0.08f;		// lower distance limit for using forces on RBs to push ring go together
 
-	public float stackForceDistance = 0.02f;			// distance threshold for forcing ring stack - hack to allow some stack manipulation with motion controller
+	public float stackForceDistance = 0.02f;            // distance threshold for forcing ring stack - hack to allow some stack manipulation with motion controller
+
+	public float ringRepelDistance = 0.2f;
 
 	public float pairingForcingVelocity = 20.0f;        // translation rate for pairing using positional transform lerp - maintains forced ring stacking for manipulation
 	public int pairingForcingRotationVelocity = 50;     // rotation rate for pairing using quaternion slerp
@@ -641,11 +643,30 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
+	void RingRepel()
+	{
+		foreach (var a in GameObject.FindGameObjectsWithTag("ring"))
+		{
+			var ring = a.GetComponent<Ring>();
+			foreach (var b in GameObject.FindGameObjectsWithTag("ring"))
+			{
+				var dist = Vector3.Distance(a.transform.position, b.transform.position);
+				if (a!=b && ring.partnerDonor != b && ring.partnerAcceptor != b && dist < ringRepelDistance)
+				{
+					var oppositeForce = b.transform.position - a.transform.position;
+					b.GetComponent<Rigidbody>().AddForce(oppositeForce);
+					Debug.DrawLine(a.transform.position, a.transform.position + oppositeForce, Color.green, 2f);
+				}
+			}
+		}
+	}
+
 	// Update is called once per frame
 	void Update()
 	{
 		PushTogether();
 		FixHoverlock();
+		RingRepel();
 		ClampRigidBodyDynamics();
 	}
 }
