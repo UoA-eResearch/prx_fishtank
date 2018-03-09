@@ -111,11 +111,9 @@ public class Fishtank : MonoBehaviour
 									// look in acceptor(a)<-donor(b) direction
 									var partnerPos = b.transform.Find("donorPos").gameObject;
 									var dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
-									var b2a = (a.transform.position - b.transform.position).normalized;
-									var testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
-									var testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
+									var angleDiff = Quaternion.Angle(a.transform.rotation, partnerPos.transform.rotation);
 
-									var score = dist;// * testPairAlignDot * testPairRelateDot;
+									var score = dist * angleDiff;
 									
 									var next = b;
 									while (next.GetComponent<Ring>().partnerDonor != null)
@@ -127,6 +125,8 @@ public class Fishtank : MonoBehaviour
 											break;
 										}
 									}
+
+									//Debug.Log(a.name + " acting as donor for " + b.name + " score=" + score);
 
 									if (score < bestDonorScore)
 									{
@@ -141,11 +141,9 @@ public class Fishtank : MonoBehaviour
 									// look in donor(a)->acceptor(b) direction
 									var myPartnerPos = a.transform.Find("acceptorPos").gameObject;
 									var dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
-									var b2a = (a.transform.position - b.transform.position).normalized;
-									var testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
-									var testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
+									var angleDiff = Quaternion.Angle(b.transform.rotation, myPartnerPos.transform.rotation);
 
-									var score = dist;// * testPairAlignDot * testPairRelateDot;
+									var score = dist * angleDiff;
 
 									var next = b;
 									while (next.GetComponent<Ring>().partnerAcceptor != null)
@@ -158,6 +156,8 @@ public class Fishtank : MonoBehaviour
 										}
 									}
 
+									//Debug.Log(a.name + " acting as acceptor for " + b.name + " score=" + score);
+
 									if (score < bestDonorScore)
 									{
 										bestAcceptorScore = score;
@@ -168,7 +168,7 @@ public class Fishtank : MonoBehaviour
 								
 							}
 						}
-						if (bestDonor != null)
+						if (bestDonorScore < bestAcceptorScore && bestDonor != null)
 						{
 							a.GetComponent<Ring>().partnerDonor = bestDonor;
 							bestDonor.GetComponent<Ring>().partnerAcceptor = a;
@@ -179,7 +179,7 @@ public class Fishtank : MonoBehaviour
 							Debug.DrawLine(a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.cyan, 0.2f);
 							Debug.Log(a.name + " as ACCEPTOR is choosing " + bestDonor.name + " as donor");
 						}
-						if (bestAcceptor != null && bestDonor != bestAcceptor)
+						if (bestAcceptorScore < bestDonorScore && bestAcceptor != null && bestDonor != bestAcceptor)
 						{
 							a.GetComponent<Ring>().partnerAcceptor = bestAcceptor;
 							bestAcceptor.GetComponent<Ring>().partnerDonor = a;
@@ -666,7 +666,7 @@ public class Fishtank : MonoBehaviour
 	{
 		PushTogether();
 		FixHoverlock();
-		RingRepel();
+		//RingRepel();
 		ClampRigidBodyDynamics();
 	}
 }
