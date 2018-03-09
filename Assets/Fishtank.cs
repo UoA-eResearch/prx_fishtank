@@ -52,6 +52,7 @@ public class Fishtank : MonoBehaviour
 	public float stackForceDistance = 0.02f;            // distance threshold for forcing ring stack - hack to allow some stack manipulation with motion controller
 
 	public float ringRepelDistance = 0.2f;
+	public float ringAngleDiff = 10;
 
 	public float pairingForcingVelocity = 20.0f;        // translation rate for pairing using positional transform lerp - maintains forced ring stacking for manipulation
 	public int pairingForcingRotationVelocity = 50;     // rotation rate for pairing using quaternion slerp
@@ -651,7 +652,8 @@ public class Fishtank : MonoBehaviour
 			foreach (var b in GameObject.FindGameObjectsWithTag("ring"))
 			{
 				var dist = Vector3.Distance(a.transform.position, b.transform.position);
-				if (a!=b && ring.partnerDonor != b && ring.partnerAcceptor != b && dist < ringRepelDistance)
+				var angleDiff = Quaternion.Angle(a.transform.rotation, b.transform.rotation);
+				if (a!=b && ring.partnerDonor != b && ring.partnerAcceptor != b && dist < ringRepelDistance && angleDiff > ringAngleDiff)
 				{
 					var oppositeForce = b.transform.position - a.transform.position;
 					b.GetComponent<Rigidbody>().AddForce(oppositeForce);
@@ -666,7 +668,7 @@ public class Fishtank : MonoBehaviour
 	{
 		PushTogether();
 		FixHoverlock();
-		//RingRepel();
+		RingRepel();
 		ClampRigidBodyDynamics();
 	}
 }
