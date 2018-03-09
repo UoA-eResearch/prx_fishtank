@@ -57,6 +57,8 @@ public class Fishtank : MonoBehaviour
 	public float pairingForcingVelocity = 20.0f;        // translation rate for pairing using positional transform lerp - maintains forced ring stacking for manipulation
 	public int pairingForcingRotationVelocity = 50;     // rotation rate for pairing using quaternion slerp
 
+	public bool cheat = false;
+
 	void FindPairs()
 	{
 		//print(Time.realtimeSinceStartup);
@@ -454,6 +456,11 @@ public class Fishtank : MonoBehaviour
 							//go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingForcingVelocity);
 							//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
 						}
+						if (cheat)
+						{
+							go.transform.position = donorPos;
+							go.transform.rotation = targetRotation;
+						}
 					}
 					if (ring.partnerAcceptor != null)
 					{
@@ -480,6 +487,12 @@ public class Fishtank : MonoBehaviour
 
 							//go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingForcingVelocity);
 							//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
+						}
+
+						if (cheat)
+						{
+							go.transform.position = acceptorPos;
+							go.transform.rotation = targetRotation;
 						}
 					}
 				}

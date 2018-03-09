@@ -819,6 +819,7 @@ MonoBehaviour:
   ringAngleDiff: 45
   pairingForcingVelocity: 20
   pairingForcingRotationVelocity: 50
+  cheat: 0
 --- !u!114 &469726001
 MonoBehaviour:
   m_ObjectHideFlags: 0
