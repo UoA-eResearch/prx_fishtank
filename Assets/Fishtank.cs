@@ -12,9 +12,11 @@ public class Fishtank : MonoBehaviour
 	public GameObject ringPrefab;
 	public int numMonomers = 180;
 	private Dictionary<GameObject, GameObject> pairs;
-	private Dictionary<GameObject, GameObject> pairsLast;
-	private Dictionary<GameObject, GameObject> pairsDonor;
-	private Dictionary<GameObject, GameObject> pairsDonorLast;
+
+	private Dictionary<GameObject, GameObject> pairsMyAcceptor;
+	private Dictionary<GameObject, GameObject> pairsMyAcceptorPrev;
+	private Dictionary<GameObject, GameObject> pairsMyDonor;
+	private Dictionary<GameObject, GameObject> pairsMyDonorPrev;
 
 	private Bounds bounds;
 	private string[] tags;
@@ -32,24 +34,27 @@ public class Fishtank : MonoBehaviour
 	private int probabilityStackMake;
 	private float fishtankAlpha = 0.01f;
 
+	public float alignLimitDot = 0.5f;
+	public float relateLimitDot = 0.5f;
+
 	// magic numbers for pushing gos around - entirely empirical !
 
-	private float forceTankMin = 0.1f;					// impulse force range for keeping go in tank
+	private float forceTankMin = 0.1f;                  // impulse force range for keeping go in tank
 	private float forceTankMax = 0.5f;
 
-	private float torqueDiffuse = 0.0001f;				// torque for random motion (monomer / dimer) - ring is higher in code
-	private float forceDiffuseMin = 1.0f;				// impulse forces for random motion
+	private float torqueDiffuse = 0.0001f;              // torque for random motion (monomer / dimer) - ring is higher in code
+	private float forceDiffuseMin = 1.0f;               // impulse forces for random motion
 	private float forceDiffuseMax = 2.0f;
 
 	public float pairingInterval = 0.1f;
 
-	public float pairingVelocity = 0.05f;				// translation rate for pairing using positional transform lerp
+	public float pairingVelocity = 0.05f;               // translation rate for pairing using positional transform lerp
 	public int pairingRotationVelocity = 40;            // rotation rate for pairing using quaternion slerp
 
-	public float minDistApplyRBForces = 0.02f;			// lower distance limit for using forces on RBs to push monomer / dimer go together
-	public float minDistApplyRBForcesRing = 0.08f;		// lower distance limit for using forces on RBs to push ring go together
+	public float minDistApplyRBForces = 0.02f;          // lower distance limit for using forces on RBs to push monomer / dimer go together
+	public float minDistApplyRBForcesRing = 0.08f;      // lower distance limit for using forces on RBs to push ring go together
 
-	public float stackForceDistance = 0.02f;            // distance threshold for forcing ring stack - hack to allow some stack manipulation with motion controller
+	public float stackForceDistance = 0.01f;            // distance threshold for forcing ring stack - hack to allow some stack manipulation with motion controller
 
 	public float ringRepelDistance = 0.2f;
 	public float ringAngleDiff = 10;
@@ -62,11 +67,14 @@ public class Fishtank : MonoBehaviour
 	void FindPairs()
 	{
 		//print(Time.realtimeSinceStartup);
-		assignProbability ();
+		assignProbability();
 		//Debug.Log ("Prob for" + phValue + "is " + probabilityBind + probabilityBreak);
 		phValue = phSlider.GetPhValue();
 		//Debug.Log("PH value " + phValue);
 		pairs = new Dictionary<GameObject, GameObject>();
+		pairsMyAcceptor = new Dictionary<GameObject, GameObject>();
+		pairsMyDonor = new Dictionary<GameObject, GameObject>();
+
 		masterDimers = new List<GameObject>();
 		foreach (var a in GameObject.FindGameObjectsWithTag("ring"))
 		{
@@ -81,13 +89,13 @@ public class Fishtank : MonoBehaviour
 			//Debug.Log("There are " + gos.Length + " " + tag + " around");
 			foreach (var a in gos)
 			{
-				
+
 				if (tag == "dimer" && pairs.ContainsKey(a))
 				{
 					// Already know the pair for this
 					continue;
 				}
-				
+
 				float minDistance = float.PositiveInfinity;
 				var match = a;
 				if (tag == "ring")
@@ -96,11 +104,11 @@ public class Fishtank : MonoBehaviour
 					GameObject bestAcceptor = null;
 					var bestDonorScore = float.PositiveInfinity;
 					var bestAcceptorScore = float.PositiveInfinity;
-					if (Random.Range(1,100) <= probabilityRingBreak)
+					if (Random.Range(1, 100) <= probabilityRingBreak)
 					{
 						a.GetComponent<Ring>().breakRing(null);
 					}
-					else if (Random.Range(1,100) <= probabilityStackMake)
+					else if (Random.Range(1, 100) <= probabilityStackMake)
 					{
 						//var partnerPosA = a.transform.Find("partnerPos").gameObject;
 						//Debug.DrawLine(a.transform, a.transform.Find("partnerPos").gameObject.position);
@@ -108,132 +116,218 @@ public class Fishtank : MonoBehaviour
 						{
 							if (a != b)
 							{
-								if (a.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().partnerAcceptor == null)
-								// I don't have a donor, and b isn't already donoring
+								Vector3 b2a;
+								float testPairAlignDot;
+								float testPairRelateDot;
+
+								if (a.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().partnerAcceptor == null) ;
+								// I don't have a donor, and b isn't already donating so far in this findPairs() call 
 								{
 									// look in acceptor(a)<-donor(b) direction
-									var partnerPos = b.transform.Find("donorPos").gameObject;
+									//Debug.Log(a.name + " as ACC is testing " + b.name + "as poss DONOR: align = " + testPairAlignDot + " relate = " + testPairRelateDot);
+									var partnerPos = b.transform.Find("acceptorPos").gameObject; // a is accepting so we are looking to b's acceptorPos
 									var dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
-									var angleDiff = Quaternion.Angle(a.transform.rotation, partnerPos.transform.rotation);
+									//var angleDiff = Quaternion.Angle(a.transform.rotation, partnerPos.transform.rotation);
+									var bHasBetterAcceptor = false;
+									var score = float.PositiveInfinity;
+									//var score = dist * angleDiff;
 
-									var score = dist * angleDiff;
-									
-									var next = b;
-									while (next.GetComponent<Ring>().partnerDonor != null)
+									b2a = (a.transform.position - b.transform.position).normalized;
+									testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+									testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
+
+
+
+									if ((testPairAlignDot > alignLimitDot) && (testPairRelateDot > relateLimitDot))
 									{
-										next = next.GetComponent<Ring>().partnerDonor;
-										if (next == a) // cyclic
+										score = dist;
+
+										if (pairsMyAcceptorPrev.ContainsKey(b))
 										{
-											score = float.PositiveInfinity;
-											break;
+											// b was a donor last time and c was the acceptor (i.e. a is now competing with c)
+
+											var c = pairsMyAcceptorPrev[b];
+											//Debug.Log(b.name + " was a DONOR LAST time " + c.name + " was the ACC");
+											var cdist = Vector3.Distance(c.transform.position, partnerPos.transform.position);
+											//var cangleDiff = Quaternion.Angle(c.transform.rotation, partnerPos.transform.rotation);
+
+											var cscore = cdist;// * cangleDiff;
+
+											if (cscore < score)
+											{
+												bHasBetterAcceptor = true;
+												//Debug.Log(a.name + " as ACC is testing " + b.name + " as possible DONOR but " + c.name + " is a better ACC");
+											}
 										}
 									}
 
-									//Debug.Log(a.name + " acting as donor for " + b.name + " score=" + score);
 
-									if (score < bestDonorScore)
+									if (!bHasBetterAcceptor)
 									{
-										bestDonorScore = score;
-										bestDonor = b;
+										var next = b;
+										while (next.GetComponent<Ring>().partnerDonor != null)
+										{
+											next = next.GetComponent<Ring>().partnerDonor;
+											if (next == a) // cyclic
+											{
+												score = float.PositiveInfinity;
+												break;
+											}
+										}
+										if (score < bestDonorScore)
+										{
+											bestDonorScore = score;
+											bestDonor = b;
+										}
 									}
+
 								}
-								
+
 								if (a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerDonor == null)
-								// I'm not donoring yet, and b has an acceptor slot I could fit into
+								// I'm not yet a donor, and b has an acceptor slot I could fill - so far in this findPairs() call 
 								{
 									// look in donor(a)->acceptor(b) direction
 									var myPartnerPos = a.transform.Find("acceptorPos").gameObject;
 									var dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
-									var angleDiff = Quaternion.Angle(b.transform.rotation, myPartnerPos.transform.rotation);
+									//var angleDiff = Quaternion.Angle(b.transform.rotation, myPartnerPos.transform.rotation);
+									var bHasBetterDonor = false;
 
-									var score = dist * angleDiff;
+									var score = float.PositiveInfinity;
+									//var score = dist * angleDiff;
 
-									var next = b;
-									while (next.GetComponent<Ring>().partnerAcceptor != null)
+									b2a = (a.transform.position - b.transform.position).normalized;
+									testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+									testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
+
+									if ((testPairAlignDot > alignLimitDot) && (testPairRelateDot < -1.0f * relateLimitDot))
 									{
-										next = next.GetComponent<Ring>().partnerAcceptor;
-										if (next == a) // cyclic
+										score = dist;
+
+										if (pairsMyDonorPrev.ContainsKey(b))
 										{
-											score = float.PositiveInfinity;
-											break;
+											// b was an acceptor last time and c was the donor (i.e. a is now competing with c)
+											var c = pairsMyDonorPrev[b];
+											var cPartnerPos = c.transform.Find("acceptorPos").gameObject;
+											var cdist = Vector3.Distance(b.transform.position, cPartnerPos.transform.position);
+											//var cangleDiff = Quaternion.Angle(c.transform.rotation, cPartnerPos.transform.rotation);
+
+											var cscore = cdist;// * cangleDiff;
+
+											if (cscore < score)
+											{
+												bHasBetterDonor = true;
+												//Debug.Log(a.name + " as DONOR is testing " + b.name + " as ACC but " + c.name + " is better DONOR");
+											}
 										}
 									}
 
-									//Debug.Log(a.name + " acting as acceptor for " + b.name + " score=" + score);
-
-									if (score < bestDonorScore)
+									if (!bHasBetterDonor)
 									{
-										bestAcceptorScore = score;
-										bestAcceptor = b;
+										var next = b;
+										while (next.GetComponent<Ring>().partnerAcceptor != null)
+										{
+											next = next.GetComponent<Ring>().partnerAcceptor;
+											if (next == a) // cyclic
+											{
+												score = float.PositiveInfinity;
+												break;
+											}
+										}
+
+										//Debug.Log(a.name + " acting as acceptor for " + b.name + " score=" + score);
+
+										if (score < bestAcceptorScore)
+										{
+											bestAcceptorScore = score;
+											bestAcceptor = b;
+										}
 									}
 
 								}
-								
+
 							}
 						}
-						if (bestDonorScore < bestAcceptorScore && bestDonor != null)
+						if (bestDonor != null) //(bestDonorScore < bestAcceptorScore && bestDonor != null)
 						{
 							a.GetComponent<Ring>().partnerDonor = bestDonor;
 							bestDonor.GetComponent<Ring>().partnerAcceptor = a;
-							var partnerPos = bestDonor.transform.Find("donorPos").position;
-							
+							var partnerPos = bestDonor.transform.Find("acceptorPos").position; // I want to go to my donor's acceptorPos
+
 							Vector3 pairTransform = (partnerPos - a.transform.position);
 							Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos, Color.blue, 0.2f);
 							Debug.DrawLine(a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.cyan, 0.2f);
-							Debug.Log(a.name + " as ACCEPTOR is choosing " + bestDonor.name + " as donor");
+							//Debug.Log(a.name + " as ACCEPTOR is choosing " + bestDonor.name + " as donor");
+
+							pairsMyDonor[a] = bestDonor;
+							pairsMyAcceptor[bestDonor] = a;
+
 						}
-						if (bestAcceptorScore < bestDonorScore && bestAcceptor != null && bestDonor != bestAcceptor)
+						if (bestAcceptor != null) //(bestAcceptorScore < bestDonorScore && bestAcceptor != null && bestDonor != bestAcceptor)
 						{
 							a.GetComponent<Ring>().partnerAcceptor = bestAcceptor;
 							bestAcceptor.GetComponent<Ring>().partnerDonor = a;
-							var partnerPos = bestAcceptor.transform.Find("acceptorPos").position;
+							var partnerPos = bestAcceptor.transform.Find("donorPos").position; // I want to go to my acceptor's donorPos
 
 							Vector3 pairTransform = (partnerPos - a.transform.position);
 							Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos, Color.red, 0.2f);
 							Debug.DrawLine(a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.magenta, 0.2f);
-							Debug.Log(a.name + " as DONOR is choosing " + bestAcceptor.name + " as acceptor");
+							//Debug.Log(a.name + " as DONOR is choosing " + bestAcceptor.name + " as acceptor");
+
+							pairsMyAcceptor[a] = bestAcceptor;
+							pairsMyDonor[bestAcceptor] = a;
+
 						}
 						if (bestAcceptor == null && bestDonor == null)
 						{
-							Debug.LogError("Unable to find a donor or acceptor ring for " + a.name + "!");
+							//Debug.LogError("Unable to find a donor or acceptor ring for " + a.name + "!");
 						}
 					}
 				}
 				else if (tag == "dimer")
 				{
-					
-					if (Random.Range (1, 100) <= probabilityDimerBreak)
+
+					if (Random.Range(1, 100) <= probabilityDimerBreak)
 					{
 						a.GetComponent<BreakDimer>().breakApartDimer();
 					}
-					else if (Random.Range (1, 100) <= probabilityRingMake) {
+					else if (Random.Range(1, 100) <= probabilityRingMake)
+					{
 						bool hasAll = true;
-						foreach (Transform child in a.transform) {
-							if (child.name.StartsWith ("ring")) {
+						foreach (Transform child in a.transform)
+						{
+							if (child.name.StartsWith("ring"))
+							{
 								minDistance = float.PositiveInfinity;
 								match = child.gameObject;
-								foreach (var b in gos) {
-									if (a != b && !pairs.ContainsKey (b)) {
-										float dist = Vector3.Distance (child.transform.position, b.transform.position);
-										if (dist < minDistance) {
+								foreach (var b in gos)
+								{
+									if (a != b && !pairs.ContainsKey(b))
+									{
+										float dist = Vector3.Distance(child.transform.position, b.transform.position);
+										if (dist < minDistance)
+										{
 											minDistance = dist;
 											match = b;
 										}
 									}
 								}
-								if (minDistance == float.PositiveInfinity) {
+								if (minDistance == float.PositiveInfinity)
+								{
 									//Debug.LogError("Unable to find a dimer for " + child.name + " in " + a.name + "!");
 									hasAll = false;
-								} else {
-									pairs [child.gameObject] = match;
-									pairs [match] = child.gameObject;
+								}
+								else
+								{
+									pairs[child.gameObject] = match;
+									pairs[match] = child.gameObject;
 									//Debug.Log(a.name + " has chosen " + match.name + " to fit into " + child.name + " with dist " + minDistance);
 								}
 							}
 						}
-						pairs [a] = a;
-						if (hasAll) {
-							masterDimers.Add (a);
+						pairs[a] = a;
+						if (hasAll)
+						{
+							masterDimers.Add(a);
 						}
 					}
 				}
@@ -261,7 +355,7 @@ public class Fishtank : MonoBehaviour
 						}
 						else
 						{
-							 //Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
+							//Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
 							pairs[a] = match;
 							pairs[match] = a;
 						}
@@ -273,6 +367,10 @@ public class Fishtank : MonoBehaviour
 				}
 			}
 		}
+		//pairsMyAcceptorPrev = new Dictionary<GameObject, GameObject>();
+		//pairsMyDonorPrev = new Dictionary<GameObject, GameObject>();
+		pairsMyAcceptorPrev = pairsMyAcceptor;
+		pairsMyDonorPrev = pairsMyDonor;
 	}
 
 	void PushTogether()
@@ -432,7 +530,7 @@ public class Fishtank : MonoBehaviour
 
 					if (ring.partnerDonor != null)
 					{
-						var donor = ring.partnerDonor.transform.Find("donorPos");
+						var donor = ring.partnerDonor.transform.Find("acceptorPos");
 						var donorPos = donor.position;
 						var targetRotation = donor.rotation;
 						var distanceFromDonorPos = Vector3.Distance(go.transform.position, donorPos);
@@ -446,15 +544,16 @@ public class Fishtank : MonoBehaviour
 						else if (distanceFromDonorPos > stackForceDistance)
 						{
 							go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingVelocity);
-							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.1f) * pairingRotationVelocity);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
 						}
 						else
 						{
 							// update docked flags - not currently used except for debug in inspector
 							ring.dockedToDonor = true;
 
-							//go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingForcingVelocity);
-							//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
+							go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingForcingVelocity);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
+
 						}
 						if (cheat)
 						{
@@ -464,7 +563,7 @@ public class Fishtank : MonoBehaviour
 					}
 					if (ring.partnerAcceptor != null)
 					{
-						var acceptor = ring.partnerAcceptor.transform.Find("acceptorPos");
+						var acceptor = ring.partnerAcceptor.transform.Find("donorPos");
 						var acceptorPos = acceptor.position;
 						var targetRotation = acceptor.rotation;
 						var distanceFromAcceptorPos = Vector3.Distance(go.transform.position, acceptorPos);
@@ -478,7 +577,7 @@ public class Fishtank : MonoBehaviour
 						else if (distanceFromAcceptorPos > stackForceDistance)
 						{
 							go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingVelocity);
-							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.1f) * pairingRotationVelocity);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
 						}
 						else
 						{
@@ -486,7 +585,8 @@ public class Fishtank : MonoBehaviour
 							ring.dockedToAcceptor = true;
 
 							//go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingForcingVelocity);
-							//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
+
 						}
 
 						if (cheat)
@@ -564,81 +664,83 @@ public class Fishtank : MonoBehaviour
 			go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * Time.deltaTime * Random.Range(forceDiffuseMin, forceDiffuseMax), ForceMode.Impulse);
 		}
 
-		go.GetComponent<Rigidbody>().AddRelativeTorque(torque * Random.onUnitSphere, ForceMode.Impulse);		
+		go.GetComponent<Rigidbody>().AddRelativeTorque(torque * Random.onUnitSphere, ForceMode.Impulse);
 	}
 
-	void assignProbability(){
+	void assignProbability()
+	{
 		Color col;
 		col.a = fishtankAlpha;
 		col = Color.cyan;
 
-		switch (phSlider.GetPhValue()) {
-			
-		case 9:
-			probabilityDimerMake = 1;
-			probabilityDimerBreak = 50;
-			probabilityRingMake = 0;
-			probabilityRingBreak = 100;
-			probabilityStackMake = 0;
-			col = Color.cyan;
-			break;
+		switch (phSlider.GetPhValue())
+		{
 
-		case 8:
-			probabilityDimerMake = 10;
-			probabilityDimerBreak = 1;
-			probabilityRingMake = 0;
-			probabilityRingBreak = 100;
-			probabilityStackMake = 0;
-			col = Color.blue;
-			break;
+			case 9:
+				probabilityDimerMake = 1;
+				probabilityDimerBreak = 50;
+				probabilityRingMake = 0;
+				probabilityRingBreak = 100;
+				probabilityStackMake = 0;
+				col = Color.cyan;
+				break;
 
-		case 7:
-			probabilityDimerMake = 100;
-			probabilityDimerBreak = 0;
-			probabilityRingMake = 10;
-			probabilityRingBreak = 5;
-			probabilityStackMake = 1;
-			col = Color.gray;
-			break;
+			case 8:
+				probabilityDimerMake = 10;
+				probabilityDimerBreak = 1;
+				probabilityRingMake = 0;
+				probabilityRingBreak = 100;
+				probabilityStackMake = 0;
+				col = Color.blue;
+				break;
 
-		case 6:
-			probabilityDimerMake = 100;
-			probabilityDimerBreak = 0;
-			probabilityRingMake = 50;
-			probabilityRingBreak = 2;
-			probabilityStackMake = 1;
-			col = Color.green;
-			break;
+			case 7:
+				probabilityDimerMake = 100;
+				probabilityDimerBreak = 0;
+				probabilityRingMake = 10;
+				probabilityRingBreak = 5;
+				probabilityStackMake = 1;
+				col = Color.gray;
+				break;
 
-		case 5:
-			probabilityDimerMake = 100;
-			probabilityDimerBreak = 0;
-			probabilityRingMake = 50;
-			probabilityRingBreak = 1;
-			probabilityStackMake = 1;
-			col = Color.magenta;
-			break;
+			case 6:
+				probabilityDimerMake = 100;
+				probabilityDimerBreak = 0;
+				probabilityRingMake = 50;
+				probabilityRingBreak = 2;
+				probabilityStackMake = 1;
+				col = Color.green;
+				break;
 
-		case 4:
-			probabilityDimerMake = 100;
-			probabilityDimerBreak = 0;
-			probabilityRingMake = 100;
-			probabilityRingBreak = 1;
-			probabilityStackMake = 50;
-			col = Color.red;
-			break;
+			case 5:
+				probabilityDimerMake = 100;
+				probabilityDimerBreak = 0;
+				probabilityRingMake = 50;
+				probabilityRingBreak = 1;
+				probabilityStackMake = 1;
+				col = Color.magenta;
+				break;
 
-		case 3:
-			probabilityDimerMake = 100;
-			probabilityDimerBreak = 0;
-			probabilityRingMake = 100;
-			probabilityRingBreak = 0;
-			probabilityStackMake = 100;
-			col = Color.yellow;
-			break;
+			case 4:
+				probabilityDimerMake = 100;
+				probabilityDimerBreak = 0;
+				probabilityRingMake = 100;
+				probabilityRingBreak = 1;
+				probabilityStackMake = 50;
+				col = Color.red;
+				break;
+
+			case 3:
+				probabilityDimerMake = 100;
+				probabilityDimerBreak = 0;
+				probabilityRingMake = 100;
+				probabilityRingBreak = 0;
+				probabilityStackMake = 100;
+				col = Color.yellow;
+				break;
 		}
 		col.a = fishtankAlpha;
-		gameObject.GetComponent<Renderer> ().material.color = col;
+		gameObject.GetComponent<Renderer>().material.color = col;
 
 	}
 
@@ -666,7 +768,7 @@ public class Fishtank : MonoBehaviour
 			{
 				var dist = Vector3.Distance(a.transform.position, b.transform.position);
 				var angleDiff = Quaternion.Angle(a.transform.rotation, b.transform.rotation);
-				if (a!=b && ring.partnerDonor != b && ring.partnerAcceptor != b && dist < ringRepelDistance && angleDiff > ringAngleDiff)
+				if (a != b && ring.partnerDonor != b && ring.partnerAcceptor != b && dist < ringRepelDistance && angleDiff > ringAngleDiff)
 				{
 					var oppositeForce = b.transform.position - a.transform.position;
 					b.GetComponent<Rigidbody>().AddForce(oppositeForce);
@@ -681,7 +783,7 @@ public class Fishtank : MonoBehaviour
 	{
 		PushTogether();
 		FixHoverlock();
-		RingRepel();
+		//RingRepel();
 		ClampRigidBodyDynamics();
 	}
 }
