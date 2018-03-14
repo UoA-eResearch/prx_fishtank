@@ -93,9 +93,22 @@ public class Ring: MonoBehaviour
 		}
 	}
 
-	void OnAttachedToHand()
+	void OnAttachedToHand(Hand hand)
 	{
 		ringAttached = true;
+		var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachFromOtherHand;
+		if (dockedToAcceptor && !partnerAcceptor.GetComponent<Ring>().ringAttached)
+		{
+			hand.AttachObject(partnerAcceptor, attachmentFlags);
+		}
+		if (dockedToDonor && !partnerDonor.GetComponent<Ring>().ringAttached)
+		{
+			hand.AttachObject(partnerDonor, attachmentFlags);
+		}
+		foreach (var ao in hand.AttachedObjects)
+		{
+			ao.attachedObject.SetActive(true);
+		}
 		velEst.BeginEstimatingVelocity();
 	}
 
