@@ -604,10 +604,9 @@ public class Fishtank : MonoBehaviour
 
 
 
-				if (!bounds.Contains(go.transform.position))
+				if (!bounds.Contains(go.transform.position) && tag != "dimer")
 				{
-					// monomer/dimer/ring is outside tank bounds
-					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(0.1f, 0.5f), ForceMode.Impulse);
+					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(forceTankMin, forceTankMax), ForceMode.Impulse);
 				}
 			}
 		}
