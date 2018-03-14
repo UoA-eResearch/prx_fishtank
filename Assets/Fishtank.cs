@@ -808,7 +808,7 @@ public class Fishtank : MonoBehaviour
 		}
 		if (!hasWon)
 		{
-			timer.text = Time.time.ToString() + "s";
+			timer.text = Time.timeSinceLevelLoad.ToString() + "s";
 		}
 	}
 
