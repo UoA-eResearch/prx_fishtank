@@ -809,6 +809,8 @@ MonoBehaviour:
     type: 2}
   ringPrefab: {fileID: 1314551590984416, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   numMonomers: 180
+  alignLimitDot: 0.5
+  relateLimitDot: 0.5
   pairingInterval: 0.1
   pairingVelocity: 0.05
   pairingRotationVelocity: 40
@@ -1497,7 +1499,7 @@ SphereCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1219730223}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
@@ -3605,7 +3607,7 @@ CapsuleCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2117462440}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.5
   m_Height: 2
