@@ -10,6 +10,11 @@ public class Fishtank : MonoBehaviour
 	public GameObject monomerPrefab;
 	public GameObject dimerPrefab;
 	public GameObject ringPrefab;
+	public Text timer;
+	public Text monomerCount;
+	public Text dimerCount;
+	public Text ringCount;
+	private bool hasWon = false;
 	public int numMonomers = 180;
 	private Dictionary<GameObject, GameObject> pairs;
 
@@ -778,6 +783,36 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
+	void UpdateTimer()
+	{
+		var monomers = GameObject.FindGameObjectsWithTag("monomer");
+		var dimers = GameObject.FindGameObjectsWithTag("dimer");
+		var rings = GameObject.FindGameObjectsWithTag("ring");
+		monomerCount.text = monomers.Length.ToString();
+		dimerCount.text = dimers.Length.ToString();
+		ringCount.text = rings.Length.ToString();
+		if (rings.Length == numMonomers / 2 / 6)
+		{
+			int docks = 0;
+			foreach (var ring in rings)
+			{
+				var r = ring.GetComponent<Ring>();
+				if (r.dockedToAcceptor)
+				{
+					docks++;
+				}
+			}
+			if (docks == rings.Length - 1)
+			{
+				hasWon = true;
+			}
+		}
+		if (!hasWon)
+		{
+			timer.text = Time.time.ToString() + "s";
+		}
+	}
+
 	// Update is called once per frame
 	void Update()
 	{
@@ -785,5 +820,6 @@ public class Fishtank : MonoBehaviour
 		FixHoverlock();
 		//RingRepel();
 		ClampRigidBodyDynamics();
+		UpdateTimer();
 	}
 }
