@@ -18,7 +18,7 @@ public class ShowDonut : MonoBehaviour {
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if (other.gameObject.tag == "monomer" && !donut.activeInHierarchy)
+		if ((other.gameObject.tag == "monomer" || other.gameObject.tag == "dimer" )&& !donut.activeInHierarchy)
 		{
 			donut.SetActive(true);
 			Invoke("DonutOff", 5);
