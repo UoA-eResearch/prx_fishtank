@@ -21,7 +21,7 @@ public class ShowDonut : MonoBehaviour {
 		if ((other.gameObject.tag == "monomer" || other.gameObject.tag == "dimer" )&& !donut.activeInHierarchy)
 		{
 			donut.SetActive(true);
-			Invoke("DonutOff", 5);
+			Invoke("DonutOff", 100);
 		}
 	}
 }
