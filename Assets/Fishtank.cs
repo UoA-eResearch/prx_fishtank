@@ -11,9 +11,12 @@ public class Fishtank : MonoBehaviour
 	public GameObject dimerPrefab;
 	public GameObject ringPrefab;
 	public Text timer;
+	public Text timer2;
 	public Text monomerCount;
 	public Text dimerCount;
 	public Text ringCount;
+	public Text ringCount2;
+	public Text biggestStack;
 	private bool hasWon = false;
 	public int numMonomers = 180;
 	private Dictionary<GameObject, GameObject> pairs;
@@ -22,6 +25,8 @@ public class Fishtank : MonoBehaviour
 	private Dictionary<GameObject, GameObject> pairsMyAcceptorPrev;
 	private Dictionary<GameObject, GameObject> pairsMyDonor;
 	private Dictionary<GameObject, GameObject> pairsMyDonorPrev;
+
+	public GameObject cartoonDonutPS;
 
 	private Bounds bounds;
 	private string[] tags;
@@ -476,6 +481,11 @@ public class Fishtank : MonoBehaviour
 							if (totalDist < 0.01f)
 							{
 								var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
+
+								//testing particle system
+								var donutVfx = Instantiate(cartoonDonutPS, go.transform.position, Quaternion.identity);
+								Destroy(donutVfx, 4.0f);
+
 								ring.name = "ring [ " + go.name + "]";
 								//Debug.Log(ring.name);
 								masterDimers.Remove(go);
@@ -790,25 +800,33 @@ public class Fishtank : MonoBehaviour
 		monomerCount.text = monomers.Length.ToString();
 		dimerCount.text = dimers.Length.ToString();
 		ringCount.text = rings.Length.ToString();
-		if (rings.Length == numMonomers / 2 / 6)
+		ringCount2.text = ringCount.text;
+		int stackLength = 0;
+		if (rings.Length > 0)//rings.Length == numMonomers / 2 / 6)
 		{
 			int docks = 0;
 			foreach (var ring in rings)
 			{
 				var r = ring.GetComponent<Ring>();
+				
 				if (r.dockedToAcceptor)
 				{
 					docks++;
 				}
+				stackLength = docks + 1;
+				
 			}
 			if (docks == rings.Length - 1)
 			{
 				hasWon = true;
 			}
 		}
+		biggestStack.text = stackLength.ToString();
 		if (!hasWon)
 		{
-			timer.text = Time.timeSinceLevelLoad.ToString() + "s";
+			double timeD = System.Math.Round(Time.timeSinceLevelLoad, 1);
+			timer.text = timeD.ToString() + "s";
+			timer2.text = timer.text;
 		}
 	}
 

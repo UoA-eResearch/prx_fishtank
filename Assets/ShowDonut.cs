@@ -10,6 +10,8 @@ public class ShowDonut : MonoBehaviour {
 	private Vector3 big;
 	private float startTime;
 
+	public GameObject cartoonDonutPS;
+
 	private void Awake()
 	{
 		donut = transform.parent.Find("Donut").gameObject;
@@ -30,6 +32,11 @@ public class ShowDonut : MonoBehaviour {
 			donut.SetActive(true);
 			startTime = Time.time;
 			Invoke("DonutOff", 5);
+
+			//Nick - why can't I do this here? :-)
+			//var donutVfx = Instantiate(cartoonDonutPS, donut.transform.position, Quaternion.identity);
+			//Destroy(donutVfx, 4.0f);
+
 		}
 	}
 
