@@ -16,8 +16,13 @@ public class Fishtank : MonoBehaviour
 	public Text dimerCount;
 	public Text ringCount;
 	public Text ringCount2;
-	public Text biggestStack;
+	public Text stackLongestTxt;
+	public Text stackNumberTxt;
 	private bool hasWon = false;
+
+	private int stackLongest = 0;
+	private int stacks = 0;
+
 	public int numMonomers = 180;
 	private Dictionary<GameObject, GameObject> pairs;
 
@@ -802,32 +807,54 @@ public class Fishtank : MonoBehaviour
 		ringCount.text = rings.Length.ToString();
 		ringCount2.text = ringCount.text;
 		int stackLength = 0;
-		if (rings.Length > 0)//rings.Length == numMonomers / 2 / 6)
+
+		stacks = 0;
+		stackLongest = 0;
+
+		if (rings.Length > 0) // we have rings
 		{
-			int docks = 0;
 			foreach (var ring in rings)
 			{
 				var r = ring.GetComponent<Ring>();
-				
-				if (r.dockedToAcceptor)
+
+				//find donor end of a stack
+				if (r.dockedToAcceptor && !r.dockedToDonor)
 				{
-					docks++;
+					stackLength = 2;
+					stacks++;
+					//docks++;
+					var next = r.GetComponent<Ring>().partnerAcceptor;
+					var nextR = next.GetComponent<Ring>();
+					while (nextR.dockedToAcceptor)
+					{
+						next = nextR.GetComponent<Ring>().partnerAcceptor;
+						nextR = next.GetComponent<Ring>();
+						stackLength++;					
+					}
 				}
-				stackLength = docks + 1;
-				
+				if (stackLength > stackLongest)
+				{
+					stackLongest = stackLength;
+				}
+
 			}
-			if (docks == rings.Length - 1)
+			if (stackLongest == numMonomers / 2 / 6)
 			{
 				hasWon = true;
 			}
 		}
-		biggestStack.text = stackLength.ToString();
+		stackLongestTxt.text = stackLongest.ToString();
+		stackNumberTxt.text = stacks.ToString();
+
 		if (!hasWon)
 		{
+			// update timer if we have not yet won
 			double timeD = System.Math.Round(Time.timeSinceLevelLoad, 1);
 			timer.text = timeD.ToString() + "s";
-			timer2.text = timer.text;
+			timer2.text = timeD.ToString();
 		}
+
+
 	}
 
 	// Update is called once per frame
