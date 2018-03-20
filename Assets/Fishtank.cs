@@ -19,6 +19,7 @@ public class Fishtank : MonoBehaviour
 	public Text stackLongestTxt;
 	public Text stackNumberTxt;
 	private bool hasWon = false;
+	private bool confettiDone = false;
 
 	private int stackLongest = 0;
 	private int stacks = 0;
@@ -32,7 +33,8 @@ public class Fishtank : MonoBehaviour
 	private Dictionary<GameObject, GameObject> pairsMyDonorPrev;
 
 	public GameObject cartoonDonutPS;
-
+	public GameObject confettiPS;
+	
 	public GameObject solventH;
 	public GameObject solventOH;
 	public GameObject solventH2O;
@@ -892,7 +894,7 @@ public class Fishtank : MonoBehaviour
 			}
 			if (stackLongest == numMonomers / 2 / 6)
 			{
-				hasWon = true;
+				hasWon = true;	
 			}
 		}
 		stackLongestTxt.text = stackLongest.ToString();
@@ -904,6 +906,12 @@ public class Fishtank : MonoBehaviour
 			double timeD = System.Math.Round(Time.timeSinceLevelLoad, 1);
 			timer.text = timeD.ToString() + "s";
 			timer2.text = timeD.ToString();
+		}
+		if (hasWon && !confettiDone)
+		{
+			Vector3 confettiOffset = new Vector3(0f, 2.5f, 0f);
+			Instantiate(confettiPS, (gameObject.transform.position + confettiOffset), Quaternion.identity);
+			confettiDone = true;
 		}
 
 
