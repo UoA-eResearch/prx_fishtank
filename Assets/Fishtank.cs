@@ -33,6 +33,14 @@ public class Fishtank : MonoBehaviour
 
 	public GameObject cartoonDonutPS;
 
+	public GameObject solventH;
+	public GameObject solventOH;
+	public GameObject solventH2O;
+
+	private ParticleSystem psSolventH;
+	private ParticleSystem psSolventOH;
+	private ParticleSystem psSolventH2O;
+
 	private Bounds bounds;
 	private string[] tags;
 
@@ -633,6 +641,16 @@ public class Fishtank : MonoBehaviour
 
 		phSlider = gameObject.GetComponent<PHSlider>();
 
+		// initialise solvent particle systems
+		var mysolventH = Instantiate(solventH,  gameObject.transform.position, Quaternion.identity);
+		var mysolventOH = Instantiate(solventOH, gameObject.transform.position, Quaternion.identity);
+		var mysolventH2O = Instantiate(solventH2O, gameObject.transform.position, Quaternion.identity);
+
+		psSolventH = mysolventH.GetComponentInChildren<ParticleSystem>();
+		psSolventOH = mysolventOH.GetComponentInChildren<ParticleSystem>();
+		psSolventH2O = mysolventH2O.GetComponentInChildren<ParticleSystem>();
+
+
 		tags = new string[] { "monomer", "dimer", "ring" };
 
 		bounds = gameObject.GetComponent<Collider>().bounds;
@@ -689,6 +707,7 @@ public class Fishtank : MonoBehaviour
 	void assignProbability()
 	{
 		Color col;
+		Color particleCol;
 		col.a = fishtankAlpha;
 		col = Color.cyan;
 
@@ -760,6 +779,39 @@ public class Fishtank : MonoBehaviour
 		}
 		col.a = fishtankAlpha;
 		gameObject.GetComponent<Renderer>().material.color = col;
+
+		{
+			// visualise pH in solvent particle systems
+			ParticleSystem.MainModule psHMain = psSolventH.main;
+			ParticleSystem.MainModule psOHMain = psSolventOH.main;
+			ParticleSystem.EmissionModule psHEmission = psSolventH.emission;
+			ParticleSystem.EmissionModule psOHEmission = psSolventOH.emission;
+			ParticleSystem.EmissionModule psH2OEmission = psSolventH2O.emission;
+
+			if (true)
+			{ 
+				// test A - linking solvent particle (H) colours to pH
+
+				particleCol = col;
+				particleCol.a = 1.0f;
+				psHMain.startColor = particleCol;
+				psHMain.startSize = 0.01f; // slightly larger than prefab to make it more visible
+
+				psHEmission.rateOverTime = ((9 - (phSlider.GetPhValue() - 3))^2) * 50;
+				psOHEmission.rateOverTime = 0.0f;
+				psH2OEmission.rateOverTime = 100.0f;
+
+			}
+
+			if (false)
+			{
+				// test B - linking solvent particle (H and OH) numbers to pH
+
+				psH2OEmission.rateOverTime = 100.0f;
+				psHEmission.rateOverTime = (6 - (phSlider.GetPhValue() - 3)) * 30;
+				psOHEmission.rateOverTime = (phSlider.GetPhValue() - 3) * 30;
+			}
+		}
 
 	}
 
