@@ -32,7 +32,7 @@ public class Fishtank : MonoBehaviour
 	private Dictionary<GameObject, GameObject> pairsMyDonor;
 	private Dictionary<GameObject, GameObject> pairsMyDonorPrev;
 
-	public GameObject cartoonDonutPS;
+	public GameObject ringPS;
 	public GameObject confettiPS;
 	
 	public GameObject solventH;
@@ -496,10 +496,9 @@ public class Fishtank : MonoBehaviour
 							if (totalDist < 0.01f)
 							{
 								var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
-
-								//testing particle system
-								var donutVfx = Instantiate(cartoonDonutPS, go.transform.position, Quaternion.identity);
-								Destroy(donutVfx, 4.0f);
+								
+								var ringVfx = Instantiate(ringPS, go.transform.position, Quaternion.identity);
+								Destroy(ringVfx, 4.0f);
 
 								ring.name = "ring [ " + go.name + "]";
 								//Debug.Log(ring.name);

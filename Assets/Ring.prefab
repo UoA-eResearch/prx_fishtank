@@ -977,6 +977,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 241e581f203563a41849c7ac2ef17246, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cartoonDonutPS: {fileID: 1629154026007300, guid: 60ca3a78f3cf35943bc4adc6595436be,
+    type: 2}
 --- !u!114 &114710297751909288
 MonoBehaviour:
   m_ObjectHideFlags: 1
