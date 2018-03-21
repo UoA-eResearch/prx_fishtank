@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class ShowDonut : MonoBehaviour {
 
-	private GameObject donut;
 	private Vector3 small;
 	private Vector3 medium;
 	private Vector3 big;
 	private float startTime;
 
+	public GameObject donut;
+	public GameObject rustyDonut;
 	public GameObject cartoonDonutPS;
 
 	private void Awake()
 	{
-		donut = transform.parent.Find("Donut").gameObject;
 		small = donut.transform.localScale * .9f;
 		medium = donut.transform.localScale;
 		big = donut.transform.localScale * 1.1f;
@@ -36,6 +36,22 @@ public class ShowDonut : MonoBehaviour {
 			var donutVfx = Instantiate(cartoonDonutPS, donut.transform.position, Quaternion.identity);
 			Destroy(donutVfx, 4.0f);
 
+		}
+	}
+
+	private void OnTriggerStay(Collider other)
+	{
+		if (other.name == "ringCenter")
+		{
+			rustyDonut.SetActive(true);
+		}
+	}
+
+	private void OnTriggerExit(Collider other)
+	{
+		if (other.name == "ringCenter")
+		{
+			rustyDonut.SetActive(false);
 		}
 	}
 

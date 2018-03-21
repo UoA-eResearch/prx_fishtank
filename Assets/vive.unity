@@ -1496,7 +1496,7 @@ Prefab:
     - {fileID: 114831056366379486, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
     - {fileID: 114864354974993022, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
     - {fileID: 114133895727301288, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
-    - {fileID: 65311637666035512, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &537061220 stripped
@@ -3070,7 +3070,7 @@ Prefab:
     - {fileID: 114831056366379486, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
     - {fileID: 114864354974993022, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
     - {fileID: 114133895727301288, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
-    - {fileID: 65311637666035512, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &1242813180 stripped
@@ -3531,7 +3531,7 @@ Prefab:
     - {fileID: 114831056366379486, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
     - {fileID: 114864354974993022, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
     - {fileID: 114133895727301288, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
-    - {fileID: 65311637666035512, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
+    - {fileID: 0}
   m_ParentPrefab: {fileID: 100100000, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
   m_IsPrefabParent: 0
 --- !u!4 &1313628777 stripped
