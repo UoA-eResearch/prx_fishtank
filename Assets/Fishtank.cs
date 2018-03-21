@@ -34,6 +34,8 @@ public class Fishtank : MonoBehaviour
 
 	public GameObject ringPS;
 	public GameObject confettiPS;
+
+	public AudioSource fishtankAudioSource;
 	
 	public GameObject solventH;
 	public GameObject solventOH;
@@ -908,6 +910,7 @@ public class Fishtank : MonoBehaviour
 		}
 		if (hasWon && !confettiDone)
 		{
+			fishtankAudioSource.Play();
 			Vector3 confettiOffset = new Vector3(0f, 2.5f, 0f);
 			Instantiate(confettiPS, (gameObject.transform.position + confettiOffset), Quaternion.identity);
 			confettiDone = true;

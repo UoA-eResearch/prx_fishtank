@@ -12,6 +12,9 @@ public class ShowDonut : MonoBehaviour {
 	public GameObject donut;
 	public GameObject rustyDonut;
 	public GameObject cartoonDonutPS;
+	public AudioSource ringAudioSource;
+	public AudioClip donutSpawnSound;
+	public AudioClip rustyDonutSpawnSound;
 
 	private void Awake()
 	{
@@ -36,14 +39,16 @@ public class ShowDonut : MonoBehaviour {
 			var donutVfx = Instantiate(cartoonDonutPS, donut.transform.position, Quaternion.identity);
 			Destroy(donutVfx, 4.0f);
 
+			ringAudioSource.PlayOneShot(donutSpawnSound);
 		}
 	}
 
 	private void OnTriggerStay(Collider other)
 	{
-		if (other.name == "ringCenter")
+		if (other.name == "ringCenter" && !rustyDonut.activeInHierarchy)
 		{
 			rustyDonut.SetActive(true);
+			ringAudioSource.PlayOneShot(rustyDonutSpawnSound);
 		}
 	}
 
