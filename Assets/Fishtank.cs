@@ -36,6 +36,8 @@ public class Fishtank : MonoBehaviour
 	public GameObject confettiPS;
 
 	public AudioSource fishtankAudioSource;
+
+	public PartyModeSwitch partyModeSwitch;
 	
 	public GameObject solventH;
 	public GameObject solventOH;
@@ -498,9 +500,12 @@ public class Fishtank : MonoBehaviour
 							if (totalDist < 0.01f)
 							{
 								var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
-								
-								var ringVfx = Instantiate(ringPS, go.transform.position, Quaternion.identity);
-								Destroy(ringVfx, 4.0f);
+
+								if (partyModeSwitch.partying)
+								{
+									var ringVfx = Instantiate(ringPS, go.transform.position, Quaternion.identity);
+									Destroy(ringVfx, 4.0f);
+								}
 
 								ring.name = "ring [ " + go.name + "]";
 								//Debug.Log(ring.name);
@@ -908,7 +913,7 @@ public class Fishtank : MonoBehaviour
 			timer.text = timeD.ToString() + "s";
 			timer2.text = timeD.ToString();
 		}
-		if (hasWon && !confettiDone)
+		if (hasWon && !confettiDone && partyModeSwitch.partying)
 		{
 			fishtankAudioSource.Play();
 			Vector3 confettiOffset = new Vector3(0f, 2.5f, 0f);

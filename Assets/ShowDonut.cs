@@ -16,8 +16,11 @@ public class ShowDonut : MonoBehaviour {
 	public AudioClip donutSpawnSound;
 	public AudioClip rustyDonutSpawnSound;
 
+	private PartyModeSwitch partyModeSwitch;
+
 	private void Awake()
 	{
+		partyModeSwitch = FindObjectOfType<PartyModeSwitch>();
 		small = donut.transform.localScale * .9f;
 		medium = donut.transform.localScale;
 		big = donut.transform.localScale * 1.1f;
@@ -30,7 +33,7 @@ public class ShowDonut : MonoBehaviour {
 
 	private void OnTriggerEnter(Collider other)
 	{
-		if ((other.gameObject.tag == "monomer" || other.gameObject.tag == "dimer" )&& !donut.activeInHierarchy)
+		if ((other.gameObject.tag == "monomer" || other.gameObject.tag == "dimer" )&& !donut.activeInHierarchy && partyModeSwitch.partying)
 		{
 			donut.SetActive(true);
 			startTime = Time.time;
@@ -45,7 +48,7 @@ public class ShowDonut : MonoBehaviour {
 
 	private void OnTriggerStay(Collider other)
 	{
-		if (other.name == "ringCenter" && !rustyDonut.activeInHierarchy)
+		if (other.name == "ringCenter" && !rustyDonut.activeInHierarchy && partyModeSwitch.partying)
 		{
 			rustyDonut.SetActive(true);
 			ringAudioSource.PlayOneShot(rustyDonutSpawnSound);
@@ -62,10 +65,18 @@ public class ShowDonut : MonoBehaviour {
 
 	private void Update()
 	{
-		var s = Time.time - startTime;
-		var newSmall = Vector3.Lerp(small, medium, s);
-		var newBig = Vector3.Lerp(big, medium, s);
-		float f = Mathf.PingPong(s * 10, 1);
-		donut.transform.localScale = Vector3.Lerp(newSmall, newBig, f);
+		if (partyModeSwitch.partying)
+		{
+			var s = Time.time - startTime;
+			var newSmall = Vector3.Lerp(small, medium, s);
+			var newBig = Vector3.Lerp(big, medium, s);
+			float f = Mathf.PingPong(s * 10, 1);
+			donut.transform.localScale = Vector3.Lerp(newSmall, newBig, f);
+		}
+		else
+		{
+			donut.SetActive(false);
+			rustyDonut.SetActive(false);
+		}
 	}
 }
