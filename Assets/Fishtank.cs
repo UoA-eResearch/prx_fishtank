@@ -803,7 +803,7 @@ public class Fishtank : MonoBehaviour
 				particleCol = col;
 				particleCol.a = 1.0f;
 				psHMain.startColor = particleCol;
-				psHMain.startSize = 0.01f; // slightly larger than prefab to make it more visible
+				psHMain.startSize = 0.012f; // slightly larger than prefab to make it more visible
 
 				psHEmission.rateOverTime = ((9 - (phSlider.GetPhValue() - 3))^2) * 50;
 				psOHEmission.rateOverTime = 0.0f;
