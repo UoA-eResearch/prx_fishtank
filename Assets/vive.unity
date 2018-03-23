@@ -1410,6 +1410,7 @@ MonoBehaviour:
   alignLimitDot: 0.5
   relateLimitDot: 0.5
   pairingInterval: 0.1
+  ringAntiparallelCheckInterval: 1
   pairingVelocity: 0.05
   pairingRotationVelocity: 40
   minDistApplyRBForces: 0.02

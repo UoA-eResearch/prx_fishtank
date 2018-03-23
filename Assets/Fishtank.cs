@@ -77,6 +77,8 @@ public class Fishtank : MonoBehaviour
 
 	public float pairingInterval = 0.1f;
 
+	public float ringAntiparallelCheckInterval = 1f;
+
 	public float pairingVelocity = 0.05f;               // translation rate for pairing using positional transform lerp
 	public int pairingRotationVelocity = 40;            // rotation rate for pairing using quaternion slerp
 
@@ -672,6 +674,7 @@ public class Fishtank : MonoBehaviour
 			monomer.name = "monomer" + i;
 		}
 		InvokeRepeating("FindPairs", 0, pairingInterval);
+		InvokeRepeating("DetectAntiparallel", 0, ringAntiparallelCheckInterval);
 	}
 
 	private void FixHoverlock()
@@ -922,6 +925,41 @@ public class Fishtank : MonoBehaviour
 		}
 
 
+	}
+
+	void DetectAntiparallel()
+	{
+		float minDist = float.PositiveInfinity;
+		GameObject flipper = null;
+		foreach (var a in GameObject.FindGameObjectsWithTag("ring"))
+		{
+			foreach (var b in GameObject.FindGameObjectsWithTag("ring"))
+			{
+				if (a != b && a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerAcceptor == null)
+				{
+					var testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+					var dist = Vector3.Distance(a.transform.position, b.transform.position);
+					if (dist < minDist && testPairAlignDot < -relateLimitDot)
+					{
+						// Both a and b are missing acceptors, they're the closest unpaired acceptors in the fishtank, and they're aligned in antiparallel. Designate b to flip
+						minDist = dist;
+						Debug.Log(a.name + " and " + b.name + " are both missing acceptors - relate=" + testPairAlignDot + " = suitable for a flip");
+						flipper = b;
+					}
+				}
+			}
+		}
+		if (flipper != null)
+		{
+			// Flip the designated ring around, along with it's entire stack
+			flipper.transform.Rotate(0, 0, 180, Space.Self);
+			var donor = flipper.GetComponent<Ring>().partnerDonor;
+			while (donor != null)
+			{
+				donor.transform.transform.Rotate(0, 0, 180, Space.Self);
+				donor = donor.GetComponent<Ring>().partnerDonor;
+			}
+		}
 	}
 
 	// Update is called once per frame
