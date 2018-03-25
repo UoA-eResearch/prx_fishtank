@@ -1420,6 +1420,7 @@ MonoBehaviour:
   ringAngleDiff: 45
   pairingForcingVelocity: 20
   pairingForcingRotationVelocity: 50
+  ringRotSymmetry: 6
   cheat: 0
 --- !u!114 &469726001
 MonoBehaviour:
@@ -3691,7 +3692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46f8e9e70f68ee3418ad85992778c116, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 0
+  value: 1
 --- !u!114 &1288313465
 MonoBehaviour:
   m_ObjectHideFlags: 0
