@@ -577,28 +577,13 @@ public class Fishtank : MonoBehaviour
 						var targetRotation = donor.rotation;
 						var distanceFromDonorPos = Vector3.Distance(go.transform.position, donorPos);
 
-						var angle = Quaternion.Angle(go.transform.rotation, targetRotation);
+						//var angle = Quaternion.Angle(go.transform.rotation, targetRotation);
 						//Debug.Log(go.name + " is " + angle + " from donor target rotation ");
 
 						{
-							
-							Quaternion testRotationQuat;
-							float testRotationDiff;
-							float bestRotationDiff = 360.0f;
-							for (int i = 0; i < ringRotSymmetry; i++)
-							{
-								testRotationQuat = donor.rotation * Quaternion.Euler(new Vector3(0, (i * (360.0f / ringRotSymmetry)), 0));
-								testRotationDiff = Quaternion.Angle(go.transform.rotation, testRotationQuat);
-								if (testRotationDiff < bestRotationDiff)
-								{
-									bestRotationDiff = testRotationDiff;
-									bestRotationOffsetAngle = (i * (360.0f / ringRotSymmetry));
-								}
-
-							}
-							
+							bestRotationOffsetAngle = GetBestRotationOffsetAngle(donor.rotation, go);
+							//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
 							targetRotation = donor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
-							Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
 						}
 
 						if (distanceFromDonorPos > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
@@ -634,29 +619,12 @@ public class Fishtank : MonoBehaviour
 						var targetRotation = acceptor.rotation;
 						var distanceFromAcceptorPos = Vector3.Distance(go.transform.position, acceptorPos);
 
-						
 						{
-							bestRotationOffsetAngle = 0.0f;
-							Quaternion testRotationQuat;
-							float testRotationDiff;
-							float bestRotationDiff = 360.0f;
-							for (int i = 0; i < ringRotSymmetry; i++)
-							{
-								testRotationQuat = acceptor.rotation * Quaternion.Euler(new Vector3(0, (i * (360.0f / ringRotSymmetry)), 0));
-								testRotationDiff = Quaternion.Angle(go.transform.rotation, testRotationQuat);
-								if (testRotationDiff < bestRotationDiff)
-								{
-									bestRotationDiff = testRotationDiff;
-									bestRotationOffsetAngle = (i * (360.0f / ringRotSymmetry));
-								}
-
-							}
-
+							bestRotationOffsetAngle = GetBestRotationOffsetAngle(acceptor.rotation, go);
+							//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
 							targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
-							Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
 						}
-						
-
+			
 						/*
 						{
 							// possible optimisation as alternative to code block above
@@ -1020,6 +988,27 @@ public class Fishtank : MonoBehaviour
 				donor = donor.GetComponent<Ring>().partnerDonor;
 			}
 		}
+	}
+
+	float GetBestRotationOffsetAngle (Quaternion partnerRotation, GameObject ring)
+	{
+		Quaternion testRotationQuat;
+		float testRotationDiff;
+		float bestRotationDiff = 360.0f;
+		float bestRotationOffsetAngle = 0.0f;
+		for (int i = 0; i < ringRotSymmetry; i++)
+		{
+			testRotationQuat = partnerRotation * Quaternion.Euler(new Vector3(0, (i * (360.0f / ringRotSymmetry)), 0));
+			testRotationDiff = Quaternion.Angle(ring.transform.rotation, testRotationQuat);
+			if (testRotationDiff < bestRotationDiff)
+			{
+				bestRotationDiff = testRotationDiff;
+				bestRotationOffsetAngle = (i * (360.0f / ringRotSymmetry));
+			}
+
+		}
+		//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
+		return bestRotationOffsetAngle;
 	}
 
 	// Update is called once per frame
