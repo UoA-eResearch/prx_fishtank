@@ -72,7 +72,7 @@ public class Ring: MonoBehaviour
 
 	void OnHandHoverBegin(Hand hand)
 	{
-		if (gameObject == hand.otherHand.currentAttachedObject && shouldBreak)
+		if (gameObject == hand.otherHand.currentAttachedObject && shouldBreak && hand.otherHand.AttachedObjects.Count == 1)
 		{
 			breakRing(hand);
 		}
