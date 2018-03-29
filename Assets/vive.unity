@@ -1404,12 +1404,13 @@ MonoBehaviour:
   confettiPS: {fileID: 1436732341807552, guid: 820976cf41c9be14c926c89edf470e8b, type: 2}
   fishtankAudioSource: {fileID: 469726002}
   partyModeSwitch: {fileID: 1288313465}
-  solventH: {fileID: 1535990462162624, guid: 358466c21c5966d43b388e54e725c29a, type: 2}
+  solventH: {fileID: 1343720090702508, guid: 46d5d3d631859224aa75481c6a3579f7, type: 2}
   solventOH: {fileID: 1090510125369910, guid: 80271ce95b5108f4eb53a7e76c8e0501, type: 2}
   solventH2O: {fileID: 1390383740014688, guid: 6ee026f66212cf347b76e20e39573efd, type: 2}
   alignLimitDot: 0.5
   relateLimitDot: 0.5
   pairingInterval: 0.1
+  ringAntiparallelCheckInterval: 1
   pairingVelocity: 0.05
   pairingRotationVelocity: 40
   minDistApplyRBForces: 0.02
@@ -1419,6 +1420,7 @@ MonoBehaviour:
   ringAngleDiff: 45
   pairingForcingVelocity: 20
   pairingForcingRotationVelocity: 50
+  ringRotSymmetry: 6
   cheat: 0
 --- !u!114 &469726001
 MonoBehaviour:
@@ -3690,7 +3692,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46f8e9e70f68ee3418ad85992778c116, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 0
+  value: 1
 --- !u!114 &1288313465
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4323,7 +4325,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1437929108
 GameObject:
@@ -6594,7 +6596,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 447954, guid: dc06161b6d97feb419f45f03b62e14b9, type: 2}
       propertyPath: m_RootOrder
-      value: 3
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 107946, guid: dc06161b6d97feb419f45f03b62e14b9, type: 2}
       propertyPath: m_Name

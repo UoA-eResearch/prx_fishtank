@@ -77,6 +77,8 @@ public class Fishtank : MonoBehaviour
 
 	public float pairingInterval = 0.1f;
 
+	public float ringAntiparallelCheckInterval = 1f;
+
 	public float pairingVelocity = 0.05f;               // translation rate for pairing using positional transform lerp
 	public int pairingRotationVelocity = 40;            // rotation rate for pairing using quaternion slerp
 
@@ -90,6 +92,8 @@ public class Fishtank : MonoBehaviour
 
 	public float pairingForcingVelocity = 20.0f;        // translation rate for pairing using positional transform lerp - maintains forced ring stacking for manipulation
 	public int pairingForcingRotationVelocity = 50;     // rotation rate for pairing using quaternion slerp
+
+	public int ringRotSymmetry = 6;						// number of equivalent docking positions around ring
 
 	public bool cheat = false;
 
@@ -561,6 +565,8 @@ public class Fishtank : MonoBehaviour
 				else if (tag == "ring")
 				{
 					var ring = go.GetComponent<Ring>();
+					float bestRotationOffsetAngle = 0.0f;
+
 					ring.dockedToDonor = false;
 					ring.dockedToAcceptor = false;
 
@@ -570,6 +576,15 @@ public class Fishtank : MonoBehaviour
 						var donorPos = donor.position;
 						var targetRotation = donor.rotation;
 						var distanceFromDonorPos = Vector3.Distance(go.transform.position, donorPos);
+
+						//var angle = Quaternion.Angle(go.transform.rotation, targetRotation);
+						//Debug.Log(go.name + " is " + angle + " from donor target rotation ");
+
+						{
+							bestRotationOffsetAngle = GetBestRotationOffsetAngle(donor.rotation, go);
+							//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
+							targetRotation = donor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+						}
 
 						if (distanceFromDonorPos > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
 						{
@@ -603,6 +618,21 @@ public class Fishtank : MonoBehaviour
 						var acceptorPos = acceptor.position;
 						var targetRotation = acceptor.rotation;
 						var distanceFromAcceptorPos = Vector3.Distance(go.transform.position, acceptorPos);
+
+						{
+							bestRotationOffsetAngle = GetBestRotationOffsetAngle(acceptor.rotation, go);
+							//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
+							targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+						}
+			
+						/*
+						{
+							// possible optimisation as alternative to code block above
+							bestRotationOffsetAngle = 360.0f - bestRotationOffsetAngle;
+							targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+							Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
+						}
+						*/
 
 						if (distanceFromAcceptorPos > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
 						{
@@ -672,6 +702,7 @@ public class Fishtank : MonoBehaviour
 			monomer.name = "monomer" + i;
 		}
 		InvokeRepeating("FindPairs", 0, pairingInterval);
+		InvokeRepeating("DetectAntiparallel", 0, ringAntiparallelCheckInterval);
 	}
 
 	private void FixHoverlock()
@@ -803,7 +834,7 @@ public class Fishtank : MonoBehaviour
 				particleCol = col;
 				particleCol.a = 1.0f;
 				psHMain.startColor = particleCol;
-				psHMain.startSize = 0.01f; // slightly larger than prefab to make it more visible
+				psHMain.startSize = 0.012f; // slightly larger than prefab to make it more visible
 
 				psHEmission.rateOverTime = ((9 - (phSlider.GetPhValue() - 3))^2) * 50;
 				psOHEmission.rateOverTime = 0.0f;
@@ -922,6 +953,62 @@ public class Fishtank : MonoBehaviour
 		}
 
 
+	}
+
+	void DetectAntiparallel()
+	{
+		float minDist = float.PositiveInfinity;
+		GameObject flipper = null;
+		foreach (var a in GameObject.FindGameObjectsWithTag("ring"))
+		{
+			foreach (var b in GameObject.FindGameObjectsWithTag("ring"))
+			{
+				if (a != b && a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerAcceptor == null)
+				{
+					var testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+					var dist = Vector3.Distance(a.transform.position, b.transform.position);
+					if (dist < minDist && testPairAlignDot < -relateLimitDot)
+					{
+						// Both a and b are missing acceptors, they're the closest unpaired acceptors in the fishtank, and they're aligned in antiparallel. Designate b to flip
+						minDist = dist;
+						Debug.Log(a.name + " and " + b.name + " are both missing acceptors - relate=" + testPairAlignDot + " = suitable for a flip");
+						flipper = b;
+					}
+				}
+			}
+		}
+		if (flipper != null)
+		{
+			// Flip the designated ring around, along with it's entire stack
+			flipper.transform.Rotate(0, 0, 180, Space.Self);
+			var donor = flipper.GetComponent<Ring>().partnerDonor;
+			while (donor != null)
+			{
+				donor.transform.transform.Rotate(0, 0, 180, Space.Self);
+				donor = donor.GetComponent<Ring>().partnerDonor;
+			}
+		}
+	}
+
+	float GetBestRotationOffsetAngle (Quaternion partnerRotation, GameObject ring)
+	{
+		Quaternion testRotationQuat;
+		float testRotationDiff;
+		float bestRotationDiff = 360.0f;
+		float bestRotationOffsetAngle = 0.0f;
+		for (int i = 0; i < ringRotSymmetry; i++)
+		{
+			testRotationQuat = partnerRotation * Quaternion.Euler(new Vector3(0, (i * (360.0f / ringRotSymmetry)), 0));
+			testRotationDiff = Quaternion.Angle(ring.transform.rotation, testRotationQuat);
+			if (testRotationDiff < bestRotationDiff)
+			{
+				bestRotationDiff = testRotationDiff;
+				bestRotationOffsetAngle = (i * (360.0f / ringRotSymmetry));
+			}
+
+		}
+		//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
+		return bestRotationOffsetAngle;
 	}
 
 	// Update is called once per frame
