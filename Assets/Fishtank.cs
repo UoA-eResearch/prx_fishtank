@@ -504,6 +504,8 @@ public class Fishtank : MonoBehaviour
 							if (totalDist < 0.01f)
 							{
 								var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
+								//var ringTransform = go.transform.Find("dimer2ringTransform");
+								//var ring = Instantiate(ringPrefab, (go.transform.position + ringTransform.position), go.transform.rotation, transform);
 
 								if (partyModeSwitch.partying)
 								{

@@ -85,7 +85,7 @@ public class Ring: MonoBehaviour
 			Vector3 velocity = velEst.GetVelocityEstimate();
 			//Debug.Log("Velocity: " + velocity + velocity.magnitude);
 
-			if (velocity.magnitude > 3.0 && ringAttached)
+			if (velocity.magnitude > 10.0 && ringAttached)
 			{
 				breakRing(hand);
 				ringAttached = false;
