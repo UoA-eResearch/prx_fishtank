@@ -3694,7 +3694,7 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: "\rThis simulation was developed by:\n\nNick Young and Bianca Haux\nUniversity
     of Auckland Centre for eResearch\n\nDavid Doak\nNorwich University of the Arts\n\nJuliet
-    Gerrard, and Michael Barnett\nUniversity of Auckland School of Biological Sciences.\n\nThe
+    Gerrard and Michael Barnett\nUniversity of Auckland School of Biological Sciences.\n\nThe
     source code is accessible at\r\nhttps://github.com/UoA-eResearch/prx_fishtank.\r"
 --- !u!222 &1265486685
 CanvasRenderer:
@@ -4463,7 +4463,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!23 &1418861761
 MeshRenderer:
   m_ObjectHideFlags: 0
