@@ -1055,13 +1055,17 @@ public class Fishtank : MonoBehaviour
 			var dimer = go;
 			dimer.GetComponent<MeshRenderer>().enabled = !renderCartoon;
 			dimer.transform.Find("mesh_cartoon").gameObject.SetActive(renderCartoon);
+
+			dimer.transform.Find("dimerLight").gameObject.SetActive(!renderCartoon);
 		}
 		else if (go.tag == "ring")
 		{
 			var ring = go;
 			ring.transform.Find("Ring_MeshPart0").gameObject.SetActive(!renderCartoon);
 			ring.transform.Find("Ring_MeshPart1").gameObject.SetActive(!renderCartoon);
-			ring.transform.Find("cartoon_built").gameObject.SetActive(renderCartoon);
+			ring.transform.Find("mesh_cartoon").gameObject.SetActive(renderCartoon);
+
+			ring.transform.Find("ringLight").gameObject.SetActive(!renderCartoon);
 		}
 	}
 

@@ -598,7 +598,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4272524431128226}
   m_Layer: 0
-  m_Name: cartoon_built
+  m_Name: mesh_cartoon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1547,7 +1547,7 @@ GameObject:
   - component: {fileID: 4799051708464584}
   - component: {fileID: 108048730391376206}
   m_Layer: 0
-  m_Name: Area Light
+  m_Name: ringLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -9800,7 +9800,7 @@ Light:
   serializedVersion: 8
   m_Type: 2
   m_Color: {r: 0, g: 1, b: 0.13103437, a: 1}
-  m_Intensity: 1
+  m_Intensity: 3
   m_Range: 0.15
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -10002,6 +10002,8 @@ MonoBehaviour:
   partnerDonor: {fileID: 0}
   dockedToAcceptor: 0
   dockedToDonor: 0
+  fishtankScript: {fileID: 0}
+  fishtankGO: {fileID: 0}
 --- !u!114 &114916512091932642
 MonoBehaviour:
   m_ObjectHideFlags: 1
