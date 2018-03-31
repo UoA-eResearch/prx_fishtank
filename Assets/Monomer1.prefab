@@ -38,7 +38,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4038231407947276}
   m_Layer: 0
-  m_Name: mesh_transform
+  m_Name: mesh_cartoon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

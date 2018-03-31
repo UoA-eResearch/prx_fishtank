@@ -17,10 +17,15 @@ public class Ring: MonoBehaviour
 	public bool dockedToAcceptor = false;
 	public bool dockedToDonor = false;
 
+	public Fishtank fishtankScript;
+	public GameObject fishtankGO;
+
 	void Awake()
 	{
 		velEst = GetComponent<VelocityEstimator>();
 		fishtank = transform.parent;
+		GameObject fishtankGO = GameObject.Find("fishtank");
+		fishtankScript = fishtankGO.GetComponent<Fishtank>();
 	}
 
 	public void breakRing(Hand currentHand)
@@ -37,6 +42,8 @@ public class Ring: MonoBehaviour
 		var dimer = Instantiate(dimerPrefab, transform.position, transform.rotation, fishtank);
 		dimer.GetComponent<Rigidbody>().AddForce(-dimer.transform.forward * Random.RandomRange(0.01f, 0.02f), ForceMode.Impulse);
 		dimer.name = "dimer_" + dimer.GetInstanceID();
+		fishtankScript.SetCartoonRendering(dimer);
+
 		float minDist = 0;
 		if (currentHand != null) {
 			minDist = Vector3.Distance (dimer.transform.position, currentHand.otherHand.hoverSphereTransform.position);
@@ -49,6 +56,8 @@ public class Ring: MonoBehaviour
 				var childDimer = Instantiate(dimerPrefab, child.transform.position, child.transform.rotation, fishtank);
 				childDimer.GetComponent<Rigidbody>().AddForce(-childDimer.transform.forward * Random.RandomRange(0.01f, 0.02f), ForceMode.Impulse);
 				childDimer.name = "dimer_" + dimer.GetInstanceID();
+				fishtankScript.SetCartoonRendering(childDimer);
+
 				if (currentHand != null)
 				{
 					var dist = Vector3.Distance(child.transform.position, currentHand.otherHand.hoverSphereTransform.position);

@@ -96,6 +96,8 @@ public class Fishtank : MonoBehaviour
 	public int ringRotSymmetry = 6;						// number of equivalent docking positions around ring
 
 	public bool cheat = false;
+	public bool renderCartoon = false;
+	private bool renderCartoonLast = false;
 
 	void FindPairs()
 	{
@@ -466,6 +468,8 @@ public class Fishtank : MonoBehaviour
 						var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
 						dimer.name = "dimer (" + go.name + " + " + partner.name + ")";
 
+						SetCartoonRendering(dimer);
+
 						Destroy(go);
 						Destroy(partner);
 						continue;
@@ -504,6 +508,8 @@ public class Fishtank : MonoBehaviour
 							if (totalDist < 0.01f)
 							{
 								var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
+								SetCartoonRendering(ring);
+
 								//var ringTransform = go.transform.Find("dimer2ringTransform");
 								//var ring = Instantiate(ringPrefab, (go.transform.position + ringTransform.position), go.transform.rotation, transform);
 
@@ -702,6 +708,9 @@ public class Fishtank : MonoBehaviour
 			monomer.transform.position = pos;
 			monomer.transform.rotation = Random.rotation;
 			monomer.name = "monomer" + i;
+			SetCartoonRendering(monomer);
+
+
 		}
 		InvokeRepeating("FindPairs", 0, pairingInterval);
 		InvokeRepeating("DetectAntiparallel", 0, ringAntiparallelCheckInterval);
@@ -1013,6 +1022,49 @@ public class Fishtank : MonoBehaviour
 		return bestRotationOffsetAngle;
 	}
 
+	void UpdateCartoon ()
+	{
+		if (renderCartoon != renderCartoonLast)
+		{
+			foreach (var a in GameObject.FindGameObjectsWithTag("monomer"))
+			{
+				SetCartoonRendering(a);
+			}
+			foreach (var a in GameObject.FindGameObjectsWithTag("dimer"))
+			{
+				SetCartoonRendering(a);
+			}
+			foreach (var a in GameObject.FindGameObjectsWithTag("ring"))
+			{
+				SetCartoonRendering(a);
+			}
+			renderCartoonLast = renderCartoon;
+		}
+	}
+
+	public void SetCartoonRendering(GameObject go)
+	{
+		if (go.tag == "monomer")
+		{
+			var monomer = go;
+			monomer.GetComponent<MeshRenderer>().enabled = !renderCartoon;
+			monomer.transform.Find("mesh_cartoon").gameObject.SetActive(renderCartoon);
+		}
+		else if (go.tag == "dimer")
+		{
+			var dimer = go;
+			dimer.GetComponent<MeshRenderer>().enabled = !renderCartoon;
+			dimer.transform.Find("mesh_cartoon").gameObject.SetActive(renderCartoon);
+		}
+		else if (go.tag == "ring")
+		{
+			var ring = go;
+			ring.transform.Find("Ring_MeshPart0").gameObject.SetActive(!renderCartoon);
+			ring.transform.Find("Ring_MeshPart1").gameObject.SetActive(!renderCartoon);
+			ring.transform.Find("cartoon_built").gameObject.SetActive(renderCartoon);
+		}
+	}
+
 	// Update is called once per frame
 	void Update()
 	{
@@ -1021,5 +1073,6 @@ public class Fishtank : MonoBehaviour
 		//RingRepel();
 		ClampRigidBodyDynamics();
 		UpdateTimer();
+		UpdateCartoon();
 	}
 }

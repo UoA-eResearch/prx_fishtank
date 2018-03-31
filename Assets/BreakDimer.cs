@@ -16,10 +16,15 @@ public class BreakDimer : MonoBehaviour
 	private Transform partnerPos;
 	private Transform fishtank;
 
+	public Fishtank fishtankScript;
+	public GameObject fishtankGO;
+
 	void Awake()
 	{
 		velEst = GetComponent<VelocityEstimator>();
 		fishtank = transform.parent;
+		GameObject fishtankGO = GameObject.Find("fishtank");
+		fishtankScript = fishtankGO.GetComponent<Fishtank>();
 	}
 
 	void breakDimer(Hand hand)
@@ -51,10 +56,12 @@ public class BreakDimer : MonoBehaviour
 		monomer1 = Instantiate(monomerPrefab, monomerPos.position, monomerPos.rotation, fishtank);
 		//monomer1.GetComponent<Rigidbody>().AddForce(-monomer1.transform.forward * Random.RandomRange(0.01f,0.02f), ForceMode.Impulse);
 		monomer1.name = "Mo_" + monomer1.GetInstanceID();
+		fishtankScript.SetCartoonRendering(monomer1);
 		partnerPos = monomer1.transform.Find("partnerPos");
 		monomer2 = Instantiate(monomerPrefab, partnerPos.position, partnerPos.rotation, fishtank);
 		//monomer2.GetComponent<Rigidbody>().AddForce(-monomer2.transform.forward * Random.RandomRange(0.01f,0.02f), ForceMode.Impulse);
 		monomer2.name = "Mo_" + monomer2.GetInstanceID();
+		fishtankScript.SetCartoonRendering(monomer2);
 		Debug.Log("Destroying " + gameObject.name);
 		Destroy(gameObject);
 	}
