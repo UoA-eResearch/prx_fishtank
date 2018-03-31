@@ -533,7 +533,7 @@ public class Fishtank : MonoBehaviour
 							}
 							//master dimers have pairs but do not try to move towards them
 							//but making master dimers wander seems to compromise ring formation
-							//AddRandomMotion(go);
+							AddRandomMotion(go);
 						}
 						catch (KeyNotFoundException e)
 						{
@@ -553,7 +553,8 @@ public class Fishtank : MonoBehaviour
 					*/
 
 					// 
-					if (tag == "monomer" || tag == "dimer")
+					// do the actual pushing together
+					if (tag == "monomer")
 					{
 						if (distanceFromTarget > minDistApplyRBForces) // use rigidbody forces to push paired game objects together
 						{
@@ -566,6 +567,21 @@ public class Fishtank : MonoBehaviour
 							//Debug.Log(dimer.name);
 							go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * pairingVelocity);
 							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.1f) * pairingRotationVelocity);
+						}
+					}
+					if (tag == "dimer")
+					{
+						if (distanceFromTarget > minDistApplyRBForces) // use rigidbody forces to push paired game objects together
+						{
+							float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f); //
+							go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 1.0f) * pairingRotationVelocity);
+						}
+						else
+						{
+							//Debug.Log(dimer.name);
+							go.transform.position = Vector3.MoveTowards(go.transform.position, targetPos, Time.deltaTime * 3.0f * pairingVelocity);
+							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(1.0f, 2.0f) * pairingRotationVelocity);
 						}
 					}
 				}
@@ -747,10 +763,20 @@ public class Fishtank : MonoBehaviour
 		}
 		else
 		{
-			go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * Time.deltaTime * Random.Range(forceDiffuseMin, forceDiffuseMax), ForceMode.Impulse);
+			if (masterDimers.Contains(go))
+			{
+				// don't tumble master dimers
+				go.GetComponent<Rigidbody>().AddRelativeTorque(torque * 0.1f * Random.onUnitSphere, ForceMode.Impulse);
+				go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * 0.1f  * Time.deltaTime * Random.Range(forceDiffuseMin, forceDiffuseMax), ForceMode.Impulse);
+			}
+			else
+			{
+				go.GetComponent<Rigidbody>().AddRelativeTorque(torque * Random.onUnitSphere, ForceMode.Impulse);
+				go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * Time.deltaTime * Random.Range(forceDiffuseMin, forceDiffuseMax), ForceMode.Impulse);
+			}
 		}
 
-		go.GetComponent<Rigidbody>().AddRelativeTorque(torque * Random.onUnitSphere, ForceMode.Impulse);
+
 	}
 
 	void assignProbability()
