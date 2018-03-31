@@ -507,11 +507,10 @@ public class Fishtank : MonoBehaviour
 							//Debug.Log(go.name + " is a master dimer, and the sum of it's child ring targets is " + totalDist);
 							if (totalDist < 0.01f)
 							{
-								var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
+								var dimer2RingTransform = go.transform.Find("tf_dimer2ring");
+								//var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
+								var ring = Instantiate(ringPrefab, dimer2RingTransform.position, go.transform.rotation, transform);
 								SetCartoonRendering(ring);
-
-								//var ringTransform = go.transform.Find("dimer2ringTransform");
-								//var ring = Instantiate(ringPrefab, (go.transform.position + ringTransform.position), go.transform.rotation, transform);
 
 								if (partyModeSwitch.partying)
 								{

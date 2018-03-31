@@ -39,7 +39,9 @@ public class Ring: MonoBehaviour
 		}
 
 		// Make a dimer and attach it to the hand. This replaces the ring you were just holding.
-		var dimer = Instantiate(dimerPrefab, transform.position, transform.rotation, fishtank);
+		var ring2DimerTransform = transform.Find("tf_ring2dimer");
+		var dimer = Instantiate(dimerPrefab, ring2DimerTransform.position, transform.rotation, fishtank);
+		//var dimer = Instantiate(dimerPrefab, transform.position, transform.rotation, fishtank);
 		dimer.GetComponent<Rigidbody>().AddForce(-dimer.transform.forward * Random.RandomRange(0.01f, 0.02f), ForceMode.Impulse);
 		dimer.name = "dimer_" + dimer.GetInstanceID();
 		fishtankScript.SetCartoonRendering(dimer);
