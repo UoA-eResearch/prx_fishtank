@@ -4296,6 +4296,19 @@ Prefab:
       propertyPath: m_TagString
       value: Untagged
       objectReference: {fileID: 0}
+    - target: {fileID: 1602504187637872, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 23276768395998852, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1689528170762482, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114517365559859954, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}
     - {fileID: 114881386268475852, guid: ffa33f1f8341b0d4c9ab8eb68588c53b, type: 2}

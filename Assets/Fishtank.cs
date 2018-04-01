@@ -160,7 +160,7 @@ public class Fishtank : MonoBehaviour
 								{
 									// look in acceptor(a)<-donor(b) direction
 									//Debug.Log(a.name + " as ACC is testing " + b.name + "as poss DONOR: align = " + testPairAlignDot + " relate = " + testPairRelateDot);
-									var partnerPos = b.transform.Find("acceptorPos").gameObject; // a is accepting so we are looking to b's acceptorPos
+									var partnerPos = b.transform.Find("tf_stack/acceptorPos").gameObject; // a is accepting so we are looking to b's acceptorPos
 									var dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
 									//var angleDiff = Quaternion.Angle(a.transform.rotation, partnerPos.transform.rotation);
 									var bHasBetterAcceptor = false;
@@ -168,9 +168,11 @@ public class Fishtank : MonoBehaviour
 									//var score = dist * angleDiff;
 
 									b2a = (a.transform.position - b.transform.position).normalized;
-									testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
-									testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
 
+									//testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+									//testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
+									testPairAlignDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b.transform.Find("tf_stack/acceptorPos").up);
+									testPairRelateDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b2a);
 
 
 									if ((testPairAlignDot > alignLimitDot) && (testPairRelateDot > relateLimitDot))
@@ -222,7 +224,7 @@ public class Fishtank : MonoBehaviour
 								// I'm not yet a donor, and b has an acceptor slot I could fill - so far in this findPairs() call 
 								{
 									// look in donor(a)->acceptor(b) direction
-									var myPartnerPos = a.transform.Find("acceptorPos").gameObject;
+									var myPartnerPos = a.transform.Find("tf_stack/acceptorPos").gameObject;
 									var dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
 									//var angleDiff = Quaternion.Angle(b.transform.rotation, myPartnerPos.transform.rotation);
 									var bHasBetterDonor = false;
@@ -231,8 +233,10 @@ public class Fishtank : MonoBehaviour
 									//var score = dist * angleDiff;
 
 									b2a = (a.transform.position - b.transform.position).normalized;
-									testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
-									testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
+									//testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+									//testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
+									testPairAlignDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b.transform.Find("tf_stack/acceptorPos").up);
+									testPairRelateDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b2a);
 
 									if ((testPairAlignDot > alignLimitDot) && (testPairRelateDot < -1.0f * relateLimitDot))
 									{
@@ -242,7 +246,7 @@ public class Fishtank : MonoBehaviour
 										{
 											// b was an acceptor last time and c was the donor (i.e. a is now competing with c)
 											var c = pairsMyDonorPrev[b];
-											var cPartnerPos = c.transform.Find("acceptorPos").gameObject;
+											var cPartnerPos = c.transform.Find("tf_stack/acceptorPos").gameObject;
 											var cdist = Vector3.Distance(b.transform.position, cPartnerPos.transform.position);
 											//var cangleDiff = Quaternion.Angle(c.transform.rotation, cPartnerPos.transform.rotation);
 
@@ -286,7 +290,7 @@ public class Fishtank : MonoBehaviour
 						{
 							a.GetComponent<Ring>().partnerDonor = bestDonor;
 							bestDonor.GetComponent<Ring>().partnerAcceptor = a;
-							var partnerPos = bestDonor.transform.Find("acceptorPos").position; // I want to go to my donor's acceptorPos
+							var partnerPos = bestDonor.transform.Find("tf_stack/acceptorPos").position; // I want to go to my donor's acceptorPos
 
 							Vector3 pairTransform = (partnerPos - a.transform.position);
 							Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos, Color.blue, 0.2f);
@@ -301,7 +305,7 @@ public class Fishtank : MonoBehaviour
 						{
 							a.GetComponent<Ring>().partnerAcceptor = bestAcceptor;
 							bestAcceptor.GetComponent<Ring>().partnerDonor = a;
-							var partnerPos = bestAcceptor.transform.Find("donorPos").position; // I want to go to my acceptor's donorPos
+							var partnerPos = bestAcceptor.transform.Find("tf_stack/donorPos").position; // I want to go to my acceptor's donorPos
 
 							Vector3 pairTransform = (partnerPos - a.transform.position);
 							Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos, Color.red, 0.2f);
@@ -595,7 +599,7 @@ public class Fishtank : MonoBehaviour
 
 					if (ring.partnerDonor != null)
 					{
-						var donor = ring.partnerDonor.transform.Find("acceptorPos");
+						var donor = ring.partnerDonor.transform.Find("tf_stack/acceptorPos");
 						var donorPos = donor.position;
 						var targetRotation = donor.rotation;
 						var distanceFromDonorPos = Vector3.Distance(go.transform.position, donorPos);
@@ -637,7 +641,7 @@ public class Fishtank : MonoBehaviour
 					}
 					if (ring.partnerAcceptor != null)
 					{
-						var acceptor = ring.partnerAcceptor.transform.Find("donorPos");
+						var acceptor = ring.partnerAcceptor.transform.Find("tf_stack/donorPos");
 						var acceptorPos = acceptor.position;
 						var targetRotation = acceptor.rotation;
 						var distanceFromAcceptorPos = Vector3.Distance(go.transform.position, acceptorPos);
@@ -1001,7 +1005,8 @@ public class Fishtank : MonoBehaviour
 			{
 				if (a != b && a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerAcceptor == null)
 				{
-					var testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+					//var testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+					var testPairAlignDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b.transform.Find("tf_stack/acceptorPos").up);
 					var dist = Vector3.Distance(a.transform.position, b.transform.position);
 					if (dist < minDist && testPairAlignDot < -relateLimitDot)
 					{
@@ -1017,13 +1022,81 @@ public class Fishtank : MonoBehaviour
 		{
 			// Flip the designated ring around, along with it's entire stack
 			flipper.transform.Rotate(0, 0, 180, Space.Self);
+			//SwitchAcceptorDonorPositions(flipper);
+
 			var donor = flipper.GetComponent<Ring>().partnerDonor;
 			while (donor != null)
 			{
 				donor.transform.transform.Rotate(0, 0, 180, Space.Self);
+				//SwitchAcceptorDonorPositions(donor);
 				donor = donor.GetComponent<Ring>().partnerDonor;
 			}
 		}
+	}
+
+	void SwitchAcceptorDonorPositions(GameObject ring)
+	{
+		Vector3 myPosition;
+		Vector3 myScale;
+		float myRotationY;
+		float myRotationZ;
+
+#if (true)
+		{
+			// 180 z flip the stackingTransform parent of the acceptorPos and donorPos
+			myRotationY = ring.transform.Find("tf_stack").localEulerAngles.y;
+			myRotationZ = ring.transform.Find("tf_stack").localEulerAngles.z;
+			if (myRotationZ == 0)
+			{
+				myRotationZ = 180;
+			}
+			else if (myRotationZ == 180)
+			{
+				myRotationZ = 0;
+			}
+			ring.transform.Find("tf_stack").localRotation = Quaternion.Euler(0, myRotationY, myRotationZ);
+		}
+#endif
+
+#if (false)
+		{
+			// directly manipulate acceptorPos and donorPos
+			myPosition = ring.transform.Find("tf_stack/donorPos").localPosition;
+			myPosition.y = myPosition.y * -1f;
+			ring.transform.Find("tf_stack/donorPos").localPosition = myPosition;
+
+			myRotationY = ring.transform.Find("tf_stack/donorPos").localEulerAngles.y;
+			myRotationY = myRotationY * -1f;
+			myRotationZ = ring.transform.Find("tf_stack/donorPos").localEulerAngles.z;
+			if (myRotationZ == 0)
+			{
+				myRotationZ = 180;
+			}
+			else if (myRotationZ == 180)
+			{
+				myRotationZ = 0;
+			}
+			ring.transform.Find("tf_stack/donorPos").localRotation = Quaternion.Euler(0, myRotationY, 0);
+
+
+			myPosition = ring.transform.Find("tf_stack/acceptorPos").localPosition;
+			myPosition.y = myPosition.y * -1f;
+			ring.transform.Find("tf_stack/acceptorPos").localPosition = myPosition;
+
+			myRotationY = ring.transform.Find("tf_stack/acceptorPos").localEulerAngles.y;
+			myRotationY = myRotationY * -1f;
+			myRotationZ = ring.transform.Find("tf_stack/acceptorPos").localEulerAngles.z;
+			if (myRotationZ == 0)
+			{
+				myRotationZ = 180;
+			}
+			else if (myRotationZ == 180)
+			{
+				myRotationZ = 0;
+			}
+			ring.transform.Find("tf_stack/acceptorPos").localRotation = Quaternion.Euler(0, myRotationY, 0);
+		}
+#endif
 	}
 
 	float GetBestRotationOffsetAngle (Quaternion partnerRotation, GameObject ring)
