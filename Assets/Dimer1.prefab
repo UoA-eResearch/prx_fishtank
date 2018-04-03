@@ -65,7 +65,7 @@ GameObject:
   - component: {fileID: 23002877253911498}
   - component: {fileID: 95207577611307136}
   m_Layer: 0
-  m_Name: 5fcg_A_toon
+  m_Name: 5jcg_A_toon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 23531257063872272}
   - component: {fileID: 95127485733912608}
   m_Layer: 0
-  m_Name: 5fcg_B_surf
+  m_Name: 5jcg_B_surf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -169,7 +169,7 @@ GameObject:
   - component: {fileID: 23450387707267066}
   - component: {fileID: 95764033744093262}
   m_Layer: 0
-  m_Name: 5fcg_B_toon
+  m_Name: 5jcg_B_toon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -187,7 +187,7 @@ GameObject:
   - component: {fileID: 23443129393382622}
   - component: {fileID: 95140158248130258}
   m_Layer: 0
-  m_Name: 5fcg_A_surf
+  m_Name: 5jcg_A_surf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

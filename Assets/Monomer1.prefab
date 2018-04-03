@@ -23,7 +23,7 @@ GameObject:
   - component: {fileID: 23369299918026128}
   - component: {fileID: 95604640089339576}
   m_Layer: 0
-  m_Name: 5fcg_E_surf
+  m_Name: 5jcg_E_surf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -81,7 +81,7 @@ GameObject:
   - component: {fileID: 23976158959518712}
   - component: {fileID: 95717184698840568}
   m_Layer: 0
-  m_Name: 5fcg_E_toon
+  m_Name: 5jcg_E_toon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
