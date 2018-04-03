@@ -38,7 +38,9 @@ public class Fishtank : MonoBehaviour
 	public AudioSource fishtankAudioSource;
 
 	public PartyModeSwitch partyModeSwitch;
-	
+	public CartoonModeSwitch cartoonModeSwitch;
+
+
 	public GameObject solventH;
 	public GameObject solventOH;
 	public GameObject solventH2O;
@@ -707,14 +709,21 @@ public class Fishtank : MonoBehaviour
 		phSlider = gameObject.GetComponent<PHSlider>();
 
 		// initialise solvent particle systems
-		var mysolventH = Instantiate(solventH,  gameObject.transform.position, Quaternion.identity);
-		var mysolventOH = Instantiate(solventOH, gameObject.transform.position, Quaternion.identity);
-		var mysolventH2O = Instantiate(solventH2O, gameObject.transform.position, Quaternion.identity);
+		var mysolventH = Instantiate(solventH, gameObject.transform); // gameObject.transform.position, Quaternion.identity);
+		var mysolventOH = Instantiate(solventOH, gameObject.transform); //gameObject.transform.position, Quaternion.identity);
+		var mysolventH2O = Instantiate(solventH2O, gameObject.transform); //gameObject.transform.position, Quaternion.identity);
 
 		psSolventH = mysolventH.GetComponentInChildren<ParticleSystem>();
 		psSolventOH = mysolventOH.GetComponentInChildren<ParticleSystem>();
 		psSolventH2O = mysolventH2O.GetComponentInChildren<ParticleSystem>();
 
+		ParticleSystem.MainModule psHMain = psSolventH.main;
+
+		ParticleSystem.ShapeModule psHShape = psSolventH.shape;
+		ParticleSystem.ShapeModule psH2OShape = psSolventH2O.shape;
+
+		psHShape.scale = gameObject.transform.localScale;
+		psH2OShape.scale = gameObject.transform.localScale;
 
 		tags = new string[] { "monomer", "dimer", "ring" };
 
@@ -1122,6 +1131,8 @@ public class Fishtank : MonoBehaviour
 
 	void UpdateCartoon ()
 	{
+		renderCartoon = cartoonModeSwitch.GetRenderCartoon();
+
 		if (renderCartoon != renderCartoonLast)
 		{
 			foreach (var a in GameObject.FindGameObjectsWithTag("monomer"))
