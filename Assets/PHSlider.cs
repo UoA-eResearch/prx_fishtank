@@ -22,7 +22,7 @@ public class PHSlider : MonoBehaviour
             linearMapping = GetComponent<LinearMapping>();
         }
 
-		phCanvas = GameObject.Find("TitleCanvas");
+		phCanvas = GameObject.Find("pHCanvas");
 		phText = phCanvas.GetComponentInChildren<Text>();
     }
 

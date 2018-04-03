@@ -6,9 +6,13 @@ using Valve.VR.InteractionSystem;
 
 public class CartoonModeSwitch : MonoBehaviour
 {
-	public LinearMapping linearMapping;
-	public Text text;
+	public LinearMapping renderCartoonLM;
+	public Text renderCartoonText;
 	public bool renderCartoon = false;
+
+	public LinearMapping fishtankScaleLM;
+	public Text fishtankScaleText;
+	public float fishtankScale = 1.0f;
 
 	// Use this for initialization
 	void Start () {
@@ -18,22 +22,31 @@ public class CartoonModeSwitch : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		if (linearMapping.value < .5)
+		if (renderCartoonLM.value < .5)
 		{
-			text.text = "cartoon";
+			renderCartoonText.text = "cartoon";
 			renderCartoon = true;
 			//scoreboard.SetActive(true);
 		}
 		else
 		{
-			text.text = "surface";
+			renderCartoonText.text = "surface";
 			renderCartoon = false;
 			//scoreboard.SetActive(false);
 		}
+
+		fishtankScale = 1.0f - ((1.0f - fishtankScaleLM.value) / 2.0f);
+		double _scaleD = System.Math.Round(fishtankScale, 1);
+		fishtankScaleText.text = _scaleD.ToString();
 	}
 
 	public bool GetRenderCartoon()
 	{
 		return renderCartoon;
+	}
+
+	public float GetFishtankScale()
+	{
+		return fishtankScale;
 	}
 }

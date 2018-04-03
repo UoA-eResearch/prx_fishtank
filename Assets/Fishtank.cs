@@ -101,6 +101,11 @@ public class Fishtank : MonoBehaviour
 	public bool renderCartoon = false;
 	private bool renderCartoonLast = false;
 
+	public float fishtankScaleFactor = 1.0f;
+	private Vector3 fishtankScaleInit = new Vector3 (1f, 1f, 1f);
+	private Vector3 fishtankPositionInit = new Vector3(0f, 0f, 0f);
+	private Vector3 fishtankPositionCurrent = new Vector3(0f, 0f, 0f);
+
 	void FindPairs()
 	{
 		//print(Time.realtimeSinceStartup);
@@ -706,6 +711,10 @@ public class Fishtank : MonoBehaviour
 	void Start()
 	{
 
+		fishtankScaleInit = gameObject.transform.localScale;
+		fishtankPositionInit = gameObject.transform.position;
+		fishtankPositionCurrent = gameObject.transform.position;
+
 		phSlider = gameObject.GetComponent<PHSlider>();
 
 		// initialise solvent particle systems
@@ -718,13 +727,13 @@ public class Fishtank : MonoBehaviour
 		psSolventH2O = mysolventH2O.GetComponentInChildren<ParticleSystem>();
 
 		ParticleSystem.MainModule psHMain = psSolventH.main;
-
 		ParticleSystem.ShapeModule psHShape = psSolventH.shape;
 		ParticleSystem.ShapeModule psH2OShape = psSolventH2O.shape;
 
 		psHShape.scale = gameObject.transform.localScale;
 		psH2OShape.scale = gameObject.transform.localScale;
 
+		// spawn monomers
 		tags = new string[] { "monomer", "dimer", "ring" };
 
 		bounds = gameObject.GetComponent<Collider>().bounds;
@@ -1178,6 +1187,23 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
+	void UpdateScale()
+	{
+
+		fishtankScaleFactor = cartoonModeSwitch.GetFishtankScale();
+		//fishtank
+		gameObject.transform.localScale = fishtankScaleInit * fishtankScaleFactor;
+		fishtankPositionCurrent.y = fishtankPositionInit.y * fishtankScaleFactor;
+		gameObject.transform.localPosition = fishtankPositionCurrent;
+
+		//particles
+		ParticleSystem.ShapeModule psHShape = psSolventH.shape; 
+		ParticleSystem.ShapeModule psH2OShape = psSolventH2O.shape;
+		psHShape.scale = gameObject.transform.localScale;
+		psH2OShape.scale = gameObject.transform.localScale;
+
+	}
+
 	// Update is called once per frame
 	void Update()
 	{
@@ -1187,5 +1213,6 @@ public class Fishtank : MonoBehaviour
 		ClampRigidBodyDynamics();
 		UpdateTimer();
 		UpdateCartoon();
+		UpdateScale();
 	}
 }
