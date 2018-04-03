@@ -395,7 +395,8 @@ public class Fishtank : MonoBehaviour
 						else
 						{
 							//Debug.Log(a.name + "'s closest pair is " + match.name + " with distance " + minDistance);
-							pairs[a] = match;
+
+							pairs[a] = match; Debug.DrawLine(a.transform.position, match.transform.position, Color.green, 0.1f);
 							pairs[match] = a;
 						}
 					}
