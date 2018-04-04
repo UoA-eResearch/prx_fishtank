@@ -7484,11 +7484,12 @@ MonoBehaviour:
     m_HorizontalOverflow: 0
     m_VerticalOverflow: 0
     m_LineSpacing: 1
-  m_Text: "\nTeleport around by pointing where you want to go and pressing the touchpad
-    with your thumb.\n\nGrab molecules by touching them with the controller - when
-    the yellow outline shows pull the finger trigger undereath to grab.\n\nTry bringing
-    molecules together or pulling them apart!\n\nAdjust the pH by grabbing the orange
-    ball handle (attached to one controller) and moving it up or down.\n\n\r"
+  m_Text: "\nTeleport around by pressing the touchpad with your thumb and pointing
+    where you want to go. Then stop pressing to teleport.\n\nGrab molecules by touching
+    them with the controller - when the yellow outline shows pull the finger trigger
+    underneath to grab.\n\nTry bringing molecules together or pulling them apart!\n\nAdjust
+    the pH by grabbing the orange ball handle (attached to one controller) and moving
+    it up or down.\n\n\r"
 --- !u!222 &1261437649
 CanvasRenderer:
   m_ObjectHideFlags: 0
