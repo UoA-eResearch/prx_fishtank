@@ -1202,6 +1202,8 @@ public class Fishtank : MonoBehaviour
 		psHShape.scale = gameObject.transform.localScale;
 		psH2OShape.scale = gameObject.transform.localScale;
 
+		bounds = gameObject.GetComponent<Collider>().bounds;
+
 	}
 
 	// Update is called once per frame
