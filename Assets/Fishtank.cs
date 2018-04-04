@@ -18,6 +18,7 @@ public class Fishtank : MonoBehaviour
 	public Text ringCount2;
 	public Text stackLongestTxt;
 	public Text stackNumberTxt;
+	public Text pHValueChartStatisticsTxt;
 	private bool hasWon = false;
 	private bool confettiDone = false;
 
@@ -40,6 +41,7 @@ public class Fishtank : MonoBehaviour
 	public PartyModeSwitch partyModeSwitch;
 	public CartoonModeSwitch cartoonModeSwitch;
 
+	public ChartStats chartStats;
 
 	public GameObject solventH;
 	public GameObject solventOH;
@@ -877,6 +879,8 @@ public class Fishtank : MonoBehaviour
 		col.a = fishtankAlpha;
 		gameObject.GetComponent<Renderer>().material.color = col;
 
+		pHValueChartStatisticsTxt.text = phSlider.GetPhValueStr();
+
 		{
 			// visualise pH in solvent particle systems
 			ParticleSystem.MainModule psHMain = psSolventH.main;
@@ -955,7 +959,9 @@ public class Fishtank : MonoBehaviour
 		dimerCount.text = dimers.Length.ToString();
 		ringCount.text = rings.Length.ToString();
 		ringCount2.text = ringCount.text;
+
 		int stackLength = 0;
+		int numRingsInAllStacks = 0;
 
 		stacks = 0;
 		stackLongest = 0;
@@ -980,12 +986,12 @@ public class Fishtank : MonoBehaviour
 						nextR = next.GetComponent<Ring>();
 						stackLength++;					
 					}
+					numRingsInAllStacks += stackLength;
 				}
 				if (stackLength > stackLongest)
 				{
 					stackLongest = stackLength;
 				}
-
 			}
 			if (stackLongest == numMonomers / 2 / 6)
 			{
@@ -994,6 +1000,13 @@ public class Fishtank : MonoBehaviour
 		}
 		stackLongestTxt.text = stackLongest.ToString();
 		stackNumberTxt.text = stacks.ToString();
+
+		// do stats
+		float monomerFraction = (float)monomers.Length / numMonomers;
+		float dimerFraction = (dimers.Length * 2.0f) / numMonomers;
+		float ringFraction = (rings.Length * 12.0f) / numMonomers;
+		float stackFraction = (numRingsInAllStacks * 12.0f) / numMonomers;
+		chartStats.SetStats(monomerFraction, dimerFraction, ringFraction, stackFraction);
 
 		if (!hasWon)
 		{

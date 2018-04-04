@@ -14,8 +14,8 @@ public class PHSlider : MonoBehaviour
 	private GameObject phCanvas;
 	private Text phText;
 
-    //-------------------------------------------------
-    void Awake()
+	//-------------------------------------------------
+	void Awake()
     {
         if (linearMapping == null)
         {
@@ -54,12 +54,16 @@ public class PHSlider : MonoBehaviour
 				case 3:
 					phText.text = "pH value: low";
 					break;
+
 			}
-			
         }
     }
 
 	public int GetPhValue(){
 		return phValue;
+	}
+	public string GetPhValueStr()
+	{
+		return phText.text;
 	}
 }

@@ -10,6 +10,7 @@ public class PartyModeSwitch : MonoBehaviour {
 	public Text text;
 	public bool partying = true;
 	public GameObject scoreboard;
+	public GameObject chartStats;
 	
 	// Update is called once per frame
 	void Update () {
@@ -18,12 +19,14 @@ public class PartyModeSwitch : MonoBehaviour {
 			text.text = "Party!";
 			partying = true;
 			scoreboard.SetActive(true);
+			chartStats.SetActive(false);
 		}
 		else
 		{
 			text.text = "Serious";
 			partying = false;
 			scoreboard.SetActive(false);
+			chartStats.SetActive(true);
 		}
 	}
 }
