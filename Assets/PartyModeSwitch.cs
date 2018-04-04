@@ -15,13 +15,13 @@ public class PartyModeSwitch : MonoBehaviour {
 	void Update () {
 		if (linearMapping.value < .5)
 		{
-			text.text = "Party mode!";
+			text.text = "Party!";
 			partying = true;
 			scoreboard.SetActive(true);
 		}
 		else
 		{
-			text.text = "Serious mode.";
+			text.text = "Serious";
 			partying = false;
 			scoreboard.SetActive(false);
 		}
