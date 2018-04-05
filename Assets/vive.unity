@@ -12606,8 +12606,8 @@ MonoBehaviour:
   endPosition: {fileID: 1848556323}
   linearMapping: {fileID: 2032115207}
   repositionGameObject: 1
-  maintainMomemntum: 1
-  momemtumDampenRate: 0
+  maintainMomemntum: 0
+  momemtumDampenRate: 10
 --- !u!114 &1799510878
 MonoBehaviour:
   m_ObjectHideFlags: 0
