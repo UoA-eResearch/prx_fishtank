@@ -26,7 +26,7 @@ public class ChartStats : MonoBehaviour {
 		dimerBar.transform.localScale = new Vector3(dimerBar.transform.localScale.x, dimerFraction, dimerBar.transform.localScale.z);
 		ringBar.transform.localScale = new Vector3 (ringBar.transform.localScale.x, ringFraction, ringBar.transform.localScale.z);
 		stacksBar.transform.localScale = new Vector3(stacksBar.transform.localScale.x, stacksFraction, stacksBar.transform.localScale.z);
-		Debug.Log(monomerFraction + " " + dimerFraction + " " + ringFraction + " " + stacksFraction);
+		//Debug.Log(monomerFraction + " " + dimerFraction + " " + ringFraction + " " + stacksFraction);
 	}
 
 }

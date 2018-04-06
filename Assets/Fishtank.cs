@@ -193,16 +193,19 @@ public class Fishtank : MonoBehaviour
 											// b was a donor last time and c was the acceptor (i.e. a is now competing with c)
 
 											var c = pairsMyAcceptorPrev[b];
-											//Debug.Log(b.name + " was a DONOR LAST time " + c.name + " was the ACC");
-											var cdist = Vector3.Distance(c.transform.position, partnerPos.transform.position);
-											//var cangleDiff = Quaternion.Angle(c.transform.rotation, partnerPos.transform.rotation);
-
-											var cscore = cdist;// * cangleDiff;
-
-											if (cscore < score)
+											if (c)
 											{
-												bHasBetterAcceptor = true;
-												//Debug.Log(a.name + " as ACC is testing " + b.name + " as possible DONOR but " + c.name + " is a better ACC");
+												//Debug.Log(b.name + " was a DONOR LAST time " + c.name + " was the ACC");
+												var cdist = Vector3.Distance(c.transform.position, partnerPos.transform.position);
+												//var cangleDiff = Quaternion.Angle(c.transform.rotation, partnerPos.transform.rotation);
+
+												var cscore = cdist;// * cangleDiff;
+
+												if (cscore < score)
+												{
+													bHasBetterAcceptor = true;
+													//Debug.Log(a.name + " as ACC is testing " + b.name + " as possible DONOR but " + c.name + " is a better ACC");
+												}
 											}
 										}
 									}
@@ -255,16 +258,19 @@ public class Fishtank : MonoBehaviour
 										{
 											// b was an acceptor last time and c was the donor (i.e. a is now competing with c)
 											var c = pairsMyDonorPrev[b];
-											var cPartnerPos = c.transform.Find("tf_stack/acceptorPos").gameObject;
-											var cdist = Vector3.Distance(b.transform.position, cPartnerPos.transform.position);
-											//var cangleDiff = Quaternion.Angle(c.transform.rotation, cPartnerPos.transform.rotation);
-
-											var cscore = cdist;// * cangleDiff;
-
-											if (cscore < score)
+											if (c)
 											{
-												bHasBetterDonor = true;
-												//Debug.Log(a.name + " as DONOR is testing " + b.name + " as ACC but " + c.name + " is better DONOR");
+												var cPartnerPos = c.transform.Find("tf_stack/acceptorPos").gameObject;
+												var cdist = Vector3.Distance(b.transform.position, cPartnerPos.transform.position);
+												//var cangleDiff = Quaternion.Angle(c.transform.rotation, cPartnerPos.transform.rotation);
+
+												var cscore = cdist;// * cangleDiff;
+
+												if (cscore < score)
+												{
+													bHasBetterDonor = true;
+													//Debug.Log(a.name + " as DONOR is testing " + b.name + " as ACC but " + c.name + " is better DONOR");
+												}
 											}
 										}
 									}
@@ -459,7 +465,7 @@ public class Fishtank : MonoBehaviour
 
 				//var partner = pairs[go];
 				GameObject partner;
-				if (pairs.TryGetValue(go, out partner))
+				if (pairs.TryGetValue(go, out partner) && partner)
 				{
 					//partner = pairs[go];
 					var targetPos = partner.transform.position;
@@ -979,14 +985,24 @@ public class Fishtank : MonoBehaviour
 					stacks++;
 					//docks++;
 					var next = r.GetComponent<Ring>().partnerAcceptor;
-					var nextR = next.GetComponent<Ring>();
-					while (nextR.dockedToAcceptor)
+					if (next)
 					{
-						next = nextR.GetComponent<Ring>().partnerAcceptor;
-						nextR = next.GetComponent<Ring>();
-						stackLength++;					
+						var nextR = next.GetComponent<Ring>();
+						while (nextR.dockedToAcceptor)
+						{
+							next = nextR.GetComponent<Ring>().partnerAcceptor;
+							if (next)
+							{
+								nextR = next.GetComponent<Ring>();
+								stackLength++;
+							}
+							else
+							{
+								break;
+							}
+						}
+						numRingsInAllStacks += stackLength;
 					}
-					numRingsInAllStacks += stackLength;
 				}
 				if (stackLength > stackLongest)
 				{
