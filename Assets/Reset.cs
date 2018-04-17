@@ -14,5 +14,17 @@ public class Reset : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.R)) {
 			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 		}
+		if (Input.GetKeyDown(KeyCode.Q))
+		{
+			SceneManager.LoadScene("scene_vive");
+		}
+		if (Input.GetKeyDown(KeyCode.A))
+		{
+			SceneManager.LoadScene("scene_02");
+		}
+		if (Input.GetKeyDown(KeyCode.Z))
+		{
+			SceneManager.LoadScene("scene_03");
+		}
 	}
 }

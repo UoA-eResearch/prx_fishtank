@@ -6,5 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/vive.unity
+    path: Assets/scene_vive.unity
     guid: 83f98070614f2234b91ded8369cb7e72
+  - enabled: 1
+    path: Assets/scene_02.unity
+    guid: afbf92c5931d9754c8eb8a5305ac7113
+  - enabled: 1
+    path: Assets/scene_03.unity
+    guid: d2cc086d84194d041b469c55ea49228a
