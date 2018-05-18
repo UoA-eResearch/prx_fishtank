@@ -20,12 +20,23 @@ public class Ring: MonoBehaviour
 	public Fishtank fishtankScript;
 	public GameObject fishtankGO;
 
+	public GameObject goElectric01;
+	public ParticleSystem psElectric01;
+	public ParticleSystem.MainModule psElectric01Main;
+
 	void Awake()
 	{
 		velEst = GetComponent<VelocityEstimator>();
 		fishtank = transform.parent;
 		GameObject fishtankGO = GameObject.Find("fishtank");
 		fishtankScript = fishtankGO.GetComponent<Fishtank>();
+
+		var myElectric01 = Instantiate(goElectric01, gameObject.transform);
+
+		psElectric01 = myElectric01.GetComponentInChildren<ParticleSystem>();
+		Debug.Log(" psElectric01 " + psElectric01);
+		//psElectric01Main = psElectric01.main;
+		//psElectric01.Play();
 	}
 
 	public void breakRing(Hand currentHand)

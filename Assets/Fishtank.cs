@@ -983,6 +983,10 @@ public class Fishtank : MonoBehaviour
 				{
 					stackLength = 2;
 					stacks++;
+					if (!r.psElectric01.isPlaying)
+					{
+						r.psElectric01.Play();
+					}
 					//docks++;
 					var next = r.GetComponent<Ring>().partnerAcceptor;
 					if (next)
@@ -990,6 +994,10 @@ public class Fishtank : MonoBehaviour
 						var nextR = next.GetComponent<Ring>();
 						while (nextR.dockedToAcceptor)
 						{
+							if (!nextR.psElectric01.isPlaying)
+							{
+								nextR.psElectric01.Play();
+							}
 							next = nextR.GetComponent<Ring>().partnerAcceptor;
 							if (next)
 							{
