@@ -32,11 +32,17 @@ public class Ring: MonoBehaviour
 		fishtankScript = fishtankGO.GetComponent<Fishtank>();
 
 		var myElectric01 = Instantiate(goElectric01, gameObject.transform);
-
+	
 		psElectric01 = myElectric01.GetComponentInChildren<ParticleSystem>();
-		Debug.Log(" psElectric01 " + psElectric01);
+		psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
+
 		//psElectric01Main = psElectric01.main;
 		//psElectric01.Play();
+	}
+
+	void Update()
+	{
+		//psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
 	}
 
 	public void breakRing(Hand currentHand)

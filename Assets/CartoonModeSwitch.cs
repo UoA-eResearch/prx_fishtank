@@ -35,7 +35,8 @@ public class CartoonModeSwitch : MonoBehaviour
 			//scoreboard.SetActive(false);
 		}
 
-		fishtankScale = 1.0f - ((1.0f - fishtankScaleLM.value) / 2.5f);
+		//fishtankScale = 1.0f - ((1.0f - fishtankScaleLM.value) / 2.5f);
+		fishtankScale = 1.2f - ((1.0f - fishtankScaleLM.value) / 1.5f);
 		double _scaleD = System.Math.Round(fishtankScale, 1);
 		fishtankScaleText.text = _scaleD.ToString();
 	}

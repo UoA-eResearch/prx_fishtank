@@ -108,6 +108,8 @@ public class Fishtank : MonoBehaviour
 	private Vector3 fishtankPositionInit = new Vector3(0f, 0f, 0f);
 	private Vector3 fishtankPositionCurrent = new Vector3(0f, 0f, 0f);
 
+	public float nanowireFxScale = 0.05f;				//particle scale for nanowire electric fx
+
 	void FindPairs()
 	{
 		//print(Time.realtimeSinceStartup);
@@ -978,15 +980,29 @@ public class Fishtank : MonoBehaviour
 			{
 				var r = ring.GetComponent<Ring>();
 
+				// nanowire electric particles
+				if (!r.dockedToAcceptor && !r.dockedToDonor)
+				{
+					//free ring
+					if (r.psElectric01.isPlaying)
+					{
+						r.psElectric01.Stop();
+					}
+				}
+				else
+				{
+					// attached ring
+					if (!r.psElectric01.isPlaying)
+					{
+						r.psElectric01.Play();
+					}
+				}
+
 				//find donor end of a stack
 				if (r.dockedToAcceptor && !r.dockedToDonor)
 				{
 					stackLength = 2;
 					stacks++;
-					if (!r.psElectric01.isPlaying)
-					{
-						r.psElectric01.Play();
-					}
 					//docks++;
 					var next = r.GetComponent<Ring>().partnerAcceptor;
 					if (next)
@@ -994,10 +1010,7 @@ public class Fishtank : MonoBehaviour
 						var nextR = next.GetComponent<Ring>();
 						while (nextR.dockedToAcceptor)
 						{
-							if (!nextR.psElectric01.isPlaying)
-							{
-								nextR.psElectric01.Play();
-							}
+
 							next = nextR.GetComponent<Ring>().partnerAcceptor;
 							if (next)
 							{
@@ -1067,7 +1080,7 @@ public class Fishtank : MonoBehaviour
 					{
 						// Both a and b are missing acceptors, they're the closest unpaired acceptors in the fishtank, and they're aligned in antiparallel. Designate b to flip
 						minDist = dist;
-						Debug.Log(a.name + " and " + b.name + " are both missing acceptors - relate=" + testPairAlignDot + " = suitable for a flip");
+						//Debug.Log(a.name + " and " + b.name + " are both missing acceptors - relate=" + testPairAlignDot + " = suitable for a flip");
 						flipper = b;
 					}
 				}
@@ -1227,19 +1240,36 @@ public class Fishtank : MonoBehaviour
 	void UpdateScale()
 	{
 
-		fishtankScaleFactor = cartoonModeSwitch.GetFishtankScale();
-		//fishtank
-		gameObject.transform.localScale = fishtankScaleInit * fishtankScaleFactor;
-		fishtankPositionCurrent.y = fishtankPositionInit.y * fishtankScaleFactor;
-		gameObject.transform.localPosition = fishtankPositionCurrent;
+		//if (fishtankScaleFactor != cartoonModeSwitch.GetFishtankScale())
+		{
+			fishtankScaleFactor = cartoonModeSwitch.GetFishtankScale();
+			//fishtank
+			gameObject.transform.localScale = fishtankScaleInit * fishtankScaleFactor;
+			fishtankPositionCurrent.y = fishtankPositionInit.y * fishtankScaleFactor;
+			gameObject.transform.localPosition = fishtankPositionCurrent;
 
-		//particles
-		ParticleSystem.ShapeModule psHShape = psSolventH.shape; 
-		ParticleSystem.ShapeModule psH2OShape = psSolventH2O.shape;
-		psHShape.scale = gameObject.transform.localScale;
-		psH2OShape.scale = gameObject.transform.localScale;
+			//particles
+			ParticleSystem.ShapeModule psHShape = psSolventH.shape;
+			ParticleSystem.ShapeModule psH2OShape = psSolventH2O.shape;
+			psHShape.scale = gameObject.transform.localScale;
+			psH2OShape.scale = gameObject.transform.localScale;
 
-		bounds = gameObject.GetComponent<Collider>().bounds;
+			bounds = gameObject.GetComponent<Collider>().bounds;
+
+			//ring electric wire particles should be scaled
+			var rings = GameObject.FindGameObjectsWithTag("ring");
+			if (rings.Length > 0) // we have rings
+			{
+				foreach (var ring in rings)
+				{
+					var r = ring.GetComponent<Ring>();
+					r.psElectric01.transform.localScale = nanowireFxScale * gameObject.transform.localScale;
+					
+				}
+			}
+
+		}
+		
 
 	}
 
