@@ -19,14 +19,14 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4687871562131518}
-  - component: {fileID: 114800087876278342}
   - component: {fileID: 54626151459215104}
   - component: {fileID: 65260872528810614}
   - component: {fileID: 114973685837587816}
   - component: {fileID: 114412544137196472}
   - component: {fileID: 114274612155144836}
+  - component: {fileID: 114828906519478960}
   m_Layer: 0
-  m_Name: builder_pf
+  m_Name: PolyBuilder_pf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -169,7 +169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b93b6a877adcbf94c89a9d6e0c0e844d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114800087876278342
+--- !u!114 &114828906519478960
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -180,12 +180,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a490a4d4178e1b34d98dd874d4a90527, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unit01_Prefab: {fileID: 0}
-  unit02_Prefab: {fileID: 1640450986028998, guid: 1321d04aa1a10db44827c482341ca3d9,
-    type: 2}
-  unit03_Prefab: {fileID: 1640450986028998, guid: 39a2602b8e7ab9348bc46d2ad202abd8,
-    type: 2}
+  Monomer01_Prefab: {fileID: 0}
+  unit02_Prefab: {fileID: 0}
+  unit03_Prefab: {fileID: 0}
   polyArr: []
+  distConArr: []
 --- !u!114 &114973685837587816
 MonoBehaviour:
   m_ObjectHideFlags: 1

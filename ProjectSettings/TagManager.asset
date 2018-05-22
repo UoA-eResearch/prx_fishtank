@@ -8,6 +8,8 @@ TagManager:
   - dimer
   - ring
   - pairParent
+  - chain
+  - dist
   layers:
   - Default
   - TransparentFX
