@@ -14,19 +14,23 @@ public class Reset : MonoBehaviour {
 		if (Input.GetKeyDown(KeyCode.R)) {
 			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 		}
-		if (Input.GetKeyDown(KeyCode.Q))
+		if (Input.GetKeyDown(KeyCode.Alpha1))
 		{
 			SceneManager.LoadScene("scene_vive");
 		}
 		/*
-		if (Input.GetKeyDown(KeyCode.A))
+		if (Input.GetKeyDown(KeyCode.Alpha2))
 		{
 			SceneManager.LoadScene("scene_02");
 		}
 		*/
-		if (Input.GetKeyDown(KeyCode.Z))
+		if (Input.GetKeyDown(KeyCode.Alpha3))
 		{
 			SceneManager.LoadScene("scene_03");
+		}
+		if (Input.GetKeyDown(KeyCode.Alpha4))
+		{
+			SceneManager.LoadScene("scene_04");
 		}
 	}
 }
