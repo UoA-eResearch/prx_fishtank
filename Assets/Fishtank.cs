@@ -980,37 +980,21 @@ public class Fishtank : MonoBehaviour
 			{
 				var r = ring.GetComponent<Ring>();
 
-				// nanowire electric particles
-				if (!r.dockedToAcceptor && !r.dockedToDonor)
-				{
-					//free ring
-					if (r.psElectric01.isPlaying)
-					{
-						r.psElectric01.Stop();
-					}
-				}
-				else
-				{
-					// attached ring
-					if (!r.psElectric01.isPlaying)
-					{
-						r.psElectric01.Play();
-					}
-				}
+				updateNanoWireFx(r);
 
 				//find donor end of a stack
 				if (r.dockedToAcceptor && !r.dockedToDonor)
 				{
+					var next = r.GetComponent<Ring>().partnerAcceptor;
 					stackLength = 2;
 					stacks++;
 					//docks++;
-					var next = r.GetComponent<Ring>().partnerAcceptor;
+
 					if (next)
 					{
 						var nextR = next.GetComponent<Ring>();
 						while (nextR.dockedToAcceptor)
 						{
-
 							next = nextR.GetComponent<Ring>().partnerAcceptor;
 							if (next)
 							{
@@ -1062,6 +1046,76 @@ public class Fishtank : MonoBehaviour
 
 
 	}
+
+
+	void updateNanoWireFx(Ring r)
+	{
+		
+		// nanowire electric particles
+		// turns on fx for rings in stacks of 3 or more
+		// this method avoids keeping arrays or lists for stacks ;)
+
+
+		if (!r.dockedToAcceptor && !r.dockedToDonor)
+		{
+			//free ring
+			nanoWireOff(r);
+		}
+		else if (r.dockedToAcceptor && r.dockedToDonor)
+		{
+			// two neighbours docked either side
+			nanoWireOn(r);
+		}
+
+
+		if (r.dockedToAcceptor && !r.dockedToDonor)
+		{
+			var myAcceptorRing = r.partnerAcceptor.GetComponent<Ring>();
+			if (myAcceptorRing.dockedToAcceptor)
+			{
+				//(at least) two neighbours docked on Acceptor side
+				nanoWireOn(r);
+			}
+			else
+			{
+				nanoWireOff(r);
+			}
+		}
+
+		if (!r.dockedToAcceptor && r.dockedToDonor)
+		{
+			var myDonorRing = r.partnerDonor.GetComponent<Ring>();
+			if (myDonorRing.dockedToDonor)
+			{
+				//(at least) two neighbours docked on Donor side
+				nanoWireOn(r);
+			}
+			else
+			{
+				nanoWireOff(r);
+			}
+
+		}
+		
+
+	}
+
+	void nanoWireOn(Ring r)
+	{
+		if (!r.psElectric01.isPlaying)
+		{
+			r.psElectric01.Play();
+		}
+	}
+
+	void nanoWireOff(Ring r)
+	{
+		if (r.psElectric01.isPlaying)
+		{
+			r.psElectric01.Stop();
+		}
+	}
+
 
 	void DetectAntiparallel()
 	{
