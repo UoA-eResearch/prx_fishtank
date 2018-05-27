@@ -1105,7 +1105,9 @@ public class Fishtank : MonoBehaviour
 		if (!r.psElectric01.isPlaying)
 		{
 			r.psElectric01.Play();
+			r.setShaderTrans();
 		}
+		
 	}
 
 	void nanoWireOff(Ring r)
@@ -1113,6 +1115,7 @@ public class Fishtank : MonoBehaviour
 		if (r.psElectric01.isPlaying)
 		{
 			r.psElectric01.Stop();
+			r.setShaderVertexCol();
 		}
 	}
 

@@ -24,6 +24,42 @@ public class Ring: MonoBehaviour
 	public ParticleSystem psElectric01;
 	public ParticleSystem.MainModule psElectric01Main;
 
+	public Shader shaderVert;
+	public Shader shaderTrans;
+
+	public GameObject meshPart0;
+	public GameObject meshPart1;
+
+	public Renderer myMeshPart0Renderer;
+	public Renderer myMeshPart1Renderer;
+
+	public Color colorMeshPart0;
+	public Color colorMeshPart1;
+
+
+	void Start()
+	{
+		// runtime shader swap setup
+
+		shaderVert = Shader.Find(" Vertex Colored"); // WTF? unbelievably this shader name has a <space> before the 'V'
+		shaderTrans = Shader.Find("Transparent/Diffuse");
+
+		meshPart0 = gameObject.transform.Find("Ring_MeshPart0").gameObject;
+		meshPart1 = gameObject.transform.Find("Ring_MeshPart1").gameObject;
+
+		myMeshPart0Renderer = meshPart0.GetComponent<Renderer>();
+		myMeshPart1Renderer = meshPart1.GetComponent<Renderer>();
+
+		colorMeshPart0 = myMeshPart0Renderer.material.color;
+		colorMeshPart0.a = 0.1f;
+		myMeshPart0Renderer.material.SetColor("_Color", colorMeshPart0);
+
+		colorMeshPart1 = myMeshPart1Renderer.material.color;
+		colorMeshPart1.a = 0.1f;
+		myMeshPart1Renderer.material.SetColor("_Color", colorMeshPart1);
+
+	}
+
 	void Awake()
 	{
 		velEst = GetComponent<VelocityEstimator>();
@@ -36,13 +72,24 @@ public class Ring: MonoBehaviour
 		psElectric01 = myElectric01.GetComponentInChildren<ParticleSystem>();
 		psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
 
-		//psElectric01Main = psElectric01.main;
-		//psElectric01.Play();
 	}
 
 	void Update()
 	{
 		//psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
+	}
+
+
+	public void setShaderTrans()
+	{
+		myMeshPart0Renderer.material.shader = shaderTrans;
+		myMeshPart1Renderer.material.shader = shaderTrans;
+	}
+
+	public void setShaderVertexCol()
+	{
+		myMeshPart0Renderer.material.shader = shaderVert;
+		myMeshPart1Renderer.material.shader = shaderVert;
 	}
 
 	public void breakRing(Hand currentHand)
