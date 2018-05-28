@@ -18,7 +18,8 @@ public class Ring: MonoBehaviour
 	public bool dockedToDonor = false;
 
 	public float age = 0.0f;
-	public float timeToGrowNanoParticle = 10.0f;
+	public float delayToGrowNanoParticle = 4.0f; // cosmetic delay to let accretion particle system get up to speed
+	public float timeToGrowNanoParticle = 15.0f;
 	public bool ringCanStack = false;
 
 	public Fishtank fishtankScript;
@@ -31,11 +32,19 @@ public class Ring: MonoBehaviour
 	public float myRingLightCurrentIntensity;
 
 
-
+	// Particle Systems
 	public GameObject goElectric01;
 	public ParticleSystem psElectric01;
 	public ParticleSystem.MainModule psElectric01Main;
 
+	public GameObject goAccretion01;
+	public ParticleSystem psAccretion01;
+	public ParticleSystem.MainModule psAccretion01Main;
+	public ParticleSystem.EmissionModule psAccretion01Emission;
+	private float psAccretion01EmissionRateInit = 100.0f;
+	//public float psAccretion01EmissionRateCurrent;
+
+	// Runtime Shader Interaction
 	public Shader shaderVert;
 	public Shader shaderTrans;
 
@@ -93,7 +102,17 @@ public class Ring: MonoBehaviour
 		psElectric01 = myElectric01.GetComponentInChildren<ParticleSystem>();
 		psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
 
-		
+		if (true)
+		{
+			var myAccretion01 = Instantiate(goAccretion01, gameObject.transform);
+
+			psAccretion01 = myAccretion01.GetComponentInChildren<ParticleSystem>();
+			psAccretion01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
+
+			psAccretion01Emission = psAccretion01.emission;
+			psAccretion01Emission.rateOverTime = psAccretion01EmissionRateInit;
+		}
+
 
 
 	}
@@ -103,11 +122,18 @@ public class Ring: MonoBehaviour
 		//psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
 		age = age + Time.deltaTime;
 
-		if (age < timeToGrowNanoParticle)
+		if (age < (delayToGrowNanoParticle + timeToGrowNanoParticle))
 		{
-			float scaleRelativeF = (age / timeToGrowNanoParticle);
+			float scaleRelativeF = ((age - delayToGrowNanoParticle) / timeToGrowNanoParticle);
+			if (scaleRelativeF < 0f)
+			{
+				scaleRelativeF = 0f;
+			}
 			myNanoParticle.transform.localScale = scaleRelativeF * myNanoParticleLocalScaleInit;
-			myRingLight.intensity = myRingLightMaxIntensity * scaleRelativeF;
+			myRingLightCurrentIntensity = myRingLightMaxIntensity * scaleRelativeF;
+			myRingLight.intensity = myRingLightCurrentIntensity;
+
+			psAccretion01Emission.rateOverTime = psAccretion01EmissionRateInit * (1.05f - scaleRelativeF);
 		}
 		else
 		{

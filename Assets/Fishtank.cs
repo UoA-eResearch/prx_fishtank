@@ -103,6 +103,8 @@ public class Fishtank : MonoBehaviour
 	public bool renderCartoon = false;
 	private bool renderCartoonLast = false;
 
+	public bool doNanowires = false;
+
 	public float fishtankScaleFactor = 1.0f;
 	private Vector3 fishtankScaleInit = new Vector3 (1f, 1f, 1f);
 	private Vector3 fishtankPositionInit = new Vector3(0f, 0f, 0f);
