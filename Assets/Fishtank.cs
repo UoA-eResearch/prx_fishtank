@@ -980,7 +980,7 @@ public class Fishtank : MonoBehaviour
 			{
 				var r = ring.GetComponent<Ring>();
 
-				updateNanoWireFx(r);
+				UpdateNanoWireFx(r);
 
 				//find donor end of a stack
 				if (r.dockedToAcceptor && !r.dockedToDonor)
@@ -1048,7 +1048,7 @@ public class Fishtank : MonoBehaviour
 	}
 
 
-	void updateNanoWireFx(Ring r)
+	void UpdateNanoWireFx(Ring r)
 	{
 		
 		// nanowire electric particles
@@ -1059,12 +1059,12 @@ public class Fishtank : MonoBehaviour
 		if (!r.dockedToAcceptor && !r.dockedToDonor)
 		{
 			//free ring
-			nanoWireOff(r);
+			NanoWireOff(r);
 		}
 		else if (r.dockedToAcceptor && r.dockedToDonor)
 		{
 			// two neighbours docked either side
-			nanoWireOn(r);
+			NanoWireOn(r);
 		}
 
 
@@ -1074,11 +1074,11 @@ public class Fishtank : MonoBehaviour
 			if (myAcceptorRing.dockedToAcceptor)
 			{
 				//(at least) two neighbours docked on Acceptor side
-				nanoWireOn(r);
+				NanoWireOn(r);
 			}
 			else
 			{
-				nanoWireOff(r);
+				NanoWireOff(r);
 			}
 		}
 
@@ -1088,11 +1088,11 @@ public class Fishtank : MonoBehaviour
 			if (myDonorRing.dockedToDonor)
 			{
 				//(at least) two neighbours docked on Donor side
-				nanoWireOn(r);
+				NanoWireOn(r);
 			}
 			else
 			{
-				nanoWireOff(r);
+				NanoWireOff(r);
 			}
 
 		}
@@ -1100,22 +1100,22 @@ public class Fishtank : MonoBehaviour
 
 	}
 
-	void nanoWireOn(Ring r)
+	void NanoWireOn(Ring r)
 	{
 		if (!r.psElectric01.isPlaying)
 		{
 			r.psElectric01.Play();
-			r.setShaderTrans();
+			r.SetShaderTrans();
 		}
 		
 	}
 
-	void nanoWireOff(Ring r)
+	void NanoWireOff(Ring r)
 	{
 		if (r.psElectric01.isPlaying)
 		{
 			r.psElectric01.Stop();
-			r.setShaderVertexCol();
+			r.SetShaderVertexCol();
 		}
 	}
 

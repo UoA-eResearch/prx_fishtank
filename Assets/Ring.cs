@@ -79,14 +79,18 @@ public class Ring: MonoBehaviour
 		//psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
 	}
 
+	public bool RingCanStack(Ring r)
+	{
+		return true;
+	}
 
-	public void setShaderTrans()
+	public void SetShaderTrans()
 	{
 		myMeshPart0Renderer.material.shader = shaderTrans;
 		myMeshPart1Renderer.material.shader = shaderTrans;
 	}
 
-	public void setShaderVertexCol()
+	public void SetShaderVertexCol()
 	{
 		myMeshPart0Renderer.material.shader = shaderVert;
 		myMeshPart1Renderer.material.shader = shaderVert;
