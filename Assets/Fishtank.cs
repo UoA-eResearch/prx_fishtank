@@ -456,11 +456,39 @@ public class Fishtank : MonoBehaviour
 				}
 				if (tag == "ring")
 				{
-					if (go.GetComponent<Ring>().partnerAcceptor == null && go.GetComponent<Ring>().partnerDonor == null)
+					Ring ring = go.GetComponent<Ring>();
+					if ((ring.partnerAcceptor == null && ring.partnerDonor == null))
 					{
-						// unpaired ring (no donor or acceptor) => should drift
+						//I am an unpaired ring (no donor or acceptor) => should drift
 						AddRandomMotion(go);
 						continue;
+					}
+					{
+						// intercept stacking behaviour here for nanowire formation
+						if (!ring.ringCanStack)
+						{
+							// I can't stack
+							AddRandomMotion(go);
+							continue;
+						}
+						if (ring.partnerAcceptor)
+						{
+							Ring ringPartnerAcceptor = ring.partnerAcceptor.GetComponent<Ring>();
+							if (!ringPartnerAcceptor.ringCanStack)
+							{
+								//Have an acceptor - but it can't stack
+								if (ring.partnerDonor)
+								{
+									Ring ringPartnerDonor = ring.partnerDonor.GetComponent<Ring>();
+									if (!ringPartnerDonor.ringCanStack)
+									{
+										//Have a donor but it can't stack
+										AddRandomMotion(go);
+										continue;
+									}
+								}
+							}
+						}
 					}
 				}
 

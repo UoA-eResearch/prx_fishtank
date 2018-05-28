@@ -17,8 +17,14 @@ public class Ring: MonoBehaviour
 	public bool dockedToAcceptor = false;
 	public bool dockedToDonor = false;
 
+	public float age = 0.0f;
+	public float timeToGrowNanoParticle = 10.0f;
+	public bool ringCanStack = false;
+
 	public Fishtank fishtankScript;
 	public GameObject fishtankGO;
+	public GameObject myNanoParticle;
+	private Vector3 myNanoParticleLocalScaleInit;
 
 	public GameObject goElectric01;
 	public ParticleSystem psElectric01;
@@ -58,6 +64,10 @@ public class Ring: MonoBehaviour
 		colorMeshPart1.a = 0.1f;
 		myMeshPart1Renderer.material.SetColor("_Color", colorMeshPart1);
 
+		myNanoParticle = gameObject.transform.Find("Wire").gameObject;
+		myNanoParticle.SetActive(true);
+		myNanoParticleLocalScaleInit = myNanoParticle.transform.localScale;
+
 	}
 
 	void Awake()
@@ -72,16 +82,27 @@ public class Ring: MonoBehaviour
 		psElectric01 = myElectric01.GetComponentInChildren<ParticleSystem>();
 		psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
 
+		
+
+
 	}
 
 	void Update()
 	{
 		//psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
-	}
+		age = age + Time.deltaTime;
 
-	public bool RingCanStack(Ring r)
-	{
-		return true;
+		if (age < timeToGrowNanoParticle)
+		{
+			float scaleRelativeF = (age / timeToGrowNanoParticle);
+			myNanoParticle.transform.localScale = scaleRelativeF * myNanoParticleLocalScaleInit;
+		}
+		else
+		{
+			//myNanoParticle.SetActive(true);
+			ringCanStack = true;
+		}
+
 	}
 
 	public void SetShaderTrans()
