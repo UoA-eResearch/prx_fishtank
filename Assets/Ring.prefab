@@ -688,7 +688,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1276709942627308
 GameObject:
   m_ObjectHideFlags: 1
@@ -4476,7 +4476,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1314551590984416}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 2.4702947, y: 1.548, z: -0.4785393}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 0.1, y: 0.1, z: 0.1}
   m_Children:
   - {fileID: 4371150901343046}
@@ -10492,11 +10492,26 @@ MonoBehaviour:
   partnerDonor: {fileID: 0}
   dockedToAcceptor: 0
   dockedToDonor: 0
+  age: 0
+  timeToGrowNanoParticle: 10
+  ringCanStack: 0
   fishtankScript: {fileID: 0}
   fishtankGO: {fileID: 0}
+  myNanoParticle: {fileID: 0}
+  myRingLight: {fileID: 0}
+  myRingLightMaxIntensity: 0
+  myRingLightCurrentIntensity: 0
   goElectric01: {fileID: 1774033389672680, guid: 9e27496bb815bbc4e91407d8f4c93f3f,
     type: 2}
   psElectric01: {fileID: 0}
+  shaderVert: {fileID: 0}
+  shaderTrans: {fileID: 0}
+  meshPart0: {fileID: 0}
+  meshPart1: {fileID: 0}
+  myMeshPart0Renderer: {fileID: 0}
+  myMeshPart1Renderer: {fileID: 0}
+  colorMeshPart0: {r: 0, g: 0, b: 0, a: 0}
+  colorMeshPart1: {r: 0, g: 0, b: 0, a: 0}
 --- !u!114 &114916512091932642
 MonoBehaviour:
   m_ObjectHideFlags: 1

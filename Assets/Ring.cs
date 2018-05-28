@@ -26,6 +26,12 @@ public class Ring: MonoBehaviour
 	public GameObject myNanoParticle;
 	private Vector3 myNanoParticleLocalScaleInit;
 
+	public Light myRingLight;
+	public float myRingLightMaxIntensity;
+	public float myRingLightCurrentIntensity;
+
+
+
 	public GameObject goElectric01;
 	public ParticleSystem psElectric01;
 	public ParticleSystem.MainModule psElectric01Main;
@@ -67,7 +73,12 @@ public class Ring: MonoBehaviour
 		myNanoParticle = gameObject.transform.Find("Wire").gameObject;
 		myNanoParticle.SetActive(true);
 		myNanoParticleLocalScaleInit = myNanoParticle.transform.localScale;
+		myNanoParticle.transform.localScale = 0.0f * myNanoParticleLocalScaleInit;
 
+		GameObject myRingLightGO = gameObject.transform.Find("ringLight").gameObject;
+		myRingLight = myRingLightGO.GetComponent<Light>();
+		myRingLightMaxIntensity = myRingLight.intensity;
+		myRingLight.intensity = 0.0f;
 	}
 
 	void Awake()
@@ -96,6 +107,7 @@ public class Ring: MonoBehaviour
 		{
 			float scaleRelativeF = (age / timeToGrowNanoParticle);
 			myNanoParticle.transform.localScale = scaleRelativeF * myNanoParticleLocalScaleInit;
+			myRingLight.intensity = myRingLightMaxIntensity * scaleRelativeF;
 		}
 		else
 		{
