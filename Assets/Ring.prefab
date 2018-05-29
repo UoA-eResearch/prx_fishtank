@@ -10524,6 +10524,7 @@ MonoBehaviour:
   dockedToAcceptor: 0
   dockedToDonor: 0
   age: 0
+  delayToGrowNanoParticle: 4
   timeToGrowNanoParticle: 10
   ringCanStack: 0
   fishtankScript: {fileID: 0}
@@ -10532,7 +10533,7 @@ MonoBehaviour:
   myRingLight: {fileID: 0}
   myRingLightMaxIntensity: 0
   myRingLightCurrentIntensity: 0
-  goElectric01: {fileID: 1774033389672680, guid: 9e27496bb815bbc4e91407d8f4c93f3f,
+  goElectric01: {fileID: 1902089067336918, guid: 4c5ac25890db3cb4b9113b3e96ff6550,
     type: 2}
   psElectric01: {fileID: 0}
   goAccretion01: {fileID: 1562150348480682, guid: f7303a5333009d54ea9494f6f2400535,
