@@ -97,7 +97,7 @@ public class Fishtank : MonoBehaviour
 	public float pairingForcingVelocity = 20.0f;        // translation rate for pairing using positional transform lerp - maintains forced ring stacking for manipulation
 	public int pairingForcingRotationVelocity = 50;     // rotation rate for pairing using quaternion slerp
 
-	public int ringRotSymmetry = 6;						// number of equivalent docking positions around ring
+	public int ringRotSymmetry = 6;                     // number of equivalent docking positions around ring
 
 	public bool cheat = false;
 	public bool renderCartoon = false;
@@ -106,11 +106,16 @@ public class Fishtank : MonoBehaviour
 	public bool doNanowires = false;
 
 	public float fishtankScaleFactor = 1.0f;
-	private Vector3 fishtankScaleInit = new Vector3 (1f, 1f, 1f);
+	private Vector3 fishtankScaleInit = new Vector3(1f, 1f, 1f);
 	private Vector3 fishtankPositionInit = new Vector3(0f, 0f, 0f);
 	private Vector3 fishtankPositionCurrent = new Vector3(0f, 0f, 0f);
 
-	public float nanowireFxScale = 0.05f;				//particle scale for nanowire electric fx
+	public float nanowireFxScale = 0.05f;               //particle scale for nanowire electric fx
+
+	public int modeUI = 0;
+
+	public GameObject pHSliderUI;
+	public GameObject cartoonRenderUI;
 
 	void FindPairs()
 	{
@@ -698,7 +703,7 @@ public class Fishtank : MonoBehaviour
 							//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
 							targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
 						}
-			
+
 						/*
 						{
 							// possible optimisation as alternative to code block above
@@ -829,7 +834,7 @@ public class Fishtank : MonoBehaviour
 			{
 				// don't tumble master dimers
 				go.GetComponent<Rigidbody>().AddRelativeTorque(torque * 0.1f * Random.onUnitSphere, ForceMode.Impulse);
-				go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * 0.1f  * Time.deltaTime * Random.Range(forceDiffuseMin, forceDiffuseMax), ForceMode.Impulse);
+				go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * 0.1f * Time.deltaTime * Random.Range(forceDiffuseMin, forceDiffuseMax), ForceMode.Impulse);
 			}
 			else
 			{
@@ -928,7 +933,7 @@ public class Fishtank : MonoBehaviour
 			ParticleSystem.EmissionModule psH2OEmission = psSolventH2O.emission;
 
 			if (true)
-			{ 
+			{
 				// test A - linking solvent particle (H) colours to pH
 
 				particleCol = col;
@@ -936,7 +941,7 @@ public class Fishtank : MonoBehaviour
 				psHMain.startColor = particleCol;
 				psHMain.startSize = 0.012f; // slightly larger than prefab to make it more visible
 
-				psHEmission.rateOverTime = ((9 - (phSlider.GetPhValue() - 3))^2) * 50;
+				psHEmission.rateOverTime = ((9 - (phSlider.GetPhValue() - 3)) ^ 2) * 50;
 				psOHEmission.rateOverTime = 0.0f;
 				psH2OEmission.rateOverTime = 100.0f;
 
@@ -963,8 +968,8 @@ public class Fishtank : MonoBehaviour
 			//Debug.Log("There are " + gos.Length + " " + tag + " around");
 			foreach (var go in gos)
 			{
-				go.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(go.GetComponent<Rigidbody>().velocity, 2.0f);
-				go.GetComponent<Rigidbody>().angularVelocity = Vector3.ClampMagnitude(go.GetComponent<Rigidbody>().angularVelocity, 6.0f);
+				go.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(go.GetComponent<Rigidbody>().velocity, 0.5f * 2.0f);
+				go.GetComponent<Rigidbody>().angularVelocity = Vector3.ClampMagnitude(go.GetComponent<Rigidbody>().angularVelocity, 0.5f * 6.0f);
 			}
 		}
 	}
@@ -1046,7 +1051,7 @@ public class Fishtank : MonoBehaviour
 			}
 			if (stackLongest == numMonomers / 2 / 6)
 			{
-				hasWon = true;	
+				hasWon = true;
 			}
 		}
 		stackLongestTxt.text = stackLongest.ToString();
@@ -1080,7 +1085,7 @@ public class Fishtank : MonoBehaviour
 
 	void UpdateNanoWireFx(Ring r)
 	{
-		
+
 		// nanowire electric particles
 		// turns on fx for rings in stacks of 3 or more
 		// this method avoids keeping arrays or lists for stacks ;)
@@ -1126,7 +1131,7 @@ public class Fishtank : MonoBehaviour
 			}
 
 		}
-		
+
 
 	}
 
@@ -1137,7 +1142,7 @@ public class Fishtank : MonoBehaviour
 			r.psElectric01.Play();
 			r.SetShaderTrans();
 		}
-		
+
 	}
 
 	void NanoWireOff(Ring r)
@@ -1254,7 +1259,7 @@ public class Fishtank : MonoBehaviour
 #endif
 	}
 
-	float GetBestRotationOffsetAngle (Quaternion partnerRotation, GameObject ring)
+	float GetBestRotationOffsetAngle(Quaternion partnerRotation, GameObject ring)
 	{
 		Quaternion testRotationQuat;
 		float testRotationDiff;
@@ -1275,7 +1280,7 @@ public class Fishtank : MonoBehaviour
 		return bestRotationOffsetAngle;
 	}
 
-	void UpdateCartoon ()
+	void UpdateCartoon()
 	{
 		renderCartoon = cartoonModeSwitch.GetRenderCartoon();
 
@@ -1351,13 +1356,60 @@ public class Fishtank : MonoBehaviour
 				{
 					var r = ring.GetComponent<Ring>();
 					r.psElectric01.transform.localScale = nanowireFxScale * gameObject.transform.localScale;
-					
+
 				}
 			}
 
 		}
-		
 
+
+	}
+
+	void SwitchMenuUIMode()
+	{
+		if (true) //(Input.GetKeyDown(KeyCode.Z))
+		{
+			if (modeUI == 0)
+			{
+				modeUI = 1;
+				pHSliderUI.SetActive(true);
+				cartoonRenderUI.SetActive(false);
+			}
+			else if (modeUI == 1)
+			{
+				modeUI = 0;
+				pHSliderUI.SetActive(false);
+				cartoonRenderUI.SetActive(true);
+			}
+		}
+	}
+
+	void ViveControlLeft(int controllerId)
+	{
+		var controllerLeft = SteamVR_Controller.Input(controllerId);
+		if (controllerLeft.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+		{
+			Debug.Log("Left Press Down!");
+			SwitchMenuUIMode();
+		}
+	}
+
+	void UpdateViveControllers()
+	{
+		var leftI = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
+		var rightI = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
+
+		//Debug.Log("leftI = " + leftI + " rightI = " + rightI);
+
+		if (leftI != -1)
+		{
+			ViveControlLeft(leftI);
+		}
+
+		if (rightI != -1)
+		{
+			//ViveControl(rightI);
+		}
 	}
 
 	// Update is called once per frame
@@ -1370,5 +1422,7 @@ public class Fishtank : MonoBehaviour
 		UpdateTimer();
 		UpdateCartoon();
 		UpdateScale();
+		//UpdateUIMode();
+		UpdateViveControllers();
 	}
 }
