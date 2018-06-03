@@ -40,6 +40,7 @@ public class Fishtank : MonoBehaviour
 
 	public PartyModeSwitch partyModeSwitch;
 	public CartoonModeSwitch cartoonModeSwitch;
+	public ScaleSlider scaleModeSlider;
 
 	public ChartStats chartStats;
 
@@ -116,6 +117,7 @@ public class Fishtank : MonoBehaviour
 
 	public GameObject pHSliderUI;
 	public GameObject cartoonRenderUI;
+	public GameObject fishtankScaleUI;
 
 	void FindPairs()
 	{
@@ -760,6 +762,8 @@ public class Fishtank : MonoBehaviour
 		fishtankPositionInit = gameObject.transform.position;
 		fishtankPositionCurrent = gameObject.transform.position;
 
+		SetMenuUIComponents(modeUI);
+
 		phSlider = gameObject.GetComponent<PHSlider>();
 
 		// initialise solvent particle systems
@@ -1105,30 +1109,46 @@ public class Fishtank : MonoBehaviour
 
 		if (r.dockedToAcceptor && !r.dockedToDonor)
 		{
-			var myAcceptorRing = r.partnerAcceptor.GetComponent<Ring>();
-			if (myAcceptorRing.dockedToAcceptor)
+			if (r.partnerAcceptor != null)
 			{
-				//(at least) two neighbours docked on Acceptor side
-				NanoWireOn(r);
+				var myAcceptorRing = r.partnerAcceptor.GetComponent<Ring>();
+				if (myAcceptorRing.dockedToAcceptor)
+				{
+					//(at least) two neighbours docked on Acceptor side
+					NanoWireOn(r);
+				}
+				else
+				{
+					NanoWireOff(r);
+				}
 			}
 			else
 			{
 				NanoWireOff(r);
 			}
+
 		}
 
 		if (!r.dockedToAcceptor && r.dockedToDonor)
 		{
-			var myDonorRing = r.partnerDonor.GetComponent<Ring>();
-			if (myDonorRing.dockedToDonor)
+			if (r.partnerDonor != null)
 			{
-				//(at least) two neighbours docked on Donor side
-				NanoWireOn(r);
+				var myDonorRing = r.partnerDonor.GetComponent<Ring>();
+				if (myDonorRing.dockedToDonor)
+				{
+					//(at least) two neighbours docked on Donor side
+					NanoWireOn(r);
+				}
+				else
+				{
+					NanoWireOff(r);
+				}
 			}
 			else
 			{
 				NanoWireOff(r);
 			}
+
 
 		}
 
@@ -1334,7 +1354,8 @@ public class Fishtank : MonoBehaviour
 
 		//if (fishtankScaleFactor != cartoonModeSwitch.GetFishtankScale())
 		{
-			fishtankScaleFactor = cartoonModeSwitch.GetFishtankScale();
+			//fishtankScaleFactor = cartoonModeSwitch.GetFishtankScale();
+			fishtankScaleFactor = scaleModeSlider.GetFishtankScale();
 			//fishtank
 			gameObject.transform.localScale = fishtankScaleInit * fishtankScaleFactor;
 			fishtankPositionCurrent.y = fishtankPositionInit.y * fishtankScaleFactor;
@@ -1365,23 +1386,39 @@ public class Fishtank : MonoBehaviour
 
 	}
 
+	void SetMenuUIComponents(int mode)
+	{
+		switch (mode)
+		{
+			case 0:
+				pHSliderUI.SetActive(true);
+				cartoonRenderUI.SetActive(false);
+				fishtankScaleUI.SetActive(false);
+				break;
+			case 1:
+				pHSliderUI.SetActive(false);
+				cartoonRenderUI.SetActive(true);
+				fishtankScaleUI.SetActive(false);
+				break;
+			case 2:
+				pHSliderUI.SetActive(false);
+				cartoonRenderUI.SetActive(false);
+				fishtankScaleUI.SetActive(true);
+				break;
+		}
+	}
+
 	void SwitchMenuUIMode()
 	{
 		if (true) //(Input.GetKeyDown(KeyCode.Z))
 		{
-			if (modeUI == 0)
-			{
-				modeUI = 1;
-				pHSliderUI.SetActive(true);
-				cartoonRenderUI.SetActive(false);
-			}
-			else if (modeUI == 1)
+			modeUI += 1;
+			if (modeUI == 3)
 			{
 				modeUI = 0;
-				pHSliderUI.SetActive(false);
-				cartoonRenderUI.SetActive(true);
 			}
 		}
+		SetMenuUIComponents(modeUI);
 	}
 
 	void ViveControlLeft(int controllerId)

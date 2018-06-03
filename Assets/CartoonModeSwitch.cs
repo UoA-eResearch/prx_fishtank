@@ -10,13 +10,12 @@ public class CartoonModeSwitch : MonoBehaviour
 	public Text renderCartoonText;
 	public bool renderCartoon = false;
 
-	public LinearMapping fishtankScaleLM;
-	public Text fishtankScaleText;
-	public float fishtankScale = 1.0f;
+	//public LinearMapping fishtankScaleLM;
+	//public Text fishtankScaleText;
+	//public float fishtankScale = 1.0f;
 
 	// Use this for initialization
 	void Start () {
-		
 	}
 	
 	// Update is called once per frame
@@ -35,10 +34,10 @@ public class CartoonModeSwitch : MonoBehaviour
 			//scoreboard.SetActive(false);
 		}
 
-		fishtankScale = 1.0f - ((1.0f - fishtankScaleLM.value) / 2.5f);
+		//fishtankScale = 1.0f - ((1.0f - fishtankScaleLM.value) / 2.5f);
 		//fishtankScale = 1.2f - ((1.0f - fishtankScaleLM.value) / 1.5f);
-		double _scaleD = System.Math.Round(fishtankScale, 1);
-		fishtankScaleText.text = _scaleD.ToString();
+		//double _scaleD = System.Math.Round(fishtankScale, 1);
+		//fishtankScaleText.text = _scaleD.ToString();
 	}
 
 	public bool GetRenderCartoon()
@@ -46,8 +45,8 @@ public class CartoonModeSwitch : MonoBehaviour
 		return renderCartoon;
 	}
 
-	public float GetFishtankScale()
-	{
-		return fishtankScale;
-	}
+	//public float GetFishtankScale()
+	//{
+	//	return fishtankScale;
+	//}
 }

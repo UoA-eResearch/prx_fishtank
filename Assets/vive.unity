@@ -977,7 +977,7 @@ RectTransform:
   - {fileID: 999339089}
   - {fileID: 1570141263}
   m_Father: {fileID: 1131366383}
-  m_RootOrder: 4
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -2629,6 +2629,7 @@ MonoBehaviour:
   fishtankAudioSource: {fileID: 469726002}
   partyModeSwitch: {fileID: 1288313465}
   cartoonModeSwitch: {fileID: 844004221}
+  scaleModeSlider: {fileID: 2032115209}
   chartStats: {fileID: 1411235742}
   solventH: {fileID: 1343720090702508, guid: 46d5d3d631859224aa75481c6a3579f7, type: 2}
   solventOH: {fileID: 1090510125369910, guid: 80271ce95b5108f4eb53a7e76c8e0501, type: 2}
@@ -2655,6 +2656,7 @@ MonoBehaviour:
   modeUI: 0
   pHSliderUI: {fileID: 890592589}
   cartoonRenderUI: {fileID: 1087140428}
+  fishtankScaleUI: {fileID: 1088729769}
 --- !u!114 &469726001
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5071,10 +5073,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   renderCartoonLM: {fileID: 844004220}
   renderCartoonText: {fileID: 1126763590}
-  renderCartoon: 1
-  fishtankScaleLM: {fileID: 2032115207}
-  fishtankScaleText: {fileID: 1583525688}
-  fishtankScale: 1
+  renderCartoon: 0
 --- !u!4 &844004222
 Transform:
   m_ObjectHideFlags: 0
@@ -6406,18 +6405,18 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1087140428}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.5, y: 0.5, z: 0.5}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
+  m_LocalPosition: {x: -0.05, y: -0.100000024, z: 0.15}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children:
   - {fileID: 687088415}
   - {fileID: 1763711203}
   - {fileID: 946013143}
   - {fileID: 844004222}
   - {fileID: 1827122855}
-  m_Father: {fileID: 1320717005}
-  m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 1131366383}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!1 &1088729769
 GameObject:
   m_ObjectHideFlags: 0
@@ -6427,7 +6426,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1088729770}
   m_Layer: 0
-  m_Name: SwitchFishtankScale
+  m_Name: ScaleSliderUI
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6439,18 +6438,18 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1088729769}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.5, y: 0.5, z: 0.5}
-  m_LocalScale: {x: 1.0000005, y: 1, z: 1.0000005}
+  m_LocalRotation: {x: 0.38268343, y: 0, z: 0, w: 0.92387956}
+  m_LocalPosition: {x: -0.05, y: -0.100000024, z: 0.15}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 0.2}
   m_Children:
   - {fileID: 1535698258}
   - {fileID: 654551045}
   - {fileID: 1848556323}
   - {fileID: 2032115208}
   - {fileID: 1799510875}
-  m_Father: {fileID: 1320717005}
-  m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_Father: {fileID: 1131366383}
+  m_RootOrder: 5
+  m_LocalEulerAnglesHint: {x: 45, y: 0, z: 0}
 --- !u!1 &1094556061
 GameObject:
   m_ObjectHideFlags: 0
@@ -8155,8 +8154,6 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 599017826}
-  - {fileID: 1087140429}
-  - {fileID: 1088729770}
   m_Father: {fileID: 538895370}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -14102,8 +14099,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2032115208}
   - component: {fileID: 2032115207}
+  - component: {fileID: 2032115209}
   m_Layer: 0
-  m_Name: LinearMapping
+  m_Name: Scale_LinearMapping
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -14134,6 +14132,20 @@ Transform:
   m_Father: {fileID: 1088729770}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2032115209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 2032115206}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4557d618df3b6104d8ed747b0c765878, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fishtankScaleLM: {fileID: 2032115207}
+  fishtankScaleText: {fileID: 1583525688}
+  fishtankScale: 1
 --- !u!1 &2035473037
 GameObject:
   m_ObjectHideFlags: 0
@@ -14248,7 +14260,7 @@ Prefab:
     - target: {fileID: 114150292401664452, guid: dc06161b6d97feb419f45f03b62e14b9,
         type: 2}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114531126441257938, guid: dc06161b6d97feb419f45f03b62e14b9,
         type: 2}
