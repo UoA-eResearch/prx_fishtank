@@ -11,6 +11,7 @@ public class PartyModeSwitch : MonoBehaviour {
 	private bool partyMode = false;
 	public GameObject scoreboard;
 	public GameObject chartStats;
+	public GameObject heldScoreboard;
 	
 	// Update is called once per frame
 	void Update () {
@@ -20,6 +21,7 @@ public class PartyModeSwitch : MonoBehaviour {
 			partyMode = true;
 			scoreboard.SetActive(true);
 			chartStats.SetActive(false);
+			heldScoreboard.SetActive(true);
 		}
 		else
 		{
@@ -27,6 +29,7 @@ public class PartyModeSwitch : MonoBehaviour {
 			partyMode = false;
 			scoreboard.SetActive(false);
 			chartStats.SetActive(true);
+			heldScoreboard.SetActive(false);
 		}
 	}
 	public bool GetPartyMode()

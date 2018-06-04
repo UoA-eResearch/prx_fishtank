@@ -1418,17 +1418,29 @@ public class Fishtank : MonoBehaviour
 				fishtankScaleUI.SetActive(false);
 				partyModeUI.SetActive(true);
 				break;
+			case 4:
+				pHSliderUI.SetActive(false);
+				cartoonRenderUI.SetActive(false);
+				fishtankScaleUI.SetActive(false);
+				partyModeUI.SetActive(false);
+				break;
 		}
 	}
 
-	void SwitchMenuUIMode()
+	void SwitchMenuUIMode(int direction)
 	{
+		var numUIModes = 5;
+
 		if (true) //(Input.GetKeyDown(KeyCode.Z))
 		{
-			modeUI += 1;
-			if (modeUI == 4)
+			modeUI += direction;
+			if (modeUI == numUIModes)
 			{
 				modeUI = 0;
+			}
+			if (modeUI == -1)
+			{
+				modeUI = (numUIModes - 1);
 			}
 		}
 		SetMenuUIComponents(modeUI);
@@ -1440,7 +1452,17 @@ public class Fishtank : MonoBehaviour
 		if (controllerLeft.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
 		{
 			Debug.Log("Left Press Down!");
-			SwitchMenuUIMode();
+			SwitchMenuUIMode(-1);
+		}
+	}
+
+	void ViveControlRight(int controllerId)
+	{
+		var controllerLeft = SteamVR_Controller.Input(controllerId);
+		if (controllerLeft.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+		{
+			Debug.Log("Right Press Down!");
+			SwitchMenuUIMode(1);
 		}
 	}
 
@@ -1458,7 +1480,7 @@ public class Fishtank : MonoBehaviour
 
 		if (rightI != -1)
 		{
-			//ViveControl(rightI);
+			ViveControlRight(rightI);
 		}
 	}
 

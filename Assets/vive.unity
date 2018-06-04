@@ -952,7 +952,7 @@ GameObject:
   - component: {fileID: 81891956}
   - component: {fileID: 81891955}
   m_Layer: 26
-  m_Name: Timer Canvas
+  m_Name: HeldScoreboard
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7979,6 +7979,7 @@ MonoBehaviour:
   text: {fileID: 1773986447}
   scoreboard: {fileID: 694107981}
   chartStats: {fileID: 1411235740}
+  heldScoreboard: {fileID: 81891953}
 --- !u!4 &1288313466
 Transform:
   m_ObjectHideFlags: 0
