@@ -23,13 +23,13 @@ public class CartoonModeSwitch : MonoBehaviour
 	{
 		if (renderCartoonLM.value < .5)
 		{
-			renderCartoonText.text = "cartoon";
+			renderCartoonText.text = "internal structure";
 			renderCartoon = true;
 			//scoreboard.SetActive(true);
 		}
 		else
 		{
-			renderCartoonText.text = "surface";
+			renderCartoonText.text = "external surface";
 			renderCartoon = false;
 			//scoreboard.SetActive(false);
 		}
