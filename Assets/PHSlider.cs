@@ -40,7 +40,7 @@ public class PHSlider : MonoBehaviour
 			{
 
 				case 9:
-					phText.text = "pH value: high";
+					phText.text = "pH high";
 					break;
 
 				case 8:
@@ -48,11 +48,11 @@ public class PHSlider : MonoBehaviour
 				case 6:
 				case 5:
 				case 4:
-					phText.text = "pH value: " + phValue;
+					phText.text = "pH = " + phValue;
 					break;
 
 				case 3:
-					phText.text = "pH value: low";
+					phText.text = "pH low";
 					break;
 
 			}
