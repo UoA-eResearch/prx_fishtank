@@ -8,7 +8,7 @@ public class PartyModeSwitch : MonoBehaviour {
 
 	public LinearMapping linearMapping;
 	public Text text;
-	public bool partying = true;
+	private bool partyMode = false;
 	public GameObject scoreboard;
 	public GameObject chartStats;
 	
@@ -17,16 +17,20 @@ public class PartyModeSwitch : MonoBehaviour {
 		if (linearMapping.value < .5)
 		{
 			text.text = "Party!";
-			partying = true;
+			partyMode = true;
 			scoreboard.SetActive(true);
 			chartStats.SetActive(false);
 		}
 		else
 		{
 			text.text = "Serious";
-			partying = false;
+			partyMode = false;
 			scoreboard.SetActive(false);
 			chartStats.SetActive(true);
 		}
+	}
+	public bool GetPartyMode()
+	{
+		return partyMode;
 	}
 }

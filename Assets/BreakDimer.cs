@@ -32,7 +32,7 @@ public class BreakDimer : MonoBehaviour
 		// Drop whatever you're holding
 		hand.otherHand.DetachObject(hand.otherHand.currentAttachedObject);
 		hand.DetachObject(hand.currentAttachedObject);
-		Debug.Log(hand.otherHand.name + " is hovering over " + gameObject.name + " which is attached to " + hand.name);
+		//Debug.Log(hand.otherHand.name + " is hovering over " + gameObject.name + " which is attached to " + hand.name);
 
 		breakApartDimer();
 
@@ -62,7 +62,7 @@ public class BreakDimer : MonoBehaviour
 		//monomer2.GetComponent<Rigidbody>().AddForce(-monomer2.transform.forward * Random.RandomRange(0.01f,0.02f), ForceMode.Impulse);
 		monomer2.name = "Mo_" + monomer2.GetInstanceID();
 		fishtankScript.SetCartoonRendering(monomer2);
-		Debug.Log("Destroying " + gameObject.name);
+		//Debug.Log("Destroying " + gameObject.name);
 		Destroy(gameObject);
 	}
 

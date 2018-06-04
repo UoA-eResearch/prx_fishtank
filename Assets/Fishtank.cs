@@ -33,17 +33,9 @@ public class Fishtank : MonoBehaviour
 	private Dictionary<GameObject, GameObject> pairsMyDonor;
 	private Dictionary<GameObject, GameObject> pairsMyDonorPrev;
 
+	public AudioSource fishtankAudioSource;
 	public GameObject ringPS;
 	public GameObject confettiPS;
-
-	public AudioSource fishtankAudioSource;
-
-	public PartyModeSwitch partyModeSwitch;
-	public CartoonModeSwitch cartoonModeSwitch;
-	public ScaleSlider scaleModeSlider;
-
-	public ChartStats chartStats;
-
 	public GameObject solventH;
 	public GameObject solventOH;
 	public GameObject solventH2O;
@@ -68,11 +60,11 @@ public class Fishtank : MonoBehaviour
 	private int probabilityStackMake;
 	private float fishtankAlpha = 0.01f;
 
-	public float alignLimitDot = 0.5f;
-	public float relateLimitDot = 0.5f;
+	// dot product thresholds for ring pairing
+	private float alignLimitDot = 0.5f;
+	private float relateLimitDot = 0.5f;
 
 	// magic numbers for pushing gos around - entirely empirical !
-
 	private float forceTankMin = 0.1f;                  // impulse force range for keeping go in tank
 	private float forceTankMax = 0.5f;
 
@@ -80,29 +72,29 @@ public class Fishtank : MonoBehaviour
 	private float forceDiffuseMin = 1.0f;               // impulse forces for random motion
 	private float forceDiffuseMax = 2.0f;
 
-	public float pairingInterval = 0.1f;
+	private float pairingInterval = 0.1f;
+	private float ringAntiparallelCheckInterval = 1f;
 
-	public float ringAntiparallelCheckInterval = 1f;
+	private float pairingVelocity = 0.05f;               // translation rate for pairing using positional transform lerp
+	private int pairingRotationVelocity = 40;            // rotation rate for pairing using quaternion slerp
 
-	public float pairingVelocity = 0.05f;               // translation rate for pairing using positional transform lerp
-	public int pairingRotationVelocity = 40;            // rotation rate for pairing using quaternion slerp
+	private float minDistApplyRBForces = 0.02f;          // lower distance limit for using forces on RBs to push monomer / dimer go together
+	private float minDistApplyRBForcesRing = 0.08f;      // lower distance limit for using forces on RBs to push ring go together
 
-	public float minDistApplyRBForces = 0.02f;          // lower distance limit for using forces on RBs to push monomer / dimer go together
-	public float minDistApplyRBForcesRing = 0.08f;      // lower distance limit for using forces on RBs to push ring go together
+	private float stackForceDistance = 0.02f;            // distance threshold for forcing ring stack - hack to allow some stack manipulation with motion controller
 
-	public float stackForceDistance = 0.01f;            // distance threshold for forcing ring stack - hack to allow some stack manipulation with motion controller
+	private float ringRepelDistance = 0.25f;
+	private float ringAngleDiff = 45;
 
-	public float ringRepelDistance = 0.2f;
-	public float ringAngleDiff = 10;
+	private float pairingForcingVelocity = 20.0f;        // translation rate for pairing using positional transform lerp - maintains forced ring stacking for manipulation
+	private int pairingForcingRotationVelocity = 50;     // rotation rate for pairing using quaternion slerp
 
-	public float pairingForcingVelocity = 20.0f;        // translation rate for pairing using positional transform lerp - maintains forced ring stacking for manipulation
-	public int pairingForcingRotationVelocity = 50;     // rotation rate for pairing using quaternion slerp
-
-	public int ringRotSymmetry = 6;                     // number of equivalent docking positions around ring
+	private int ringRotSymmetry = 6;                     // number of equivalent docking positions around ring
 
 	public bool cheat = false;
 	public bool renderCartoon = false;
 	private bool renderCartoonLast = false;
+	public bool partyMode = false;
 
 	public bool doNanowires = false;
 
@@ -118,6 +110,13 @@ public class Fishtank : MonoBehaviour
 	public GameObject pHSliderUI;
 	public GameObject cartoonRenderUI;
 	public GameObject fishtankScaleUI;
+	public GameObject partyModeUI;
+
+	public PartyModeSwitch partyModeSwitch;
+	public CartoonModeSwitch cartoonModeSwitch;
+	public ScaleSlider scaleModeSlider;
+
+	public ChartStats chartStats;
 
 	void FindPairs()
 	{
@@ -570,7 +569,7 @@ public class Fishtank : MonoBehaviour
 								var ring = Instantiate(ringPrefab, dimer2RingTransform.position, go.transform.rotation, transform);
 								SetCartoonRendering(ring);
 
-								if (partyModeSwitch.partying)
+								if (partyMode) //(partyModeSwitch.partying)
 								{
 									var ringVfx = Instantiate(ringPS, go.transform.position, Quaternion.identity);
 									Destroy(ringVfx, 4.0f);
@@ -1075,7 +1074,7 @@ public class Fishtank : MonoBehaviour
 			timer.text = timeD.ToString() + "s";
 			timer2.text = timeD.ToString();
 		}
-		if (hasWon && !confettiDone && partyModeSwitch.partying)
+		if (hasWon && !confettiDone && partyMode) //partyModeSwitch.partying)
 		{
 			fishtankAudioSource.Play();
 			Vector3 confettiOffset = new Vector3(0f, 2.5f, 0f);
@@ -1349,6 +1348,11 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
+	void UpdatePartyMode()
+	{
+		partyMode = partyModeSwitch.GetPartyMode();
+	}
+
 	void UpdateScale()
 	{
 
@@ -1394,16 +1398,25 @@ public class Fishtank : MonoBehaviour
 				pHSliderUI.SetActive(true);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
+				partyModeUI.SetActive(false);
 				break;
 			case 1:
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(true);
 				fishtankScaleUI.SetActive(false);
+				partyModeUI.SetActive(false);
 				break;
 			case 2:
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(true);
+				partyModeUI.SetActive(false);
+				break;
+			case 3:
+				pHSliderUI.SetActive(false);
+				cartoonRenderUI.SetActive(false);
+				fishtankScaleUI.SetActive(false);
+				partyModeUI.SetActive(true);
 				break;
 		}
 	}
@@ -1413,7 +1426,7 @@ public class Fishtank : MonoBehaviour
 		if (true) //(Input.GetKeyDown(KeyCode.Z))
 		{
 			modeUI += 1;
-			if (modeUI == 3)
+			if (modeUI == 4)
 			{
 				modeUI = 0;
 			}
@@ -1459,6 +1472,7 @@ public class Fishtank : MonoBehaviour
 		UpdateTimer();
 		UpdateCartoon();
 		UpdateScale();
+		UpdatePartyMode();
 		//UpdateUIMode();
 		UpdateViveControllers();
 	}
