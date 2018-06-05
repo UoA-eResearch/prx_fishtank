@@ -1110,7 +1110,15 @@ namespace Valve.VR.InteractionSystem
 				}
 				else
 				{
-					return hand.controller.GetPress( SteamVR_Controller.ButtonMask.Touchpad );
+					Vector2 touchpad = (hand.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
+					if (touchpad.y > 0.25)
+					{
+						return hand.controller.GetPress( SteamVR_Controller.ButtonMask.Touchpad );
+					}
+					else
+					{
+						return false;
+					}
 				}
 			}
 
@@ -1129,7 +1137,15 @@ namespace Valve.VR.InteractionSystem
 				}
 				else
 				{
-					return hand.controller.GetPressDown( SteamVR_Controller.ButtonMask.Touchpad );
+					Vector2 touchpad = (hand.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
+					if (touchpad.y > 0.25)
+					{
+						return hand.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad);
+					}
+					else
+					{
+						return false;
+					}
 				}
 			}
 

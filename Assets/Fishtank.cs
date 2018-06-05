@@ -86,7 +86,7 @@ public class Fishtank : MonoBehaviour
 	private float ringRepelDistance = 0.25f;
 	private float ringAngleDiff = 45;
 
-	private float pairingForcingVelocity = 20.0f;        // translation rate for pairing using positional transform lerp - maintains forced ring stacking for manipulation
+	private float pairingForcingVelocity = 25.0f;        // translation rate for pairing using positional transform lerp - maintains forced ring stacking for manipulation
 	private int pairingForcingRotationVelocity = 50;     // rotation rate for pairing using quaternion slerp
 
 	private int ringRotSymmetry = 6;                     // number of equivalent docking positions around ring
@@ -117,6 +117,12 @@ public class Fishtank : MonoBehaviour
 	public ScaleSlider scaleModeSlider;
 
 	public ChartStats chartStats;
+
+	public Hand myHand1;
+	public Hand myHand2;
+
+	private bool myHand1TouchPressedLastLastUpdate = false; // debouncing
+
 
 	void FindPairs()
 	{
@@ -686,6 +692,7 @@ public class Fishtank : MonoBehaviour
 							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
 
 						}
+
 						if (cheat)
 						{
 							go.transform.position = donorPos;
@@ -1446,26 +1453,6 @@ public class Fishtank : MonoBehaviour
 		SetMenuUIComponents(modeUI);
 	}
 
-	void ViveControlLeft(int controllerId)
-	{
-		var controllerLeft = SteamVR_Controller.Input(controllerId);
-		if (controllerLeft.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
-		{
-			Debug.Log("Left Press Down!");
-			SwitchMenuUIMode(-1);
-		}
-	}
-
-	void ViveControlRight(int controllerId)
-	{
-		var controllerLeft = SteamVR_Controller.Input(controllerId);
-		if (controllerLeft.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
-		{
-			Debug.Log("Right Press Down!");
-			SwitchMenuUIMode(1);
-		}
-	}
-
 	void UpdateViveControllers()
 	{
 		var leftI = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
@@ -1473,15 +1460,55 @@ public class Fishtank : MonoBehaviour
 
 		//Debug.Log("leftI = " + leftI + " rightI = " + rightI);
 
-		if (leftI != -1)
+		// using 'left' myHand1 controller pad for UI menu switching
+		// note: SteamVR/InteractionSystem/Teleport/Scripts/Teleport.cs altered to use touchpad.y threshold
+		if (myHand1.controller != null)
 		{
-			ViveControlLeft(leftI);
+			Vector2 touchpad = (myHand1.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
+			if ((touchpad.x < -0.2) && (touchpad.y < 0.2))
+			{
+				if (!myHand1TouchPressedLastLastUpdate &&  myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+				{
+					myHand1TouchPressedLastLastUpdate = true;
+					//Debug.Log("Pad Press left!");
+					SwitchMenuUIMode(-1);
+				}
+
+			}
+			if ((touchpad.x > 0.2) && (touchpad.y < 0.2))
+			{
+				if (!myHand1TouchPressedLastLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+				{
+					myHand1TouchPressedLastLastUpdate = true;
+					//Debug.Log("Pad Press right!");
+					SwitchMenuUIMode(1);
+				}
+
+			}
+			if (!myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+			{
+				myHand1TouchPressedLastLastUpdate = false;
+			}
 		}
 
-		if (rightI != -1)
+		// using controller application menu buttons for UI menu switching
+		if (myHand1.controller != null)
 		{
-			ViveControlRight(rightI);
+			if (myHand1.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+			{
+				//Debug.Log("Left Press Down!");
+				SwitchMenuUIMode(-1);
+			}
 		}
+		if (myHand2.controller != null)
+		{
+			if (myHand2.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+			{
+				//Debug.Log("Right Press Down!");
+				SwitchMenuUIMode(1);
+			}
+		}
+
 	}
 
 	// Update is called once per frame
