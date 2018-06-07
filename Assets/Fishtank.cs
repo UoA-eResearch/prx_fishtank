@@ -809,56 +809,56 @@ public class Fishtank : MonoBehaviour
 			}
 
 			if (ring.partnerAcceptor != null)
-			{
-				//if ( (ring.partnerDonor == null) || ( (ring.partnerDonor != null && (Random.Range(0.0f, 1.0f) < 0.5f))) )
+			{		
+				var acceptor = ring.partnerAcceptor.transform.Find("tf_stack/donorPos");
+				var acceptorPos = acceptor.position;
+				var targetRotation = acceptor.rotation;
+				var distanceFromAcceptorPos = Vector3.Distance(go.transform.position, acceptorPos);
+
 				{
-					var acceptor = ring.partnerAcceptor.transform.Find("tf_stack/donorPos");
-					var acceptorPos = acceptor.position;
-					var targetRotation = acceptor.rotation;
-					var distanceFromAcceptorPos = Vector3.Distance(go.transform.position, acceptorPos);
-
-					{
-						bestRotationOffsetAngle = GetBestRotationOffsetAngle(acceptor.rotation, go);
-						//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
-						targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
-					}
-
-					/*
-					{
-						// possible optimisation as alternative to code block above
-						bestRotationOffsetAngle = 360.0f - bestRotationOffsetAngle;
-						targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
-						Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
-					}
-					*/
-
-					if (distanceFromAcceptorPos > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
-					{
-						float maxPush = Mathf.Min(distanceFromAcceptorPos * 5.0f, 0.5f); //
-						go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((acceptorPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
-						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
-					}
-					else if (distanceFromAcceptorPos > stackForceDistance)
-					{
-						go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingVelocity);
-						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
-					}
-					else
-					{
-						// update docked flags - used for nanowires
-						ring.dockedToAcceptor = true;
-
-						//go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingForcingVelocity);
-						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
-
-					}
-
-					if (cheat)
-					{
-						go.transform.position = acceptorPos;
-						go.transform.rotation = targetRotation;
-					}
+					bestRotationOffsetAngle = GetBestRotationOffsetAngle(acceptor.rotation, go);
+					//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
+					targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
 				}
+
+				/*
+				{
+					// possible optimisation as alternative to code block above
+					bestRotationOffsetAngle = 360.0f - bestRotationOffsetAngle;
+					targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+					Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
+				}
+				*/
+
+				if (distanceFromAcceptorPos > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
+				{
+					float maxPush = Mathf.Min(distanceFromAcceptorPos * 5.0f, 0.5f); //
+					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((acceptorPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+				}
+				else if (distanceFromAcceptorPos > stackForceDistance)
+				{
+					go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingVelocity);
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+				}
+				else
+				{
+					// update docked flags - used for nanowires
+					ring.dockedToAcceptor = true;
+
+					// HACK: commented out because there has to be some priority for moving rings based on acceptor / donor pairings
+					// unfortunately this causes asymmetry in how ring stacks move
+					//go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingForcingVelocity);
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
+
+				}
+
+				if (cheat)
+				{
+					go.transform.position = acceptorPos;
+					go.transform.rotation = targetRotation;
+				}
+				
 			}
 			if (ring.partnerDonor != null)
 			{
@@ -981,7 +981,7 @@ public class Fishtank : MonoBehaviour
 
 			if (!ringsUseSpringConstraints)
 			{
-				//spring constraint damper interferes with rb movement
+				//RB spring constraint damper interferes with rb movement
 				var ring = go.GetComponent<Ring>();
 				ring.sjDonorToAcceptor.damper = 0;
 				ring.sjAcceptorToDonor.damper = 0;
