@@ -10524,8 +10524,8 @@ MonoBehaviour:
   dockedToAcceptor: 0
   dockedToDonor: 0
   age: 0
-  delayToGrowNanoParticle: 4
-  timeToGrowNanoParticle: 10
+  delayToGrowNanoParticle: 3
+  timeToGrowNanoParticle: 6
   ringCanStack: 0
   fishtankScript: {fileID: 0}
   fishtankGO: {fileID: 0}
@@ -10547,6 +10547,8 @@ MonoBehaviour:
   myMeshPart1Renderer: {fileID: 0}
   colorMeshPart0: {r: 0, g: 0, b: 0, a: 0}
   colorMeshPart1: {r: 0, g: 0, b: 0, a: 0}
+  sjDonorToAcceptor: {fileID: 0}
+  sjAcceptorToDonor: {fileID: 0}
 --- !u!114 &114916512091932642
 MonoBehaviour:
   m_ObjectHideFlags: 1

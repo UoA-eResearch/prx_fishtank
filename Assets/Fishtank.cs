@@ -123,6 +123,9 @@ public class Fishtank : MonoBehaviour
 
 	private bool myHand1TouchPressedLastLastUpdate = false; // debouncing
 
+	public bool ringsUseSpringConstraints = false; // if true, enables use of spring constraints for ring stacking
+	public float ringMinSpringStrength = 5f; 
+
 
 	void FindPairs()
 	{
@@ -608,14 +611,6 @@ public class Fishtank : MonoBehaviour
 						}
 					}
 
-					/*
-					if (tag == "ring")
-					{
-
-					}
-					*/
-
-					// 
 					// do the actual pushing together
 					if (tag == "monomer")
 					{
@@ -648,115 +643,267 @@ public class Fishtank : MonoBehaviour
 						}
 					}
 				}
-				else if (tag == "ring")
+				if (tag == "ring")
 				{
-					var ring = go.GetComponent<Ring>();
-					float bestRotationOffsetAngle = 0.0f;
-
-					ring.dockedToDonor = false;
-					ring.dockedToAcceptor = false;
-
-					if (ring.partnerDonor != null)
+					if (ringsUseSpringConstraints)
 					{
-						var donor = ring.partnerDonor.transform.Find("tf_stack/acceptorPos");
-						var donorPos = donor.position;
-						var targetRotation = donor.rotation;
-						var distanceFromDonorPos = Vector3.Distance(go.transform.position, donorPos);
-
-						//var angle = Quaternion.Angle(go.transform.rotation, targetRotation);
-						//Debug.Log(go.name + " is " + angle + " from donor target rotation ");
-
-						{
-							bestRotationOffsetAngle = GetBestRotationOffsetAngle(donor.rotation, go);
-							//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
-							targetRotation = donor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
-						}
-
-						if (distanceFromDonorPos > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
-						{
-							float maxPush = Mathf.Min(distanceFromDonorPos * 5.0f, 0.5f); //
-							go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((donorPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
-							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
-						}
-						else if (distanceFromDonorPos > stackForceDistance)
-						{
-							go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingVelocity);
-							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
-						}
-						else
-						{
-							// update docked flags - not currently used except for debug in inspector
-							ring.dockedToDonor = true;
-
-							go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingForcingVelocity);
-							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
-
-						}
-
-						if (cheat)
-						{
-							go.transform.position = donorPos;
-							go.transform.rotation = targetRotation;
-						}
+						PushRingsWithSprings(go);
 					}
-					if (ring.partnerAcceptor != null)
+					else
 					{
-						var acceptor = ring.partnerAcceptor.transform.Find("tf_stack/donorPos");
-						var acceptorPos = acceptor.position;
-						var targetRotation = acceptor.rotation;
-						var distanceFromAcceptorPos = Vector3.Distance(go.transform.position, acceptorPos);
-
-						{
-							bestRotationOffsetAngle = GetBestRotationOffsetAngle(acceptor.rotation, go);
-							//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
-							targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
-						}
-
-						/*
-						{
-							// possible optimisation as alternative to code block above
-							bestRotationOffsetAngle = 360.0f - bestRotationOffsetAngle;
-							targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
-							Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
-						}
-						*/
-
-						if (distanceFromAcceptorPos > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
-						{
-							float maxPush = Mathf.Min(distanceFromAcceptorPos * 5.0f, 0.5f); //
-							go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((acceptorPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
-							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
-						}
-						else if (distanceFromAcceptorPos > stackForceDistance)
-						{
-							go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingVelocity);
-							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
-						}
-						else
-						{
-							// update docked flags - not currently used except for debug in inspector
-							ring.dockedToAcceptor = true;
-
-							//go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingForcingVelocity);
-							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
-
-						}
-
-						if (cheat)
-						{
-							go.transform.position = acceptorPos;
-							go.transform.rotation = targetRotation;
-						}
+						PushRingsDirectly(go);
 					}
 				}
-
-
 
 				if (!bounds.Contains(go.transform.position) && tag != "dimer")
 				{
 					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize(bounds.center - go.transform.position) * Time.deltaTime * Random.Range(forceTankMin, forceTankMax), ForceMode.Impulse);
 				}
 			}
+		}
+	}
+
+	float GetSpringFromDistance(float dist)
+	{
+		float calcSpringStrength;
+		calcSpringStrength = 0.75f * (1.0f / (dist * dist));
+		//Debug.Log("distance = " + dist + "  spring = " + calcSpringStrength);
+		calcSpringStrength = Mathf.Max(calcSpringStrength, ringMinSpringStrength);
+		return calcSpringStrength;
+	}
+
+	void PushRingsWithSprings(GameObject go)
+	{
+		// investigating using spring constraints to move rings
+		{
+
+			float bestRotationOffsetAngle = 0.0f;
+			var ring = go.GetComponent<Ring>();
+			ring.dockedToDonor = false;
+			ring.dockedToAcceptor = false;
+
+			var rb = ring.GetComponent<Rigidbody>();
+			{
+				// set approriate (empirical) drag values
+				rb.drag = 1;
+				rb.angularDrag = 1;
+
+				ring.sjDonorToAcceptor.damper = 50;
+				ring.sjAcceptorToDonor.damper = 50;
+			}
+
+			if (ring.partnerAcceptor != null)
+			{
+				{
+					var acceptor = ring.partnerAcceptor.transform.Find("tf_stack/donorPos");
+					var acceptorPos = acceptor.position;
+					var targetRotation = acceptor.rotation;
+					var distanceFromAcceptorPos = Vector3.Distance(go.transform.position, acceptorPos);
+
+					var acceptorRing = ring.partnerAcceptor;
+					ring.sjDonorToAcceptor.connectedBody =  acceptorRing.GetComponent<Rigidbody>();
+					ring.sjDonorToAcceptor.spring = GetSpringFromDistance(distanceFromAcceptorPos);
+
+					{
+						bestRotationOffsetAngle = GetBestRotationOffsetAngle(acceptor.rotation, go);
+						//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
+						targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+					}
+
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+
+					if (distanceFromAcceptorPos < stackForceDistance)
+					{
+						// update docked flags - used for nanowires
+						ring.dockedToAcceptor = true;
+					}
+
+					if (cheat)
+					{
+						go.transform.position = acceptorPos;
+						go.transform.rotation = targetRotation;
+					}
+				}
+
+			}
+			else
+			{
+				// no acceptor - switch off corresponding spring constraint
+				ring.sjDonorToAcceptor.connectedBody = null;
+				ring.sjDonorToAcceptor.spring = 0f;
+			}
+
+			if (ring.partnerDonor != null)
+			{
+				var donor = ring.partnerDonor.transform.Find("tf_stack/acceptorPos");
+				var donorPos = donor.position;
+				var targetRotation = donor.rotation;
+				var distanceFromDonorPos = Vector3.Distance(go.transform.position, donorPos);
+
+				var donorRing = ring.partnerDonor;
+				ring.sjAcceptorToDonor.connectedBody = donorRing.GetComponent<Rigidbody>();
+				ring.sjAcceptorToDonor.spring = GetSpringFromDistance(distanceFromDonorPos);
+
+				//var angle = Quaternion.Angle(go.transform.rotation, targetRotation);
+				//Debug.Log(go.name + " is " + angle + " from donor target rotation ");
+
+				{
+					bestRotationOffsetAngle = GetBestRotationOffsetAngle(donor.rotation, go);
+					//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
+					targetRotation = donor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+				}
+
+				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+
+				if (distanceFromDonorPos < stackForceDistance)
+				{
+					// update docked flags - used for nanowires
+					ring.dockedToDonor = true;
+				}
+				if (distanceFromDonorPos < (stackForceDistance / 2.0f))
+				{
+					// force transform to straighten stack
+					go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingForcingVelocity);
+				}
+
+
+				if (cheat)
+				{
+					go.transform.position = donorPos;
+					go.transform.rotation = targetRotation;
+				}
+			}
+			else
+			{
+				// no donor - switch off corresponding spring constraint
+				ring.sjAcceptorToDonor.connectedBody = null;
+				ring.sjAcceptorToDonor.spring = 0f;
+			}
+
+		}
+	}
+
+	void PushRingsDirectly(GameObject go)
+	{
+		// original implementation of fishtank - uses RB forces and transform lerps to move rings
+		{
+			
+			float bestRotationOffsetAngle = 0.0f;
+			var ring = go.GetComponent<Ring>();
+			ring.dockedToDonor = false;
+			ring.dockedToAcceptor = false;
+			var rb = ring.GetComponent<Rigidbody>();
+			{
+				// set approriate drag values
+				rb.drag = 1;
+				rb.angularDrag = 1;
+
+				// switch all spring constraints off
+				ring.sjDonorToAcceptor.connectedBody = null;
+				ring.sjDonorToAcceptor.spring = 0f;
+				ring.sjDonorToAcceptor.damper = 0;
+
+				ring.sjAcceptorToDonor.connectedBody = null;
+				ring.sjAcceptorToDonor.spring = 0f;
+				ring.sjAcceptorToDonor.damper = 0;
+			}
+
+			if (ring.partnerAcceptor != null)
+			{
+				//if ( (ring.partnerDonor == null) || ( (ring.partnerDonor != null && (Random.Range(0.0f, 1.0f) < 0.5f))) )
+				{
+					var acceptor = ring.partnerAcceptor.transform.Find("tf_stack/donorPos");
+					var acceptorPos = acceptor.position;
+					var targetRotation = acceptor.rotation;
+					var distanceFromAcceptorPos = Vector3.Distance(go.transform.position, acceptorPos);
+
+					{
+						bestRotationOffsetAngle = GetBestRotationOffsetAngle(acceptor.rotation, go);
+						//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
+						targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+					}
+
+					/*
+					{
+						// possible optimisation as alternative to code block above
+						bestRotationOffsetAngle = 360.0f - bestRotationOffsetAngle;
+						targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+						Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
+					}
+					*/
+
+					if (distanceFromAcceptorPos > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
+					{
+						float maxPush = Mathf.Min(distanceFromAcceptorPos * 5.0f, 0.5f); //
+						go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((acceptorPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+					}
+					else if (distanceFromAcceptorPos > stackForceDistance)
+					{
+						go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingVelocity);
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+					}
+					else
+					{
+						// update docked flags - used for nanowires
+						ring.dockedToAcceptor = true;
+
+						//go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingForcingVelocity);
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
+
+					}
+
+					if (cheat)
+					{
+						go.transform.position = acceptorPos;
+						go.transform.rotation = targetRotation;
+					}
+				}
+			}
+			if (ring.partnerDonor != null)
+			{
+				var donor = ring.partnerDonor.transform.Find("tf_stack/acceptorPos");
+				var donorPos = donor.position;
+				var targetRotation = donor.rotation;
+				var distanceFromDonorPos = Vector3.Distance(go.transform.position, donorPos);
+
+				//var angle = Quaternion.Angle(go.transform.rotation, targetRotation);
+				//Debug.Log(go.name + " is " + angle + " from donor target rotation ");
+
+				{
+					bestRotationOffsetAngle = GetBestRotationOffsetAngle(donor.rotation, go);
+					//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
+					targetRotation = donor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+				}
+
+				if (distanceFromDonorPos > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
+				{
+					float maxPush = Mathf.Min(distanceFromDonorPos * 5.0f, 0.5f); //
+					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((donorPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+				}
+				else if (distanceFromDonorPos > stackForceDistance)
+				{
+					go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingVelocity);
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+				}
+				else
+				{
+					// update docked flags - used for nanowires
+					ring.dockedToDonor = true;
+
+					go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingForcingVelocity);
+					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
+
+				}
+
+				if (cheat)
+				{
+					go.transform.position = donorPos;
+					go.transform.rotation = targetRotation;
+				}
+			}
+
 		}
 	}
 
@@ -831,6 +978,14 @@ public class Fishtank : MonoBehaviour
 		{
 			//make rings tumble more
 			torque = 0.001f;
+
+			if (!ringsUseSpringConstraints)
+			{
+				//spring constraint damper interferes with rb movement
+				var ring = go.GetComponent<Ring>();
+				ring.sjDonorToAcceptor.damper = 0;
+				ring.sjAcceptorToDonor.damper = 0;
+			}
 		}
 
 		if (!bounds.Contains(go.transform.position)) // duplicate code needs tidying
@@ -842,7 +997,7 @@ public class Fishtank : MonoBehaviour
 		{
 			if (masterDimers.Contains(go))
 			{
-				// don't tumble master dimers
+				// tumble master dimers less (scaled down)
 				go.GetComponent<Rigidbody>().AddRelativeTorque(torque * 0.1f * Random.onUnitSphere, ForceMode.Impulse);
 				go.GetComponent<Rigidbody>().AddForce(Random.onUnitSphere * 0.1f * Time.deltaTime * Random.Range(forceDiffuseMin, forceDiffuseMax), ForceMode.Impulse);
 			}

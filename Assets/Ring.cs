@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
@@ -18,8 +19,8 @@ public class Ring: MonoBehaviour
 	public bool dockedToDonor = false;
 
 	public float age = 0.0f;
-	public float delayToGrowNanoParticle = 4.0f; // cosmetic delay to let accretion particle system get up to speed
-	public float timeToGrowNanoParticle = 15.0f;
+	public float delayToGrowNanoParticle = 4.0f;  // cosmetic delay to let accretion particle system get up to speed
+	public float timeToGrowNanoParticle = 10.0f;  // time after grow delay before ring is allowed to stack
 	public bool ringCanStack = false;
 
 	public Fishtank fishtankScript;
@@ -57,6 +58,9 @@ public class Ring: MonoBehaviour
 	public Color colorMeshPart0;
 	public Color colorMeshPart1;
 
+	public SpringJoint sjDonorToAcceptor;
+	public SpringJoint sjAcceptorToDonor;
+
 
 	void Start()
 	{
@@ -90,6 +94,37 @@ public class Ring: MonoBehaviour
 		myRingLight.intensity = 0.0f;
 	}
 
+	void InitialiseSpringJoints()
+	{
+		sjDonorToAcceptor = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
+		sjDonorToAcceptor.connectedBody = null; //
+		sjDonorToAcceptor.anchor = new Vector3(0f, 0.39f, 0f); //0.39 is equivalent to transform in ring prefab
+		sjDonorToAcceptor.autoConfigureConnectedAnchor = false;
+		sjDonorToAcceptor.connectedAnchor = new Vector3(0f, 0f, 0f);
+		sjDonorToAcceptor.spring = 0f;
+		sjDonorToAcceptor.damper = 50;
+		sjDonorToAcceptor.minDistance = 0f;
+		sjDonorToAcceptor.maxDistance = 0f;
+		sjDonorToAcceptor.tolerance = 0.01f;
+		sjDonorToAcceptor.enableCollision = true;
+
+
+		sjAcceptorToDonor = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
+		sjAcceptorToDonor.connectedBody = null; //
+		sjAcceptorToDonor.anchor = new Vector3(0f, -0.39f, 0f); 
+		sjAcceptorToDonor.autoConfigureConnectedAnchor = false;
+		sjAcceptorToDonor.connectedAnchor = new Vector3(0f, 0f, 0f);
+		sjAcceptorToDonor.spring = 0f;
+		sjAcceptorToDonor.damper = 50;
+		sjAcceptorToDonor.minDistance = 0f;
+		sjAcceptorToDonor.maxDistance = 0f;
+		sjAcceptorToDonor.tolerance = 0.01f;
+		sjAcceptorToDonor.enableCollision = true;
+
+
+		//sjDonor2Acceptor.tag = "chain";
+	}
+
 	void Awake()
 	{
 		velEst = GetComponent<VelocityEstimator>();
@@ -113,8 +148,10 @@ public class Ring: MonoBehaviour
 			psAccretion01Emission.rateOverTime = psAccretion01EmissionRateInit;
 		}
 
-
-
+		if (true) //(fishtankScript.ringsUseSpringConstraints)
+		{
+			InitialiseSpringJoints();
+		}
 	}
 
 	void Update()
