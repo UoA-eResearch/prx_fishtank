@@ -58,9 +58,13 @@ public class Ring: MonoBehaviour
 	public Color colorMeshPart0;
 	public Color colorMeshPart1;
 
-	public SpringJoint sjDonorToAcceptor;
-	public SpringJoint sjAcceptorToDonor;
+	//public SpringJoint sjDonorToAcceptor;
+	//public SpringJoint sjAcceptorToDonor;
 
+	public SpringJoint[] sjDonorToAcceptorArr;
+	public SpringJoint[] sjAcceptorToDonorArr;
+
+	public float radius = 1.0f; // radius for ring constraints
 
 	void Start()
 	{
@@ -94,32 +98,57 @@ public class Ring: MonoBehaviour
 		myRingLight.intensity = 0.0f;
 	}
 
+	void InitRadialSpringJoint (SpringJoint sj, int i, float anchorY)
+	{
+		sj.connectedBody = null; //
+		sj.anchor = new Vector3(radius * (Mathf.Sin(i * (60.0f * Mathf.Deg2Rad))), anchorY, radius * (Mathf.Cos(i * (60.0f * Mathf.Deg2Rad)))); 
+		sj.autoConfigureConnectedAnchor = false;
+		sj.connectedAnchor = new Vector3(0f, 0f, 0f);
+		sj.spring = 0f;
+		sj.damper = 0;
+		sj.minDistance = 0f;
+		sj.maxDistance = 0f;
+		sj.tolerance = 0.01f;
+		sj.enableCollision = true;
+	}
+
 	void InitialiseSpringJoints()
 	{
-		sjDonorToAcceptor = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-		sjDonorToAcceptor.connectedBody = null; //
-		sjDonorToAcceptor.anchor = new Vector3(0f, 0.39f, 0f); //0.39 is equivalent to transform in ring prefab
-		sjDonorToAcceptor.autoConfigureConnectedAnchor = false;
-		sjDonorToAcceptor.connectedAnchor = new Vector3(0f, 0f, 0f);
-		sjDonorToAcceptor.spring = 0f;
-		sjDonorToAcceptor.damper = 50;
-		sjDonorToAcceptor.minDistance = 0f;
-		sjDonorToAcceptor.maxDistance = 0f;
-		sjDonorToAcceptor.tolerance = 0.01f;
-		sjDonorToAcceptor.enableCollision = true;
+		sjDonorToAcceptorArr = new SpringJoint[6];
+		sjAcceptorToDonorArr = new SpringJoint[6];
+
+		for (int i = 0; i < 6; i++)
+		{
+			sjDonorToAcceptorArr[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
+			InitRadialSpringJoint(sjDonorToAcceptorArr[i], i, 0.39f); //0.39 is equivalent to transform in ring prefab
+			sjAcceptorToDonorArr[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
+			InitRadialSpringJoint(sjAcceptorToDonorArr[i], i, -0.39f);
+		}
+
+		//sjDonorToAcceptor = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
+		//sjDonorToAcceptor.connectedBody = null; //
+		//sjDonorToAcceptor.anchor = new Vector3(0f, 0.39f, 0f); //0.39 is equivalent to transform in ring prefab
+		//sjDonorToAcceptor.autoConfigureConnectedAnchor = false;
+		//sjDonorToAcceptor.connectedAnchor = new Vector3(0f, 0f, 0f);
+		//sjDonorToAcceptor.spring = 0f;
+		//sjDonorToAcceptor.damper = 50;
+		//sjDonorToAcceptor.minDistance = 0f;
+		//sjDonorToAcceptor.maxDistance = 0f;
+		//sjDonorToAcceptor.tolerance = 0.01f;
+		//sjDonorToAcceptor.enableCollision = true;
 
 
-		sjAcceptorToDonor = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-		sjAcceptorToDonor.connectedBody = null; //
-		sjAcceptorToDonor.anchor = new Vector3(0f, -0.39f, 0f); 
-		sjAcceptorToDonor.autoConfigureConnectedAnchor = false;
-		sjAcceptorToDonor.connectedAnchor = new Vector3(0f, 0f, 0f);
-		sjAcceptorToDonor.spring = 0f;
-		sjAcceptorToDonor.damper = 50;
-		sjAcceptorToDonor.minDistance = 0f;
-		sjAcceptorToDonor.maxDistance = 0f;
-		sjAcceptorToDonor.tolerance = 0.01f;
-		sjAcceptorToDonor.enableCollision = true;
+		//sjAcceptorToDonor = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
+		//sjAcceptorToDonor.connectedBody = null; //
+		//sjAcceptorToDonor.anchor = new Vector3(0f, -0.39f, 0f); 
+		//sjAcceptorToDonor.autoConfigureConnectedAnchor = false;
+		//sjAcceptorToDonor.connectedAnchor = new Vector3(0f, 0f, 0f);
+		//sjAcceptorToDonor.spring = 0f;
+		//sjAcceptorToDonor.damper = 50;
+		//sjAcceptorToDonor.minDistance = 0f;
+		//sjAcceptorToDonor.maxDistance = 0f;
+		//sjAcceptorToDonor.tolerance = 0.01f;
+		//sjAcceptorToDonor.enableCollision = true;
 
 
 		//sjDonor2Acceptor.tag = "chain";

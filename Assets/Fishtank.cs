@@ -124,7 +124,7 @@ public class Fishtank : MonoBehaviour
 	private bool myHand1TouchPressedLastLastUpdate = false; // debouncing
 
 	public bool ringsUseSpringConstraints = false; // if true, enables use of spring constraints for ring stacking
-	public float ringMinSpringStrength = 5f; 
+	public float ringMinSpringStrength = 0f; 
 
 
 	void FindPairs()
@@ -666,7 +666,7 @@ public class Fishtank : MonoBehaviour
 	float GetSpringFromDistance(float dist)
 	{
 		float calcSpringStrength;
-		calcSpringStrength = 0.75f * (1.0f / (dist * dist));
+		calcSpringStrength = 1.0f * (1.0f / (dist * dist));
 		//Debug.Log("distance = " + dist + "  spring = " + calcSpringStrength);
 		calcSpringStrength = Mathf.Max(calcSpringStrength, ringMinSpringStrength);
 		return calcSpringStrength;
@@ -678,19 +678,10 @@ public class Fishtank : MonoBehaviour
 		{
 
 			float bestRotationOffsetAngle = 0.0f;
+			float ringStackRotation = 8.09f;
 			var ring = go.GetComponent<Ring>();
 			ring.dockedToDonor = false;
 			ring.dockedToAcceptor = false;
-
-			var rb = ring.GetComponent<Rigidbody>();
-			{
-				// set approriate (empirical) drag values
-				rb.drag = 1;
-				rb.angularDrag = 1;
-
-				ring.sjDonorToAcceptor.damper = 50;
-				ring.sjAcceptorToDonor.damper = 50;
-			}
 
 			if (ring.partnerAcceptor != null)
 			{
@@ -701,16 +692,14 @@ public class Fishtank : MonoBehaviour
 					var distanceFromAcceptorPos = Vector3.Distance(go.transform.position, acceptorPos);
 
 					var acceptorRing = ring.partnerAcceptor;
-					ring.sjDonorToAcceptor.connectedBody =  acceptorRing.GetComponent<Rigidbody>();
-					ring.sjDonorToAcceptor.spring = GetSpringFromDistance(distanceFromAcceptorPos);
 
-					{
-						bestRotationOffsetAngle = GetBestRotationOffsetAngle(acceptor.rotation, go);
-						//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
-						targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
-					}
+					bestRotationOffsetAngle = GetBestRotationOffsetAngle(acceptor.rotation, go);
+					//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
+					
+					SetAcceptorConstraints(ring, bestRotationOffsetAngle - ringStackRotation);
 
-					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+					//targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+					//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
 
 					if (distanceFromAcceptorPos < stackForceDistance)
 					{
@@ -728,9 +717,8 @@ public class Fishtank : MonoBehaviour
 			}
 			else
 			{
-				// no acceptor - switch off corresponding spring constraint
-				ring.sjDonorToAcceptor.connectedBody = null;
-				ring.sjDonorToAcceptor.spring = 0f;
+				// no acceptor - switch off corresponding spring constraints
+				SwitchOffAcceptorConstraints(ring);
 			}
 
 			if (ring.partnerDonor != null)
@@ -741,31 +729,20 @@ public class Fishtank : MonoBehaviour
 				var distanceFromDonorPos = Vector3.Distance(go.transform.position, donorPos);
 
 				var donorRing = ring.partnerDonor;
-				ring.sjAcceptorToDonor.connectedBody = donorRing.GetComponent<Rigidbody>();
-				ring.sjAcceptorToDonor.spring = GetSpringFromDistance(distanceFromDonorPos);
 
-				//var angle = Quaternion.Angle(go.transform.rotation, targetRotation);
-				//Debug.Log(go.name + " is " + angle + " from donor target rotation ");
+				bestRotationOffsetAngle = GetBestRotationOffsetAngle(donor.rotation, go);
+				//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
 
-				{
-					bestRotationOffsetAngle = GetBestRotationOffsetAngle(donor.rotation, go);
-					//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
-					targetRotation = donor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
-				}
+				SetDonorConstraints(ring, bestRotationOffsetAngle + ringStackRotation);
 
-				go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+				//targetRotation = donor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
+				//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
 
 				if (distanceFromDonorPos < stackForceDistance)
 				{
 					// update docked flags - used for nanowires
 					ring.dockedToDonor = true;
 				}
-				if (distanceFromDonorPos < (stackForceDistance / 2.0f))
-				{
-					// force transform to straighten stack
-					go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingForcingVelocity);
-				}
-
 
 				if (cheat)
 				{
@@ -776,10 +753,124 @@ public class Fishtank : MonoBehaviour
 			else
 			{
 				// no donor - switch off corresponding spring constraint
-				ring.sjAcceptorToDonor.connectedBody = null;
-				ring.sjAcceptorToDonor.spring = 0f;
+				SwitchOffDonorConstraints(ring);
+
 			}
 
+		}
+	}
+
+	void DrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
+	{
+		GameObject myLine = new GameObject();
+		myLine.transform.position = start;
+		myLine.AddComponent<LineRenderer>();
+		LineRenderer lr = myLine.GetComponent<LineRenderer>();
+		lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+		lr.SetColors(color, color);
+		lr.SetWidth(0.02f, 0.02f);
+		lr.SetPosition(0, start);
+		lr.SetPosition(1, end);
+		GameObject.Destroy(myLine, duration);
+	}
+
+	void SetAcceptorConstraints(Ring ringD, float rotationOffsetAngle) 
+	{
+		var ringA = ringD.partnerAcceptor;
+
+		for (int i = 0; i < 6; i++)
+		{
+			var sj = ringD.sjDonorToAcceptorArr[i];
+
+			sj.connectedBody = ringA.GetComponent<Rigidbody>();
+
+			float connectedAnchorX = ringD.radius * (Mathf.Sin((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle))); 
+			float connectedAnchorY = 0f;
+			float connectedAnchorZ = ringD.radius * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
+
+			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
+			//sj.connectedAnchor = new Vector3(ringD.radius * (Mathf.Sin(i * (60.0f * Mathf.Deg2Rad))), 0f, ringD.radius * (Mathf.Cos(i * (60.0f * Mathf.Deg2Rad))));
+
+			sj.damper = 50;
+			
+			var startPoint = ringD.transform.position + ringD.transform.TransformVector(sj.anchor);
+			var endPoint = sj.connectedBody.transform.position + sj.connectedBody.transform.TransformVector(sj.connectedAnchor);
+
+			var currentSpringVector = endPoint - startPoint;
+			sj.spring = GetSpringFromDistance(Vector3.Magnitude(currentSpringVector));
+
+			Color constraintColor = Color.green;
+			if (Vector3.Distance(startPoint, endPoint) >= (sj.minDistance + sj.tolerance))
+			{
+				constraintColor = Color.red;
+			}
+			if (Vector3.Distance(startPoint, endPoint) <= (sj.maxDistance - sj.tolerance))
+			{
+				constraintColor = Color.yellow;
+			}
+
+			//DrawLine(startPoint, endPoint, constraintColor, 0.02f);
+		}
+	}
+
+	void SetDonorConstraints(Ring ringA, float rotationOffsetAngle)
+	{
+		var ringD = ringA.partnerDonor;
+
+		for (int i = 0; i < 6; i++)
+		{
+			var sj = ringA.sjAcceptorToDonorArr[i];
+
+			sj.connectedBody = ringD.GetComponent<Rigidbody>();
+
+			float connectedAnchorX = ringA.radius * (Mathf.Sin((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
+			float connectedAnchorY = 0f;
+			float connectedAnchorZ = ringA.radius * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
+
+			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
+			//sj.connectedAnchor = new Vector3(ringA.radius * (Mathf.Sin(i * (60.0f * Mathf.Deg2Rad))), 0f, ringA.radius * (Mathf.Cos(i * (60.0f * Mathf.Deg2Rad))));
+
+			sj.damper = 50;
+
+			var startPoint = ringA.transform.position + ringA.transform.TransformVector(sj.anchor);
+			var endPoint = sj.connectedBody.transform.position + sj.connectedBody.transform.TransformVector(sj.connectedAnchor);
+
+			var currentSpringVector = endPoint - startPoint;
+			sj.spring = GetSpringFromDistance(Vector3.Magnitude(currentSpringVector));
+
+			Color constraintColor = Color.green;
+			if (Vector3.Distance(startPoint, endPoint) >= (sj.minDistance + sj.tolerance))
+			{
+				constraintColor = Color.red;
+			}
+			if (Vector3.Distance(startPoint, endPoint) <= (sj.maxDistance - sj.tolerance))
+			{
+				constraintColor = Color.yellow;
+			}
+
+			//DrawLine(startPoint, endPoint, constraintColor, 0.02f);
+		}
+	}
+
+	void SwitchOffAcceptorConstraints(Ring ringD)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			var sj = ringD.sjDonorToAcceptorArr[i];
+			sj.connectedBody = null;
+			sj.damper = 0;
+			sj.spring = 0f;
+		}
+	}
+
+	void SwitchOffDonorConstraints(Ring ringA)
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			var sj = ringA.sjAcceptorToDonorArr[i];
+			sj.connectedBody = null;
+			sj.damper = 0;
+			sj.spring = 0f;
 		}
 	}
 
@@ -799,13 +890,10 @@ public class Fishtank : MonoBehaviour
 				rb.angularDrag = 1;
 
 				// switch all spring constraints off
-				ring.sjDonorToAcceptor.connectedBody = null;
-				ring.sjDonorToAcceptor.spring = 0f;
-				ring.sjDonorToAcceptor.damper = 0;
+				SwitchOffAcceptorConstraints(ring);
+				SwitchOffDonorConstraints(ring);
 
-				ring.sjAcceptorToDonor.connectedBody = null;
-				ring.sjAcceptorToDonor.spring = 0f;
-				ring.sjAcceptorToDonor.damper = 0;
+
 			}
 
 			if (ring.partnerAcceptor != null)
@@ -983,8 +1071,8 @@ public class Fishtank : MonoBehaviour
 			{
 				//RB spring constraint damper interferes with rb movement
 				var ring = go.GetComponent<Ring>();
-				ring.sjDonorToAcceptor.damper = 0;
-				ring.sjAcceptorToDonor.damper = 0;
+				SwitchOffAcceptorConstraints(ring);
+				SwitchOffDonorConstraints(ring);
 			}
 		}
 
