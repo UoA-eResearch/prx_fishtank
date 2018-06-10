@@ -10487,6 +10487,7 @@ MonoBehaviour:
   rustyDonut: {fileID: 1716182592688876}
   cartoonDonutPS: {fileID: 1629154026007300, guid: 60ca3a78f3cf35943bc4adc6595436be,
     type: 2}
+  myRingGO: {fileID: 0}
   ringAudioSource: {fileID: 82761042678982078}
   donutSpawnSound: {fileID: 8300000, guid: 4b4dd7245f6104c8c8eb07ccf6b386ed, type: 3}
   rustyDonutSpawnSound: {fileID: 8300000, guid: 38a17a92b9d9748c6a1e67972041b833,
@@ -10526,7 +10527,9 @@ MonoBehaviour:
   age: 0
   delayToGrowNanoParticle: 3
   timeToGrowNanoParticle: 6
+  ringHasNanoParticle: 0
   ringCanStack: 0
+  ringInterlocked: 0
   fishtankScript: {fileID: 0}
   fishtankGO: {fileID: 0}
   myNanoParticle: {fileID: 0}
@@ -10547,8 +10550,11 @@ MonoBehaviour:
   myMeshPart1Renderer: {fileID: 0}
   colorMeshPart0: {r: 0, g: 0, b: 0, a: 0}
   colorMeshPart1: {r: 0, g: 0, b: 0, a: 0}
-  sjDonorToAcceptor: {fileID: 0}
-  sjAcceptorToDonor: {fileID: 0}
+  sjDonorToAcceptorArr: []
+  sjAcceptorToDonorArr: []
+  sjRadialOffset: 0.6
+  ringMinSpringStrength: 2.5
+  ringStackingAxialRotation: 8.09
 --- !u!114 &114916512091932642
 MonoBehaviour:
   m_ObjectHideFlags: 1

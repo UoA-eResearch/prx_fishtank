@@ -124,7 +124,7 @@ public class Fishtank : MonoBehaviour
 	private bool myHand1TouchPressedLastLastUpdate = false; // debouncing
 
 	public bool ringsUseSpringConstraints = false; // if true, enables use of spring constraints for ring stacking
-	public float ringMinSpringStrength = 0f; 
+	//public float ringMinSpringStrength = 0f; 
 
 
 	void FindPairs()
@@ -474,6 +474,7 @@ public class Fishtank : MonoBehaviour
 				if (tag == "ring")
 				{
 					Ring ring = go.GetComponent<Ring>();
+
 					if ((ring.partnerAcceptor == null && ring.partnerDonor == null))
 					{
 						//I am an unpaired ring (no donor or acceptor) => should drift
@@ -507,6 +508,7 @@ public class Fishtank : MonoBehaviour
 							}
 						}
 					}
+
 				}
 
 
@@ -663,25 +665,17 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
-	float GetSpringFromDistance(float dist)
-	{
-		float calcSpringStrength;
-		calcSpringStrength = 1.0f * (1.0f / (dist * dist));
-		//Debug.Log("distance = " + dist + "  spring = " + calcSpringStrength);
-		calcSpringStrength = Mathf.Max(calcSpringStrength, ringMinSpringStrength);
-		return calcSpringStrength;
-	}
-
 	void PushRingsWithSprings(GameObject go)
 	{
 		// investigating using spring constraints to move rings
 		{
 
 			float bestRotationOffsetAngle = 0.0f;
-			float ringStackRotation = 8.09f;
 			var ring = go.GetComponent<Ring>();
+
 			ring.dockedToDonor = false;
 			ring.dockedToAcceptor = false;
+
 
 			if (ring.partnerAcceptor != null)
 			{
@@ -695,8 +689,9 @@ public class Fishtank : MonoBehaviour
 
 					bestRotationOffsetAngle = GetBestRotationOffsetAngle(acceptor.rotation, go);
 					//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
-					
-					SetAcceptorConstraints(ring, bestRotationOffsetAngle - ringStackRotation);
+
+					//SetAcceptorConstraints(ring, bestRotationOffsetAngle - ringStackRotation);
+					ring.RingSetAcceptorConstraints(bestRotationOffsetAngle - ring.ringStackingAxialRotation);
 
 					//targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
 					//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
@@ -718,7 +713,7 @@ public class Fishtank : MonoBehaviour
 			else
 			{
 				// no acceptor - switch off corresponding spring constraints
-				SwitchOffAcceptorConstraints(ring);
+				ring.RingSwitchOffAcceptorConstraints();
 			}
 
 			if (ring.partnerDonor != null)
@@ -733,7 +728,8 @@ public class Fishtank : MonoBehaviour
 				bestRotationOffsetAngle = GetBestRotationOffsetAngle(donor.rotation, go);
 				//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
 
-				SetDonorConstraints(ring, bestRotationOffsetAngle + ringStackRotation);
+				//SetDonorConstraints(ring, bestRotationOffsetAngle + ringStackRotation);
+				ring.RingSetDonorConstraints(bestRotationOffsetAngle + ring.ringStackingAxialRotation);
 
 				//targetRotation = donor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
 				//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
@@ -753,7 +749,7 @@ public class Fishtank : MonoBehaviour
 			else
 			{
 				// no donor - switch off corresponding spring constraint
-				SwitchOffDonorConstraints(ring);
+				ring.RingSwitchOffDonorConstraints();
 
 			}
 
@@ -774,106 +770,6 @@ public class Fishtank : MonoBehaviour
 		GameObject.Destroy(myLine, duration);
 	}
 
-	void SetAcceptorConstraints(Ring ringD, float rotationOffsetAngle) 
-	{
-		var ringA = ringD.partnerAcceptor;
-
-		for (int i = 0; i < 6; i++)
-		{
-			var sj = ringD.sjDonorToAcceptorArr[i];
-
-			sj.connectedBody = ringA.GetComponent<Rigidbody>();
-
-			float connectedAnchorX = ringD.radius * (Mathf.Sin((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle))); 
-			float connectedAnchorY = 0f;
-			float connectedAnchorZ = ringD.radius * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
-
-			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
-			//sj.connectedAnchor = new Vector3(ringD.radius * (Mathf.Sin(i * (60.0f * Mathf.Deg2Rad))), 0f, ringD.radius * (Mathf.Cos(i * (60.0f * Mathf.Deg2Rad))));
-
-			sj.damper = 50;
-			
-			var startPoint = ringD.transform.position + ringD.transform.TransformVector(sj.anchor);
-			var endPoint = sj.connectedBody.transform.position + sj.connectedBody.transform.TransformVector(sj.connectedAnchor);
-
-			var currentSpringVector = endPoint - startPoint;
-			sj.spring = GetSpringFromDistance(Vector3.Magnitude(currentSpringVector));
-
-			Color constraintColor = Color.green;
-			if (Vector3.Distance(startPoint, endPoint) >= (sj.minDistance + sj.tolerance))
-			{
-				constraintColor = Color.red;
-			}
-			if (Vector3.Distance(startPoint, endPoint) <= (sj.maxDistance - sj.tolerance))
-			{
-				constraintColor = Color.yellow;
-			}
-
-			//DrawLine(startPoint, endPoint, constraintColor, 0.02f);
-		}
-	}
-
-	void SetDonorConstraints(Ring ringA, float rotationOffsetAngle)
-	{
-		var ringD = ringA.partnerDonor;
-
-		for (int i = 0; i < 6; i++)
-		{
-			var sj = ringA.sjAcceptorToDonorArr[i];
-
-			sj.connectedBody = ringD.GetComponent<Rigidbody>();
-
-			float connectedAnchorX = ringA.radius * (Mathf.Sin((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
-			float connectedAnchorY = 0f;
-			float connectedAnchorZ = ringA.radius * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
-
-			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
-			//sj.connectedAnchor = new Vector3(ringA.radius * (Mathf.Sin(i * (60.0f * Mathf.Deg2Rad))), 0f, ringA.radius * (Mathf.Cos(i * (60.0f * Mathf.Deg2Rad))));
-
-			sj.damper = 50;
-
-			var startPoint = ringA.transform.position + ringA.transform.TransformVector(sj.anchor);
-			var endPoint = sj.connectedBody.transform.position + sj.connectedBody.transform.TransformVector(sj.connectedAnchor);
-
-			var currentSpringVector = endPoint - startPoint;
-			sj.spring = GetSpringFromDistance(Vector3.Magnitude(currentSpringVector));
-
-			Color constraintColor = Color.green;
-			if (Vector3.Distance(startPoint, endPoint) >= (sj.minDistance + sj.tolerance))
-			{
-				constraintColor = Color.red;
-			}
-			if (Vector3.Distance(startPoint, endPoint) <= (sj.maxDistance - sj.tolerance))
-			{
-				constraintColor = Color.yellow;
-			}
-
-			//DrawLine(startPoint, endPoint, constraintColor, 0.02f);
-		}
-	}
-
-	void SwitchOffAcceptorConstraints(Ring ringD)
-	{
-		for (int i = 0; i < 6; i++)
-		{
-			var sj = ringD.sjDonorToAcceptorArr[i];
-			sj.connectedBody = null;
-			sj.damper = 0;
-			sj.spring = 0f;
-		}
-	}
-
-	void SwitchOffDonorConstraints(Ring ringA)
-	{
-		for (int i = 0; i < 6; i++)
-		{
-			var sj = ringA.sjAcceptorToDonorArr[i];
-			sj.connectedBody = null;
-			sj.damper = 0;
-			sj.spring = 0f;
-		}
-	}
-
 	void PushRingsDirectly(GameObject go)
 	{
 		// original implementation of fishtank - uses RB forces and transform lerps to move rings
@@ -890,8 +786,8 @@ public class Fishtank : MonoBehaviour
 				rb.angularDrag = 1;
 
 				// switch all spring constraints off
-				SwitchOffAcceptorConstraints(ring);
-				SwitchOffDonorConstraints(ring);
+				ring.RingSwitchOffAcceptorConstraints();
+				ring.RingSwitchOffDonorConstraints();
 
 
 			}
@@ -1064,16 +960,25 @@ public class Fishtank : MonoBehaviour
 		float torque = torqueDiffuse;
 		if (go.tag == "ring")
 		{
+
 			//make rings tumble more
 			torque = 0.001f;
 
 			if (!ringsUseSpringConstraints)
 			{
 				//RB spring constraint damper interferes with rb movement
+				//switching the damper value may also have an effect - hence bool checks
 				var ring = go.GetComponent<Ring>();
-				SwitchOffAcceptorConstraints(ring);
-				SwitchOffDonorConstraints(ring);
+				if (ring.sjDonorToAcceptorOn == true)
+				{
+					ring.RingSwitchOffAcceptorConstraints();
+				}
+				if (ring.sjAcceptorToDonorOn == true)
+				{
+					ring.RingSwitchOffDonorConstraints();
+				}
 			}
+
 		}
 
 		if (!bounds.Contains(go.transform.position)) // duplicate code needs tidying
@@ -1221,8 +1126,8 @@ public class Fishtank : MonoBehaviour
 			//Debug.Log("There are " + gos.Length + " " + tag + " around");
 			foreach (var go in gos)
 			{
-				go.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(go.GetComponent<Rigidbody>().velocity, 0.5f * 2.0f);
-				go.GetComponent<Rigidbody>().angularVelocity = Vector3.ClampMagnitude(go.GetComponent<Rigidbody>().angularVelocity, 0.5f * 6.0f);
+				go.GetComponent<Rigidbody>().velocity = Vector3.ClampMagnitude(go.GetComponent<Rigidbody>().velocity, 1.0f * 2.0f);
+				go.GetComponent<Rigidbody>().angularVelocity = Vector3.ClampMagnitude(go.GetComponent<Rigidbody>().angularVelocity, 1.0f * 6.0f);
 			}
 		}
 	}

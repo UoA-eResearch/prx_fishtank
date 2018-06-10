@@ -12,6 +12,7 @@ public class ShowDonut : MonoBehaviour {
 	public GameObject donut;
 	public GameObject rustyDonut;
 	public GameObject cartoonDonutPS;
+	public GameObject myRingGO;
 	public AudioSource ringAudioSource;
 	public AudioClip donutSpawnSound;
 	public AudioClip rustyDonutSpawnSound;

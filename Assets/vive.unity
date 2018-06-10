@@ -2784,7 +2784,6 @@ MonoBehaviour:
   myHand1: {fileID: 1795045923}
   myHand2: {fileID: 49516981}
   ringsUseSpringConstraints: 0
-  ringMinSpringStrength: 5
 --- !u!114 &469726001
 MonoBehaviour:
   m_ObjectHideFlags: 0

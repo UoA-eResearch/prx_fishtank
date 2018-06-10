@@ -21,7 +21,10 @@ public class Ring: MonoBehaviour
 	public float age = 0.0f;
 	public float delayToGrowNanoParticle = 4.0f;  // cosmetic delay to let accretion particle system get up to speed
 	public float timeToGrowNanoParticle = 10.0f;  // time after grow delay before ring is allowed to stack
+
+	public bool ringHasNanoParticle = false;
 	public bool ringCanStack = false;
+	public bool ringInterlocked = false;
 
 	public Fishtank fishtankScript;
 	public GameObject fishtankGO;
@@ -31,7 +34,6 @@ public class Ring: MonoBehaviour
 	public Light myRingLight;
 	public float myRingLightMaxIntensity;
 	public float myRingLightCurrentIntensity;
-
 
 	// Particle Systems
 	public GameObject goElectric01;
@@ -64,7 +66,12 @@ public class Ring: MonoBehaviour
 	public SpringJoint[] sjDonorToAcceptorArr;
 	public SpringJoint[] sjAcceptorToDonorArr;
 
-	public float radius = 1.0f; // radius for ring constraints
+	public float sjRadialOffset = 0.6f; // radial offset for ring stacking spring joint constraints 
+	public float ringMinSpringStrength = 0.25f;
+	public float ringStackingAxialRotation = 8.09f; // also set in ring prefab transforms as Y rotation
+
+	public bool sjDonorToAcceptorOn = false;
+	public bool sjAcceptorToDonorOn = false;
 
 	void Start()
 	{
@@ -96,62 +103,6 @@ public class Ring: MonoBehaviour
 		myRingLight = myRingLightGO.GetComponent<Light>();
 		myRingLightMaxIntensity = myRingLight.intensity;
 		myRingLight.intensity = 0.0f;
-	}
-
-	void InitRadialSpringJoint (SpringJoint sj, int i, float anchorY)
-	{
-		sj.connectedBody = null; //
-		sj.anchor = new Vector3(radius * (Mathf.Sin(i * (60.0f * Mathf.Deg2Rad))), anchorY, radius * (Mathf.Cos(i * (60.0f * Mathf.Deg2Rad)))); 
-		sj.autoConfigureConnectedAnchor = false;
-		sj.connectedAnchor = new Vector3(0f, 0f, 0f);
-		sj.spring = 0f;
-		sj.damper = 0;
-		sj.minDistance = 0f;
-		sj.maxDistance = 0f;
-		sj.tolerance = 0.01f;
-		sj.enableCollision = true;
-	}
-
-	void InitialiseSpringJoints()
-	{
-		sjDonorToAcceptorArr = new SpringJoint[6];
-		sjAcceptorToDonorArr = new SpringJoint[6];
-
-		for (int i = 0; i < 6; i++)
-		{
-			sjDonorToAcceptorArr[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-			InitRadialSpringJoint(sjDonorToAcceptorArr[i], i, 0.39f); //0.39 is equivalent to transform in ring prefab
-			sjAcceptorToDonorArr[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-			InitRadialSpringJoint(sjAcceptorToDonorArr[i], i, -0.39f);
-		}
-
-		//sjDonorToAcceptor = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-		//sjDonorToAcceptor.connectedBody = null; //
-		//sjDonorToAcceptor.anchor = new Vector3(0f, 0.39f, 0f); //0.39 is equivalent to transform in ring prefab
-		//sjDonorToAcceptor.autoConfigureConnectedAnchor = false;
-		//sjDonorToAcceptor.connectedAnchor = new Vector3(0f, 0f, 0f);
-		//sjDonorToAcceptor.spring = 0f;
-		//sjDonorToAcceptor.damper = 50;
-		//sjDonorToAcceptor.minDistance = 0f;
-		//sjDonorToAcceptor.maxDistance = 0f;
-		//sjDonorToAcceptor.tolerance = 0.01f;
-		//sjDonorToAcceptor.enableCollision = true;
-
-
-		//sjAcceptorToDonor = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-		//sjAcceptorToDonor.connectedBody = null; //
-		//sjAcceptorToDonor.anchor = new Vector3(0f, -0.39f, 0f); 
-		//sjAcceptorToDonor.autoConfigureConnectedAnchor = false;
-		//sjAcceptorToDonor.connectedAnchor = new Vector3(0f, 0f, 0f);
-		//sjAcceptorToDonor.spring = 0f;
-		//sjAcceptorToDonor.damper = 50;
-		//sjAcceptorToDonor.minDistance = 0f;
-		//sjAcceptorToDonor.maxDistance = 0f;
-		//sjAcceptorToDonor.tolerance = 0.01f;
-		//sjAcceptorToDonor.enableCollision = true;
-
-
-		//sjDonor2Acceptor.tag = "chain";
 	}
 
 	void Awake()
@@ -200,13 +151,191 @@ public class Ring: MonoBehaviour
 			myRingLight.intensity = myRingLightCurrentIntensity;
 
 			psAccretion01Emission.rateOverTime = psAccretion01EmissionRateInit * (1.05f - scaleRelativeF);
+
+			ringHasNanoParticle = false;
 		}
 		else
 		{
-			//myNanoParticle.SetActive(true);
-			ringCanStack = true;
+				ringHasNanoParticle = true;	
 		}
 
+		// TODO: keep ringinterlocked updated
+		if (!ringInterlocked)
+		{
+			if (ringHasNanoParticle)
+			{
+				ringCanStack = true;
+			}
+		}
+		else
+		{
+			age = 0f;
+			psAccretion01Emission.rateOverTime = 0.0f;
+			ringHasNanoParticle = false;
+			ringCanStack = false;
+		}
+
+	}
+
+	float RingGetSpringFromDistance(float dist)
+	{
+		float calcSpringStrength;
+		calcSpringStrength = 1.0f * (1.0f / (dist * dist));
+		//Debug.Log("distance = " + dist + "  spring = " + calcSpringStrength);
+		calcSpringStrength = Mathf.Max(calcSpringStrength, ringMinSpringStrength);
+		return calcSpringStrength;
+	}
+
+
+	void InitRadialSpringJoint(SpringJoint sj, int i, float anchorY)
+	{
+		sj.connectedBody = null; //
+		sj.anchor = new Vector3(sjRadialOffset * (Mathf.Sin(i * (60.0f * Mathf.Deg2Rad))), anchorY, sjRadialOffset * (Mathf.Cos(i * (60.0f * Mathf.Deg2Rad))));
+		sj.autoConfigureConnectedAnchor = false;
+		sj.connectedAnchor = new Vector3(0f, 0f, 0f);
+		sj.spring = 0f;
+		sj.damper = 0;
+		sj.minDistance = 0f;
+		sj.maxDistance = 0f;
+		sj.tolerance = 0.01f;
+		sj.enableCollision = true;
+	}
+
+	void InitialiseSpringJoints()
+	{
+		sjDonorToAcceptorArr = new SpringJoint[6];
+		sjAcceptorToDonorArr = new SpringJoint[6];
+
+		for (int i = 0; i < 6; i++)
+		{
+			sjDonorToAcceptorArr[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
+			InitRadialSpringJoint(sjDonorToAcceptorArr[i], i, 0.39f); //0.39 is equivalent to transform in ring prefab
+			sjAcceptorToDonorArr[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
+			InitRadialSpringJoint(sjAcceptorToDonorArr[i], i, -0.39f);
+		}
+	}
+
+	void RingDrawLine(Vector3 start, Vector3 end, Color color, float duration = 0.2f)
+	{
+		GameObject myLine = new GameObject();
+		myLine.transform.position = start;
+		myLine.AddComponent<LineRenderer>();
+		LineRenderer lr = myLine.GetComponent<LineRenderer>();
+		lr.material = new Material(Shader.Find("Particles/Alpha Blended Premultiply"));
+		lr.SetColors(color, color);
+		lr.SetWidth(0.02f, 0.02f);
+		lr.SetPosition(0, start);
+		lr.SetPosition(1, end);
+		GameObject.Destroy(myLine, duration);
+	}
+
+	public void RingSetAcceptorConstraints(float rotationOffsetAngle)
+	{
+		var ringA = partnerAcceptor;
+
+		for (int i = 0; i < 6; i++)
+		{
+			var sj = sjDonorToAcceptorArr[i];
+
+			sj.connectedBody = ringA.GetComponent<Rigidbody>();
+
+			float connectedAnchorX = sjRadialOffset * (Mathf.Sin((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
+			float connectedAnchorY = 0f;
+			float connectedAnchorZ = sjRadialOffset * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
+
+			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
+			sj.damper = 50;
+
+			var startPoint = transform.position + transform.TransformVector(sj.anchor);
+			var endPoint = sj.connectedBody.transform.position + sj.connectedBody.transform.TransformVector(sj.connectedAnchor);
+
+			var currentSpringVector = endPoint - startPoint;
+			sj.spring = RingGetSpringFromDistance(Vector3.Magnitude(currentSpringVector));
+
+			if (false) // debug draw lines for sj's
+			{
+				Color constraintColor = Color.green;
+				if (Vector3.Distance(startPoint, endPoint) >= (sj.minDistance + sj.tolerance))
+				{
+					constraintColor = Color.red;
+				}
+				if (Vector3.Distance(startPoint, endPoint) <= (sj.maxDistance - sj.tolerance))
+				{
+					constraintColor = Color.yellow;
+				}
+				RingDrawLine(startPoint, endPoint, constraintColor, 0.02f);
+			}
+
+		}
+		sjDonorToAcceptorOn = true;
+	}
+
+	public void RingSetDonorConstraints(float rotationOffsetAngle)
+	{
+		var ringD = partnerDonor;
+
+		for (int i = 0; i < 6; i++)
+		{
+			var sj = sjAcceptorToDonorArr[i];
+
+			sj.connectedBody = ringD.GetComponent<Rigidbody>();
+
+			float connectedAnchorX = sjRadialOffset * (Mathf.Sin((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
+			float connectedAnchorY = 0f;
+			float connectedAnchorZ = sjRadialOffset * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
+
+			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
+			//sj.connectedAnchor = new Vector3(ringA.radius * (Mathf.Sin(i * (60.0f * Mathf.Deg2Rad))), 0f, ringA.radius * (Mathf.Cos(i * (60.0f * Mathf.Deg2Rad))));
+
+			sj.damper = 50;
+
+			var startPoint = transform.position + transform.TransformVector(sj.anchor);
+			var endPoint = sj.connectedBody.transform.position + sj.connectedBody.transform.TransformVector(sj.connectedAnchor);
+
+			var currentSpringVector = endPoint - startPoint;
+			sj.spring = RingGetSpringFromDistance(Vector3.Magnitude(currentSpringVector));
+
+			if (false) // debug draw lines for sj's
+			{
+				Color constraintColor = Color.green;
+				if (Vector3.Distance(startPoint, endPoint) >= (sj.minDistance + sj.tolerance))
+				{
+					constraintColor = Color.red;
+				}
+				if (Vector3.Distance(startPoint, endPoint) <= (sj.maxDistance - sj.tolerance))
+				{
+					constraintColor = Color.yellow;
+				}
+				RingDrawLine(startPoint, endPoint, constraintColor, 0.02f);
+			}
+
+		}
+		sjAcceptorToDonorOn = true;
+	}
+
+
+	public void RingSwitchOffAcceptorConstraints()
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			var sj = sjDonorToAcceptorArr[i];
+			sj.connectedBody = null;
+			sj.damper = 0;
+			sj.spring = 0f;
+		}
+		sjDonorToAcceptorOn = false;
+	}
+
+	public void RingSwitchOffDonorConstraints()
+	{
+		for (int i = 0; i < 6; i++)
+		{
+			var sj = sjAcceptorToDonorArr[i];
+			sj.connectedBody = null;
+			sj.damper = 0;
+			sj.spring = 0f;
+		}
+		sjAcceptorToDonorOn = false;
 	}
 
 	public void SetShaderTrans()
