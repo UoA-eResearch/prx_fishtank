@@ -36,6 +36,8 @@ public class Fishtank : MonoBehaviour
 	public AudioSource fishtankAudioSource;
 	public AudioClip beepUpSound;
 	public AudioClip beepDownSound;
+	public AudioClip sfxElectricity01;
+	public AudioClip sfxElectricity02;
 
 	public GameObject ringPS;
 	public GameObject confettiPS;
@@ -1318,6 +1320,21 @@ public class Fishtank : MonoBehaviour
 		{
 			r.psElectric01.Play();
 			r.SetShaderTrans();
+
+			//
+
+			if (Random.value < 0.5f)
+			{
+				r.ringAudioSource.clip = sfxElectricity01;
+
+			}
+			else
+			{
+				r.ringAudioSource.clip = sfxElectricity02;
+			}
+			r.ringAudioSource.volume = 0.05f;
+			r.ringAudioSource.loop = true;
+			r.ringAudioSource.Play();			
 		}
 
 	}
@@ -1328,6 +1345,8 @@ public class Fishtank : MonoBehaviour
 		{
 			r.psElectric01.Stop();
 			r.SetShaderVertexCol();
+
+			r.ringAudioSource.Stop();
 		}
 	}
 

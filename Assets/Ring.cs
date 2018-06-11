@@ -73,6 +73,9 @@ public class Ring: MonoBehaviour
 	public bool sjDonorToAcceptorOn = false;
 	public bool sjAcceptorToDonorOn = false;
 
+	public AudioSource ringAudioSource;
+	public AudioClip sfxRingSpawn;
+
 	void Start()
 	{
 		// runtime shader swap setup
@@ -132,6 +135,12 @@ public class Ring: MonoBehaviour
 		{
 			InitialiseSpringJoints();
 		}
+
+		ringAudioSource = GetComponent<AudioSource>();
+		ringAudioSource.clip = sfxRingSpawn;
+		ringAudioSource.loop = false;
+		ringAudioSource.Play();
+
 	}
 
 	void Update()
