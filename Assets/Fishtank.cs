@@ -116,6 +116,8 @@ public class Fishtank : MonoBehaviour
 	public GameObject cartoonRenderUI;
 	public GameObject fishtankScaleUI;
 	public GameObject partyModeUI;
+	public GameObject menuHintUI;
+	public GameObject teleportHintUI;
 
 	public PartyModeSwitch partyModeSwitch;
 	public CartoonModeSwitch cartoonModeSwitch;
@@ -1644,6 +1646,7 @@ public class Fishtank : MonoBehaviour
 		// note: SteamVR/InteractionSystem/Teleport/Scripts/Teleport.cs altered to use touchpad.y threshold
 		if (myHand1.controller != null)
 		{
+			bool showMenuHint = false;
 			Vector2 touchpad = (myHand1.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
 			if ((touchpad.x < -0.2) && (touchpad.y < 0.2))
 			{
@@ -1653,6 +1656,7 @@ public class Fishtank : MonoBehaviour
 					//Debug.Log("Pad Press left!");
 					SwitchMenuUIMode(-1);
 				}
+				showMenuHint = true;
 
 			}
 			if ((touchpad.x > 0.2) && (touchpad.y < 0.2))
@@ -1663,8 +1667,27 @@ public class Fishtank : MonoBehaviour
 					//Debug.Log("Pad Press right!");
 					SwitchMenuUIMode(1);
 				}
-
+				showMenuHint = true;
 			}
+
+			if (showMenuHint)
+			{
+				menuHintUI.SetActive(true);
+			}
+			else
+			{
+				menuHintUI.SetActive(false);
+			}
+
+			if (touchpad.y > 0.25) // value set in teleport.cs
+			{
+				teleportHintUI.SetActive(true);
+			}
+			else
+			{
+				teleportHintUI.SetActive(false);
+			}
+
 			if (!myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
 			{
 				myHand1TouchPressedLastLastUpdate = false;
