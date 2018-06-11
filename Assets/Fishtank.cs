@@ -34,6 +34,9 @@ public class Fishtank : MonoBehaviour
 	private Dictionary<GameObject, GameObject> pairsMyDonorPrev;
 
 	public AudioSource fishtankAudioSource;
+	public AudioClip beepUpSound;
+	public AudioClip beepDownSound;
+
 	public GameObject ringPS;
 	public GameObject confettiPS;
 	public GameObject solventH;
@@ -1585,6 +1588,16 @@ public class Fishtank : MonoBehaviour
 	void SwitchMenuUIMode(int direction)
 	{
 		var numUIModes = 5;
+
+		if (direction > 0)
+		{
+			fishtankAudioSource.PlayOneShot(beepUpSound, 0.4f);
+			
+		}
+		else
+		{
+			fishtankAudioSource.PlayOneShot(beepDownSound, 0.8f);
+		}
 
 		if (true) //(Input.GetKeyDown(KeyCode.Z))
 		{
