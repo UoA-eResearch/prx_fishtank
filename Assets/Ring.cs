@@ -159,7 +159,6 @@ public class Ring: MonoBehaviour
 				ringHasNanoParticle = true;	
 		}
 
-		// TODO: keep ringinterlocked updated
 		if (!ringInterlocked)
 		{
 			if (ringHasNanoParticle)
@@ -312,7 +311,6 @@ public class Ring: MonoBehaviour
 		}
 		sjAcceptorToDonorOn = true;
 	}
-
 
 	public void RingSwitchOffAcceptorConstraints()
 	{

@@ -1,13 +1,19 @@
 fileFormatVersion: 2
 guid: 241e581f203563a41849c7ac2ef17246
-timeCreated: 1521308943
+timeCreated: 1528708810
 licenseType: Free
 MonoImporter:
   serializedVersion: 2
   defaultReferences:
+  - donut: {instanceID: 0}
+  - rustyDonut: {instanceID: 0}
   - cartoonDonutPS: {fileID: 1629154026007300, guid: 60ca3a78f3cf35943bc4adc6595436be,
       type: 2}
-  - testPS: {instanceID: 0}
+  - myRingGO: {instanceID: 0}
+  - myRing: {instanceID: 0}
+  - ringAudioSource: {instanceID: 0}
+  - donutSpawnSound: {instanceID: 0}
+  - rustyDonutSpawnSound: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

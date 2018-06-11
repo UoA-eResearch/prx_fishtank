@@ -13,6 +13,7 @@ public class ShowDonut : MonoBehaviour {
 	public GameObject rustyDonut;
 	public GameObject cartoonDonutPS;
 	public GameObject myRingGO;
+	public Ring myRing;
 	public AudioSource ringAudioSource;
 	public AudioClip donutSpawnSound;
 	public AudioClip rustyDonutSpawnSound;
@@ -28,6 +29,7 @@ public class ShowDonut : MonoBehaviour {
 		//	Debug.Log("showDonut can't find PartyModeSwitch");
 		//}
 		myFishtank = FindObjectOfType<Fishtank>();
+		myRing = myRingGO.GetComponent<Ring>();
 		if (!myFishtank)
 		{
 			Debug.Log("showDonut can't find Fishtank");
@@ -55,6 +57,11 @@ public class ShowDonut : MonoBehaviour {
 
 			ringAudioSource.PlayOneShot(donutSpawnSound);
 		}
+
+		if (other.name == "ringCenter")
+		{
+			myRing.ringInterlocked = true;
+		}
 	}
 
 	private void OnTriggerStay(Collider other)
@@ -64,6 +71,10 @@ public class ShowDonut : MonoBehaviour {
 			rustyDonut.SetActive(true);
 			ringAudioSource.PlayOneShot(rustyDonutSpawnSound);
 		}
+		if (other.name == "ringCenter")
+		{
+			myRing.ringInterlocked = true;
+		}
 	}
 
 	private void OnTriggerExit(Collider other)
@@ -72,17 +83,32 @@ public class ShowDonut : MonoBehaviour {
 		{
 			rustyDonut.SetActive(false);
 		}
+
+		if (other.name == "ringCenter")
+		{
+			myRing.ringInterlocked = false;
+		}
+	}
+
+	private void pulseDonut()
+	{
+		var s = Time.time - startTime;
+		var newSmall = Vector3.Lerp(small, medium, s);
+		var newBig = Vector3.Lerp(big, medium, s);
+		float f = Mathf.PingPong(s * 10, 1);
+		donut.transform.localScale = Vector3.Lerp(newSmall, newBig, f);
 	}
 
 	private void Update()
 	{
 		if (myFishtank.partyMode) // partyModeSwitch.partying)
 		{
-			var s = Time.time - startTime;
-			var newSmall = Vector3.Lerp(small, medium, s);
-			var newBig = Vector3.Lerp(big, medium, s);
-			float f = Mathf.PingPong(s * 10, 1);
-			donut.transform.localScale = Vector3.Lerp(newSmall, newBig, f);
+			//var s = Time.time - startTime;
+			//var newSmall = Vector3.Lerp(small, medium, s);
+			//var newBig = Vector3.Lerp(big, medium, s);
+			//float f = Mathf.PingPong(s * 10, 1);
+			//donut.transform.localScale = Vector3.Lerp(newSmall, newBig, f);
+			pulseDonut();
 		}
 		else
 		{
