@@ -116,12 +116,14 @@ public class Fishtank : MonoBehaviour
 	public GameObject cartoonRenderUI;
 	public GameObject fishtankScaleUI;
 	public GameObject partyModeUI;
+	public GameObject simulationUI;
 	public GameObject menuHintUI;
 	public GameObject teleportHintUI;
 
 	public PartyModeSwitch partyModeSwitch;
 	public CartoonModeSwitch cartoonModeSwitch;
 	public ScaleSlider scaleModeSlider;
+	public SimulationSwitch simulationSwitch;
 
 	public ChartStats chartStats;
 
@@ -974,7 +976,7 @@ public class Fishtank : MonoBehaviour
 			if (!ringsUseSpringConstraints)
 			{
 				//RB spring constraint damper interferes with rb movement
-				//switching the damper value may also have an effect - hence bool checks
+				//repeatedly switching the damper value may also have an effect on the rb simulation - hence bool checks
 				var ring = go.GetComponent<Ring>();
 				if (ring.sjDonorToAcceptorOn == true)
 				{
@@ -1569,6 +1571,11 @@ public class Fishtank : MonoBehaviour
 
 	}
 
+	void UpdateSimulationMode()
+	{
+		ringsUseSpringConstraints = simulationSwitch.GetSimulationMode();
+	}
+
 	void SetMenuUIComponents(int mode)
 	{
 		switch (mode)
@@ -1578,37 +1585,49 @@ public class Fishtank : MonoBehaviour
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
 				partyModeUI.SetActive(false);
+				simulationUI.SetActive(false);
 				break;
 			case 1:
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(true);
 				fishtankScaleUI.SetActive(false);
 				partyModeUI.SetActive(false);
+				simulationUI.SetActive(false);
 				break;
 			case 2:
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(true);
 				partyModeUI.SetActive(false);
+				simulationUI.SetActive(false);
 				break;
 			case 3:
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
 				partyModeUI.SetActive(true);
+				simulationUI.SetActive(false);
 				break;
 			case 4:
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
 				partyModeUI.SetActive(false);
+				simulationUI.SetActive(true);
+				break;
+			case 5:
+				pHSliderUI.SetActive(false);
+				cartoonRenderUI.SetActive(false);
+				fishtankScaleUI.SetActive(false);
+				partyModeUI.SetActive(false);
+				simulationUI.SetActive(false);
 				break;
 		}
 	}
 
 	void SwitchMenuUIMode(int direction)
 	{
-		var numUIModes = 5;
+		var numUIModes = 6;
 
 		if (direction > 0)
 		{
@@ -1725,6 +1744,7 @@ public class Fishtank : MonoBehaviour
 		UpdateCartoon();
 		UpdateScale();
 		UpdatePartyMode();
+		UpdateSimulationMode();
 		//UpdateUIMode();
 		UpdateViveControllers();
 	}

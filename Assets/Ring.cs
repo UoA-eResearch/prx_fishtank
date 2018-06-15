@@ -412,10 +412,10 @@ public class Ring: MonoBehaviour
 
 	void OnHandHoverBegin(Hand hand)
 	{
-		if (gameObject == hand.otherHand.currentAttachedObject && shouldBreak && hand.otherHand.AttachedObjects.Count <= 2)
-		{
-			breakRing(hand);
-		}
+		//if (gameObject == hand.otherHand.currentAttachedObject && shouldBreak && hand.otherHand.AttachedObjects.Count <= 2)
+		//{
+		//	breakRing(hand);
+		//}
 	}
 
 	void HandAttachedUpdate(Hand hand)
@@ -436,18 +436,21 @@ public class Ring: MonoBehaviour
 	void OnAttachedToHand(Hand hand)
 	{
 		ringAttached = true;
-		var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachFromOtherHand;
-		if (dockedToAcceptor && !partnerAcceptor.GetComponent<Ring>().ringAttached)
+		if (!fishtankScript.ringsUseSpringConstraints)
 		{
-			hand.AttachObject(partnerAcceptor, attachmentFlags);
-		}
-		if (dockedToDonor && !partnerDonor.GetComponent<Ring>().ringAttached)
-		{
-			hand.AttachObject(partnerDonor, attachmentFlags);
-		}
-		foreach (var ao in hand.AttachedObjects)
-		{
-			ao.attachedObject.SetActive(true);
+			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachFromOtherHand;
+			if (dockedToAcceptor && !partnerAcceptor.GetComponent<Ring>().ringAttached)
+			{
+				hand.AttachObject(partnerAcceptor, attachmentFlags);
+			}
+			if (dockedToDonor && !partnerDonor.GetComponent<Ring>().ringAttached)
+			{
+				hand.AttachObject(partnerDonor, attachmentFlags);
+			}
+			foreach (var ao in hand.AttachedObjects)
+			{
+				ao.attachedObject.SetActive(true);
+			}
 		}
 		velEst.BeginEstimatingVelocity();
 	}
