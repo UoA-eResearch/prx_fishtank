@@ -700,7 +700,7 @@ public class Fishtank : MonoBehaviour
 					//Debug.Log("bestRotationOffsetAngle (acceptor) is " + bestRotationOffsetAngle);
 
 					//SetAcceptorConstraints(ring, bestRotationOffsetAngle - ringStackRotation);
-					ring.RingSetAcceptorConstraints(bestRotationOffsetAngle - ring.ringStackingAxialRotation);
+					ring.RingSetDonorToAcceptorConstraints(bestRotationOffsetAngle - ring.ringStackingAxialRotation);
 
 					//targetRotation = acceptor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
 					//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
@@ -722,7 +722,7 @@ public class Fishtank : MonoBehaviour
 			else
 			{
 				// no acceptor - switch off corresponding spring constraints
-				ring.RingSwitchOffAcceptorConstraints();
+				ring.RingSwitchOffDonorToAcceptorConstraints();
 			}
 
 			if (ring.partnerDonor != null)
@@ -738,7 +738,7 @@ public class Fishtank : MonoBehaviour
 				//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
 
 				//SetDonorConstraints(ring, bestRotationOffsetAngle + ringStackRotation);
-				ring.RingSetDonorConstraints(bestRotationOffsetAngle + ring.ringStackingAxialRotation);
+				ring.RingSetAcceptorToDonorConstraints(bestRotationOffsetAngle + ring.ringStackingAxialRotation);
 
 				//targetRotation = donor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
 				//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
@@ -758,7 +758,7 @@ public class Fishtank : MonoBehaviour
 			else
 			{
 				// no donor - switch off corresponding spring constraint
-				ring.RingSwitchOffDonorConstraints();
+				ring.RingSwitchOffAcceptorToDonorConstraints();
 
 			}
 
@@ -795,8 +795,8 @@ public class Fishtank : MonoBehaviour
 				rb.angularDrag = 1;
 
 				// switch all spring constraints off
-				ring.RingSwitchOffAcceptorConstraints();
-				ring.RingSwitchOffDonorConstraints();
+				ring.RingSwitchOffDonorToAcceptorConstraints();
+				ring.RingSwitchOffAcceptorToDonorConstraints();
 
 
 			}
@@ -980,11 +980,11 @@ public class Fishtank : MonoBehaviour
 				var ring = go.GetComponent<Ring>();
 				if (ring.sjDonorToAcceptorOn == true)
 				{
-					ring.RingSwitchOffAcceptorConstraints();
+					ring.RingSwitchOffDonorToAcceptorConstraints();
 				}
 				if (ring.sjAcceptorToDonorOn == true)
 				{
-					ring.RingSwitchOffDonorConstraints();
+					ring.RingSwitchOffAcceptorToDonorConstraints();
 				}
 			}
 

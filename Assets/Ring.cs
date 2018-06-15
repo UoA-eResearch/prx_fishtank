@@ -217,9 +217,9 @@ public class Ring: MonoBehaviour
 		for (int i = 0; i < 6; i++)
 		{
 			sjDonorToAcceptorArr[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-			InitRadialSpringJoint(sjDonorToAcceptorArr[i], i, 0.39f); //0.39 is equivalent to transform in ring prefab
+			InitRadialSpringJoint(sjDonorToAcceptorArr[i], i, 0f); // 0.39f); //0.39 is equivalent to transform in ring prefab
 			sjAcceptorToDonorArr[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-			InitRadialSpringJoint(sjAcceptorToDonorArr[i], i, -0.39f);
+			InitRadialSpringJoint(sjAcceptorToDonorArr[i], i, 0f); // -0.39f);
 		}
 	}
 
@@ -237,7 +237,7 @@ public class Ring: MonoBehaviour
 		GameObject.Destroy(myLine, duration);
 	}
 
-	public void RingSetAcceptorConstraints(float rotationOffsetAngle)
+	public void RingSetDonorToAcceptorConstraints(float rotationOffsetAngle)
 	{
 		var ringA = partnerAcceptor;
 
@@ -248,7 +248,7 @@ public class Ring: MonoBehaviour
 			sj.connectedBody = ringA.GetComponent<Rigidbody>();
 
 			float connectedAnchorX = sjRadialOffset * (Mathf.Sin((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
-			float connectedAnchorY = 0f;
+			float connectedAnchorY = -0.39f;
 			float connectedAnchorZ = sjRadialOffset * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
 
 			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
@@ -278,7 +278,7 @@ public class Ring: MonoBehaviour
 		sjDonorToAcceptorOn = true;
 	}
 
-	public void RingSetDonorConstraints(float rotationOffsetAngle)
+	public void RingSetAcceptorToDonorConstraints(float rotationOffsetAngle)
 	{
 		var ringD = partnerDonor;
 
@@ -289,7 +289,7 @@ public class Ring: MonoBehaviour
 			sj.connectedBody = ringD.GetComponent<Rigidbody>();
 
 			float connectedAnchorX = sjRadialOffset * (Mathf.Sin((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
-			float connectedAnchorY = 0f;
+			float connectedAnchorY = 0.39f;
 			float connectedAnchorZ = sjRadialOffset * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
 
 			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
@@ -321,7 +321,7 @@ public class Ring: MonoBehaviour
 		sjAcceptorToDonorOn = true;
 	}
 
-	public void RingSwitchOffAcceptorConstraints()
+	public void RingSwitchOffDonorToAcceptorConstraints()
 	{
 		for (int i = 0; i < 6; i++)
 		{
@@ -333,7 +333,7 @@ public class Ring: MonoBehaviour
 		sjDonorToAcceptorOn = false;
 	}
 
-	public void RingSwitchOffDonorConstraints()
+	public void RingSwitchOffAcceptorToDonorConstraints()
 	{
 		for (int i = 0; i < 6; i++)
 		{
