@@ -67,7 +67,10 @@ public class Ring: MonoBehaviour
 	public SpringJoint[] sjAcceptorToDonorArr;
 
 	public float sjRadialOffset = 0.6f; // radial offset for ring stacking spring joint constraints 
-	public float ringMinSpringStrength = 0.25f;
+	public float ringMinSpringStrength = 2.0f;
+	public float ringSpringsStrengthScale = 1.0f;
+	public float ringSpringsTolerance = 0.0075f;
+	public int ringSpringsDamper = 50;
 	public float ringStackingAxialRotation = 8.09f; // also set in ring prefab transforms as Y rotation
 
 	public bool sjDonorToAcceptorOn = false;
@@ -188,7 +191,7 @@ public class Ring: MonoBehaviour
 	float RingGetSpringFromDistance(float dist)
 	{
 		float calcSpringStrength;
-		calcSpringStrength = 1.0f * (1.0f / (dist * dist));
+		calcSpringStrength = ringSpringsStrengthScale * (1.0f / (dist * dist));
 		//Debug.Log("distance = " + dist + "  spring = " + calcSpringStrength);
 		calcSpringStrength = Mathf.Max(calcSpringStrength, ringMinSpringStrength);
 		return calcSpringStrength;
@@ -205,7 +208,7 @@ public class Ring: MonoBehaviour
 		sj.damper = 0;
 		sj.minDistance = 0f;
 		sj.maxDistance = 0f;
-		sj.tolerance = 0.01f;
+		sj.tolerance = ringSpringsTolerance;
 		sj.enableCollision = true;
 	}
 
@@ -252,7 +255,7 @@ public class Ring: MonoBehaviour
 			float connectedAnchorZ = sjRadialOffset * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
 
 			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
-			sj.damper = 50;
+			sj.damper = ringSpringsDamper;
 
 			var startPoint = transform.position + transform.TransformVector(sj.anchor);
 			var endPoint = sj.connectedBody.transform.position + sj.connectedBody.transform.TransformVector(sj.connectedAnchor);
@@ -295,7 +298,7 @@ public class Ring: MonoBehaviour
 			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
 			//sj.connectedAnchor = new Vector3(ringA.radius * (Mathf.Sin(i * (60.0f * Mathf.Deg2Rad))), 0f, ringA.radius * (Mathf.Cos(i * (60.0f * Mathf.Deg2Rad))));
 
-			sj.damper = 50;
+			sj.damper = ringSpringsDamper;
 
 			var startPoint = transform.position + transform.TransformVector(sj.anchor);
 			var endPoint = sj.connectedBody.transform.position + sj.connectedBody.transform.TransformVector(sj.connectedAnchor);

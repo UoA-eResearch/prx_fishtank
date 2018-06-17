@@ -10554,7 +10554,10 @@ MonoBehaviour:
   sjDonorToAcceptorArr: []
   sjAcceptorToDonorArr: []
   sjRadialOffset: 0.6
-  ringMinSpringStrength: 2.5
+  ringMinSpringStrength: 2
+  ringSpringsStrengthScale: 1
+  ringSpringsTolerance: 0.0075
+  ringSpringsDamper: 50
   ringStackingAxialRotation: 8.09
   sjDonorToAcceptorOn: 0
   sjAcceptorToDonorOn: 0
