@@ -170,200 +170,10 @@ public class Fishtank : MonoBehaviour
 
 				float minDistance = float.PositiveInfinity;
 				var match = a;
+
 				if (tag == "ring")
 				{
-					GameObject bestDonor = null;
-					GameObject bestAcceptor = null;
-					var bestDonorScore = float.PositiveInfinity;
-					var bestAcceptorScore = float.PositiveInfinity;
-					if (Random.Range(1, 100) <= probabilityRingBreak)
-					{
-						a.GetComponent<Ring>().breakRing(null);
-					}
-					else if (Random.Range(1, 100) <= probabilityStackMake)
-					{
-						//var partnerPosA = a.transform.Find("partnerPos").gameObject;
-						//Debug.DrawLine(a.transform, a.transform.Find("partnerPos").gameObject.position);
-						foreach (var b in gos)
-						{
-							if (a != b)
-							{
-								Vector3 b2a;
-								float testPairAlignDot;
-								float testPairRelateDot;
-
-								if (a.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().partnerAcceptor == null) ;
-								// I don't have a donor, and b isn't already donating so far in this findPairs() call 
-								{
-									// look in acceptor(a)<-donor(b) direction
-									//Debug.Log(a.name + " as ACC is testing " + b.name + "as poss DONOR: align = " + testPairAlignDot + " relate = " + testPairRelateDot);
-									var partnerPos = b.transform.Find("tf_stack/acceptorPos").gameObject; // a is accepting so we are looking to b's acceptorPos
-									var dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
-									//var angleDiff = Quaternion.Angle(a.transform.rotation, partnerPos.transform.rotation);
-									var bHasBetterAcceptor = false;
-									var score = float.PositiveInfinity;
-									//var score = dist * angleDiff;
-
-									b2a = (a.transform.position - b.transform.position).normalized;
-
-									//testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
-									//testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
-									testPairAlignDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b.transform.Find("tf_stack/acceptorPos").up);
-									testPairRelateDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b2a);
-
-
-									if ((testPairAlignDot > alignLimitDot) && (testPairRelateDot > relateLimitDot))
-									{
-										score = dist;
-
-										if (pairsMyAcceptorPrev.ContainsKey(b))
-										{
-											// b was a donor last time and c was the acceptor (i.e. a is now competing with c)
-
-											var c = pairsMyAcceptorPrev[b];
-											if (c)
-											{
-												//Debug.Log(b.name + " was a DONOR LAST time " + c.name + " was the ACC");
-												var cdist = Vector3.Distance(c.transform.position, partnerPos.transform.position);
-												//var cangleDiff = Quaternion.Angle(c.transform.rotation, partnerPos.transform.rotation);
-
-												var cscore = cdist;// * cangleDiff;
-
-												if (cscore < score)
-												{
-													bHasBetterAcceptor = true;
-													//Debug.Log(a.name + " as ACC is testing " + b.name + " as possible DONOR but " + c.name + " is a better ACC");
-												}
-											}
-										}
-									}
-
-
-									if (!bHasBetterAcceptor)
-									{
-										var next = b;
-										while (next.GetComponent<Ring>().partnerDonor != null)
-										{
-											next = next.GetComponent<Ring>().partnerDonor;
-											if (next == a) // cyclic
-											{
-												score = float.PositiveInfinity;
-												break;
-											}
-										}
-										if (score < bestDonorScore)
-										{
-											bestDonorScore = score;
-											bestDonor = b;
-										}
-									}
-
-								}
-
-								if (a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerDonor == null)
-								// I'm not yet a donor, and b has an acceptor slot I could fill - so far in this findPairs() call 
-								{
-									// look in donor(a)->acceptor(b) direction
-									var myPartnerPos = a.transform.Find("tf_stack/acceptorPos").gameObject;
-									var dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
-									//var angleDiff = Quaternion.Angle(b.transform.rotation, myPartnerPos.transform.rotation);
-									var bHasBetterDonor = false;
-
-									var score = float.PositiveInfinity;
-									//var score = dist * angleDiff;
-
-									b2a = (a.transform.position - b.transform.position).normalized;
-									//testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
-									//testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
-									testPairAlignDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b.transform.Find("tf_stack/acceptorPos").up);
-									testPairRelateDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b2a);
-
-									if ((testPairAlignDot > alignLimitDot) && (testPairRelateDot < -1.0f * relateLimitDot))
-									{
-										score = dist;
-
-										if (pairsMyDonorPrev.ContainsKey(b))
-										{
-											// b was an acceptor last time and c was the donor (i.e. a is now competing with c)
-											var c = pairsMyDonorPrev[b];
-											if (c)
-											{
-												var cPartnerPos = c.transform.Find("tf_stack/acceptorPos").gameObject;
-												var cdist = Vector3.Distance(b.transform.position, cPartnerPos.transform.position);
-												//var cangleDiff = Quaternion.Angle(c.transform.rotation, cPartnerPos.transform.rotation);
-
-												var cscore = cdist;// * cangleDiff;
-
-												if (cscore < score)
-												{
-													bHasBetterDonor = true;
-													//Debug.Log(a.name + " as DONOR is testing " + b.name + " as ACC but " + c.name + " is better DONOR");
-												}
-											}
-										}
-									}
-
-									if (!bHasBetterDonor)
-									{
-										var next = b;
-										while (next.GetComponent<Ring>().partnerAcceptor != null)
-										{
-											next = next.GetComponent<Ring>().partnerAcceptor;
-											if (next == a) // cyclic
-											{
-												score = float.PositiveInfinity;
-												break;
-											}
-										}
-
-										//Debug.Log(a.name + " acting as acceptor for " + b.name + " score=" + score);
-
-										if (score < bestAcceptorScore)
-										{
-											bestAcceptorScore = score;
-											bestAcceptor = b;
-										}
-									}
-
-								}
-
-							}
-						}
-						if (bestDonor != null) //(bestDonorScore < bestAcceptorScore && bestDonor != null)
-						{
-							a.GetComponent<Ring>().partnerDonor = bestDonor;
-							bestDonor.GetComponent<Ring>().partnerAcceptor = a;
-							var partnerPos = bestDonor.transform.Find("tf_stack/acceptorPos").position; // I want to go to my donor's acceptorPos
-
-							Vector3 pairTransform = (partnerPos - a.transform.position);
-							Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos, Color.blue, 0.2f);
-							Debug.DrawLine(a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.cyan, 0.2f);
-							//Debug.Log(a.name + " as ACCEPTOR is choosing " + bestDonor.name + " as donor");
-
-							pairsMyDonor[a] = bestDonor;
-							pairsMyAcceptor[bestDonor] = a;
-
-						}
-						if (bestAcceptor != null) //(bestAcceptorScore < bestDonorScore && bestAcceptor != null && bestDonor != bestAcceptor)
-						{
-							a.GetComponent<Ring>().partnerAcceptor = bestAcceptor;
-							bestAcceptor.GetComponent<Ring>().partnerDonor = a;
-							var partnerPos = bestAcceptor.transform.Find("tf_stack/donorPos").position; // I want to go to my acceptor's donorPos
-
-							Vector3 pairTransform = (partnerPos - a.transform.position);
-							Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos, Color.red, 0.2f);
-							Debug.DrawLine(a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.magenta, 0.2f);
-							//Debug.Log(a.name + " as DONOR is choosing " + bestAcceptor.name + " as acceptor");
-
-							pairsMyAcceptor[a] = bestAcceptor;
-							pairsMyDonor[bestAcceptor] = a;
-
-						}
-						if (bestAcceptor == null && bestDonor == null)
-						{
-							//Debug.LogError("Unable to find a donor or acceptor ring for " + a.name + "!");
-						}
-					}
+					FindPairsRing(a, gos);
 				}
 				else if (tag == "dimer")
 				{
@@ -455,6 +265,206 @@ public class Fishtank : MonoBehaviour
 		pairsMyDonorPrev = pairsMyDonor;
 	}
 
+	void FindPairsRing(GameObject a, GameObject[] gos)
+	{
+		// a is a Ring
+		// gos is an array of all Ring GameOjects
+		{
+			GameObject bestDonor = null;
+			GameObject bestAcceptor = null;
+			var bestDonorScore = float.PositiveInfinity;
+			var bestAcceptorScore = float.PositiveInfinity;
+			if (Random.Range(1, 100) <= probabilityRingBreak)
+			{
+				a.GetComponent<Ring>().breakRing(null);
+			}
+			else if (Random.Range(1, 100) <= probabilityStackMake)
+			{
+				//var partnerPosA = a.transform.Find("partnerPos").gameObject;
+				//Debug.DrawLine(a.transform, a.transform.Find("partnerPos").gameObject.position);
+				foreach (var b in gos)
+				{
+					if (a != b)
+					{
+						Vector3 b2a;
+						float testPairAlignDot;
+						float testPairRelateDot;
+
+						if (a.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().partnerAcceptor == null) ;
+						// I don't have a donor, and b isn't already donating so far in this findPairs() call 
+						{
+							// look in acceptor(a)<-donor(b) direction
+							//Debug.Log(a.name + " as ACC is testing " + b.name + "as poss DONOR: align = " + testPairAlignDot + " relate = " + testPairRelateDot);
+							var partnerPos = b.transform.Find("tf_stack/acceptorPos").gameObject; // a is accepting so we are looking to b's acceptorPos
+							var dist = Vector3.Distance(a.transform.position, partnerPos.transform.position);
+							//var angleDiff = Quaternion.Angle(a.transform.rotation, partnerPos.transform.rotation);
+							var bHasBetterAcceptor = false;
+							var score = float.PositiveInfinity;
+							//var score = dist * angleDiff;
+
+							b2a = (a.transform.position - b.transform.position).normalized;
+
+							//testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+							//testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
+							testPairAlignDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b.transform.Find("tf_stack/acceptorPos").up);
+							testPairRelateDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b2a);
+
+
+							if ((testPairAlignDot > alignLimitDot) && (testPairRelateDot > relateLimitDot))
+							{
+								score = dist;
+
+								if (pairsMyAcceptorPrev.ContainsKey(b))
+								{
+									// b was a donor last time and c was the acceptor (i.e. a is now competing with c)
+
+									var c = pairsMyAcceptorPrev[b];
+									if (c)
+									{
+										//Debug.Log(b.name + " was a DONOR LAST time " + c.name + " was the ACC");
+										var cdist = Vector3.Distance(c.transform.position, partnerPos.transform.position);
+										//var cangleDiff = Quaternion.Angle(c.transform.rotation, partnerPos.transform.rotation);
+
+										var cscore = cdist;// * cangleDiff;
+
+										if (cscore < score)
+										{
+											bHasBetterAcceptor = true;
+											//Debug.Log(a.name + " as ACC is testing " + b.name + " as possible DONOR but " + c.name + " is a better ACC");
+										}
+									}
+								}
+							}
+
+
+							if (!bHasBetterAcceptor)
+							{
+								var next = b;
+								while (next.GetComponent<Ring>().partnerDonor != null)
+								{
+									next = next.GetComponent<Ring>().partnerDonor;
+									if (next == a) // cyclic
+									{
+										score = float.PositiveInfinity;
+										break;
+									}
+								}
+								if (score < bestDonorScore)
+								{
+									bestDonorScore = score;
+									bestDonor = b;
+								}
+							}
+
+						}
+
+						if (a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerDonor == null)
+						// I'm not yet a donor, and b has an acceptor slot I could fill - so far in this findPairs() call 
+						{
+							// look in donor(a)->acceptor(b) direction
+							var myPartnerPos = a.transform.Find("tf_stack/acceptorPos").gameObject;
+							var dist = Vector3.Distance(b.transform.position, myPartnerPos.transform.position);
+							//var angleDiff = Quaternion.Angle(b.transform.rotation, myPartnerPos.transform.rotation);
+							var bHasBetterDonor = false;
+
+							var score = float.PositiveInfinity;
+							//var score = dist * angleDiff;
+
+							b2a = (a.transform.position - b.transform.position).normalized;
+							//testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
+							//testPairRelateDot = Vector3.Dot(a.transform.up, b2a);
+							testPairAlignDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b.transform.Find("tf_stack/acceptorPos").up);
+							testPairRelateDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b2a);
+
+							if ((testPairAlignDot > alignLimitDot) && (testPairRelateDot < -1.0f * relateLimitDot))
+							{
+								score = dist;
+
+								if (pairsMyDonorPrev.ContainsKey(b))
+								{
+									// b was an acceptor last time and c was the donor (i.e. a is now competing with c)
+									var c = pairsMyDonorPrev[b];
+									if (c)
+									{
+										var cPartnerPos = c.transform.Find("tf_stack/acceptorPos").gameObject;
+										var cdist = Vector3.Distance(b.transform.position, cPartnerPos.transform.position);
+										//var cangleDiff = Quaternion.Angle(c.transform.rotation, cPartnerPos.transform.rotation);
+
+										var cscore = cdist;// * cangleDiff;
+
+										if (cscore < score)
+										{
+											bHasBetterDonor = true;
+											//Debug.Log(a.name + " as DONOR is testing " + b.name + " as ACC but " + c.name + " is better DONOR");
+										}
+									}
+								}
+							}
+
+							if (!bHasBetterDonor)
+							{
+								var next = b;
+								while (next.GetComponent<Ring>().partnerAcceptor != null)
+								{
+									next = next.GetComponent<Ring>().partnerAcceptor;
+									if (next == a) // cyclic
+									{
+										score = float.PositiveInfinity;
+										break;
+									}
+								}
+
+								//Debug.Log(a.name + " acting as acceptor for " + b.name + " score=" + score);
+
+								if (score < bestAcceptorScore)
+								{
+									bestAcceptorScore = score;
+									bestAcceptor = b;
+								}
+							}
+
+						}
+
+					}
+				}
+				if (bestDonor != null) //(bestDonorScore < bestAcceptorScore && bestDonor != null)
+				{
+					a.GetComponent<Ring>().partnerDonor = bestDonor;
+					bestDonor.GetComponent<Ring>().partnerAcceptor = a;
+					var partnerPos = bestDonor.transform.Find("tf_stack/acceptorPos").position; // I want to go to my donor's acceptorPos
+
+					Vector3 pairTransform = (partnerPos - a.transform.position);
+					Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos, Color.blue, 0.2f);
+					Debug.DrawLine(a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.cyan, 0.2f);
+					//Debug.Log(a.name + " as ACCEPTOR is choosing " + bestDonor.name + " as donor");
+
+					pairsMyDonor[a] = bestDonor;
+					pairsMyAcceptor[bestDonor] = a;
+
+				}
+				if (bestAcceptor != null) //(bestAcceptorScore < bestDonorScore && bestAcceptor != null && bestDonor != bestAcceptor)
+				{
+					a.GetComponent<Ring>().partnerAcceptor = bestAcceptor;
+					bestAcceptor.GetComponent<Ring>().partnerDonor = a;
+					var partnerPos = bestAcceptor.transform.Find("tf_stack/donorPos").position; // I want to go to my acceptor's donorPos
+
+					Vector3 pairTransform = (partnerPos - a.transform.position);
+					Debug.DrawLine((a.transform.position + (0.75f * pairTransform)), partnerPos, Color.red, 0.2f);
+					Debug.DrawLine(a.transform.position, (a.transform.position + (0.75f * pairTransform)), Color.magenta, 0.2f);
+					//Debug.Log(a.name + " as DONOR is choosing " + bestAcceptor.name + " as acceptor");
+
+					pairsMyAcceptor[a] = bestAcceptor;
+					pairsMyDonor[bestAcceptor] = a;
+
+				}
+				if (bestAcceptor == null && bestDonor == null)
+				{
+					//Debug.LogError("Unable to find a donor or acceptor ring for " + a.name + "!");
+				}
+			}
+		}
+	}
+
 	void PushTogether()
 	{
 		foreach (var tag in tags)
@@ -464,12 +474,25 @@ public class Fishtank : MonoBehaviour
 			var rh = Player.instance.rightHand;
 			foreach (var go in gos)
 			{
+				// check for gameobjects which are attached to player - we don't want to manipulate them
 				var thisGoAttached = lh && lh.currentAttachedObject == go || rh && rh.currentAttachedObject == go;
 				if (thisGoAttached || !go)
 				{
-					//go is being held by player
-					continue;
+					if (ringsUseSpringConstraints == true && tag == "ring")
+					{
+						// this doesn't apply for rings if using spring constraints
+						// skipping the push update would be harmful as the spring constraint
+						// scaling will get out of sync with the distances and cause physics issues
+					}
+					else
+					{
+						// directly manipulating transforms for these objects will look strange
+						// so we skip the push together
+						continue;
+					}
+
 				}
+
 				// check for unpaired gos which should drift
 				if (tag == "monomer" || tag == "dimer")
 				{
