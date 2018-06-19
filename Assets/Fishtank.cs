@@ -278,7 +278,7 @@ public class Fishtank : MonoBehaviour
 			{
 				a.GetComponent<Ring>().breakRing(null);
 			}
-			else if (Random.Range(1, 100) <= probabilityStackMake)
+			else if ((Random.Range(1, 100) <= probabilityStackMake) && (a.GetComponent<Ring>().ringCanStack))
 			{
 				//var partnerPosA = a.transform.Find("partnerPos").gameObject;
 				//Debug.DrawLine(a.transform, a.transform.Find("partnerPos").gameObject.position);
@@ -290,7 +290,7 @@ public class Fishtank : MonoBehaviour
 						float testPairAlignDot;
 						float testPairRelateDot;
 
-						if (a.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().partnerAcceptor == null) ;
+						if (a.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().ringCanStack)
 						// I don't have a donor, and b isn't already donating so far in this findPairs() call 
 						{
 							// look in acceptor(a)<-donor(b) direction
@@ -358,7 +358,7 @@ public class Fishtank : MonoBehaviour
 
 						}
 
-						if (a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerDonor == null)
+						if (a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().ringCanStack)
 						// I'm not yet a donor, and b has an acceptor slot I could fill - so far in this findPairs() call 
 						{
 							// look in donor(a)->acceptor(b) direction
@@ -464,6 +464,53 @@ public class Fishtank : MonoBehaviour
 			}
 		}
 	}
+
+	void ClearRingDockedFlags()
+	{
+		var ringGos = GameObject.FindGameObjectsWithTag("ring");
+		foreach (var ringGo in ringGos)
+		{
+			Ring ring = ringGo.GetComponent<Ring>();
+			ring.dockedToDonor = false;
+			ring.dockedToAcceptor = false;
+		}
+	}
+
+	void SetRingDockedFlags()
+	{
+		var ringGos = GameObject.FindGameObjectsWithTag("ring");
+		foreach (var ringGo in ringGos)
+		{
+			Ring ring = ringGo.GetComponent<Ring>();
+			if (ring.partnerAcceptor)
+			{
+				var acceptor = ring.partnerAcceptor.transform.Find("tf_stack/donorPos");
+				var acceptorPos = acceptor.position;
+				var targetRotation = acceptor.rotation;
+				var distanceFromAcceptorPos = Vector3.Distance(ringGo.transform.position, acceptorPos);
+				if (distanceFromAcceptorPos < stackForceDistance)
+				{
+					// update docked flags - used for nanowires
+					ring.dockedToAcceptor = true;
+				}
+			}
+			if (ring.partnerDonor)
+			{
+				var donor = ring.partnerDonor.transform.Find("tf_stack/acceptorPos");
+				var donorPos = donor.position;
+				var targetRotation = donor.rotation;
+				var distanceFromDonorPos = Vector3.Distance(ringGo.transform.position, donorPos);
+				if (distanceFromDonorPos < stackForceDistance)
+				{
+					// update docked flags - used for nanowires
+					ring.dockedToDonor = true;
+				}
+			}
+
+
+		}
+	}
+
 
 	void PushTogether()
 	{
@@ -705,8 +752,8 @@ public class Fishtank : MonoBehaviour
 			float bestRotationOffsetAngle = 0.0f;
 			var ring = go.GetComponent<Ring>();
 
-			ring.dockedToDonor = false;
-			ring.dockedToAcceptor = false;
+			//ring.dockedToDonor = false;
+			//ring.dockedToAcceptor = false;
 
 
 			if (ring.partnerAcceptor != null)
@@ -766,11 +813,11 @@ public class Fishtank : MonoBehaviour
 				//targetRotation = donor.rotation * Quaternion.Euler(new Vector3(0, bestRotationOffsetAngle, 0));
 				//go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
 
-				if (distanceFromDonorPos < stackForceDistance)
-				{
-					// update docked flags - used for nanowires
-					ring.dockedToDonor = true;
-				}
+				//if (distanceFromDonorPos < stackForceDistance)
+				//{
+				//	// update docked flags - used for nanowires
+				//	ring.dockedToDonor = true;
+				//}
 
 				if (cheat)
 				{
@@ -809,8 +856,8 @@ public class Fishtank : MonoBehaviour
 			
 			float bestRotationOffsetAngle = 0.0f;
 			var ring = go.GetComponent<Ring>();
-			ring.dockedToDonor = false;
-			ring.dockedToAcceptor = false;
+			//ring.dockedToDonor = false;
+			//ring.dockedToAcceptor = false;
 			var rb = ring.GetComponent<Rigidbody>();
 			{
 				// set approriate drag values
@@ -820,8 +867,6 @@ public class Fishtank : MonoBehaviour
 				// switch all spring constraints off
 				ring.RingSwitchOffDonorToAcceptorConstraints();
 				ring.RingSwitchOffAcceptorToDonorConstraints();
-
-
 			}
 
 			if (ring.partnerAcceptor != null)
@@ -905,8 +950,8 @@ public class Fishtank : MonoBehaviour
 				}
 				else
 				{
-					// update docked flags - used for nanowires
-					ring.dockedToDonor = true;
+					//// update docked flags - used for nanowires
+					//ring.dockedToDonor = true;
 
 					go.transform.position = Vector3.MoveTowards(go.transform.position, donorPos, Time.deltaTime * pairingForcingVelocity);
 					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * pairingForcingRotationVelocity);
@@ -1383,10 +1428,13 @@ public class Fishtank : MonoBehaviour
 		float minDist = float.PositiveInfinity;
 		GameObject flipper = null;
 		foreach (var a in GameObject.FindGameObjectsWithTag("ring"))
-		{
+		{ 
 			foreach (var b in GameObject.FindGameObjectsWithTag("ring"))
 			{
-				if (a != b && a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerAcceptor == null)
+				Ring aRing = a.GetComponent<Ring>();
+				Ring bRing = b.GetComponent<Ring>();
+
+				if ((a != b && aRing.partnerAcceptor == null && bRing.partnerAcceptor == null) && (aRing.ringCanStack && bRing.ringCanStack))
 				{
 					//var testPairAlignDot = Vector3.Dot(a.transform.up, b.transform.up);
 					var testPairAlignDot = Vector3.Dot(a.transform.Find("tf_stack/acceptorPos").up, b.transform.Find("tf_stack/acceptorPos").up);
@@ -1401,7 +1449,7 @@ public class Fishtank : MonoBehaviour
 				}
 			}
 		}
-		if (flipper != null)
+		if (flipper != null) 
 		{
 			// Flip the designated ring around, along with it's entire stack
 			flipper.transform.Rotate(0, 0, 180, Space.Self);
@@ -1759,7 +1807,9 @@ public class Fishtank : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		ClearRingDockedFlags();
 		PushTogether();
+		SetRingDockedFlags();
 		FixHoverlock();
 		//RingRepel();
 		ClampRigidBodyDynamics();

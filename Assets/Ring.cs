@@ -186,6 +186,35 @@ public class Ring: MonoBehaviour
 			ringCanStack = false;
 		}
 
+		if (!ringCanStack) 
+		{
+			//catch cases where manipulated rings have legacy spring constraints active
+			if (sjDonorToAcceptorOn)
+			{
+				RingSwitchOffDonorToAcceptorConstraints();
+			}
+			if (sjAcceptorToDonorOn)
+			{
+				RingSwitchOffAcceptorToDonorConstraints();
+			}
+		}
+
+		// catch cases where rings have legacy spring constraints active - probably bad logic in fishtank.cs :( 
+		if (!partnerAcceptor)
+		{
+			if (sjDonorToAcceptorOn)
+			{
+				RingSwitchOffDonorToAcceptorConstraints();
+			}
+		}
+		if (!partnerDonor)
+		{
+			if (sjAcceptorToDonorOn)
+			{
+				RingSwitchOffAcceptorToDonorConstraints();
+			}
+		}
+
 	}
 
 	float RingGetSpringFromDistance(float dist)
@@ -220,9 +249,9 @@ public class Ring: MonoBehaviour
 		for (int i = 0; i < 6; i++)
 		{
 			sjDonorToAcceptorArr[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-			InitRadialSpringJoint(sjDonorToAcceptorArr[i], i, 0f); // 0.39f); //0.39 is equivalent to transform in ring prefab
+			InitRadialSpringJoint(sjDonorToAcceptorArr[i], i, 0f); //0.39 is equivalent to transform in ring prefab
 			sjAcceptorToDonorArr[i] = gameObject.AddComponent(typeof(SpringJoint)) as SpringJoint;
-			InitRadialSpringJoint(sjAcceptorToDonorArr[i], i, 0f); // -0.39f);
+			InitRadialSpringJoint(sjAcceptorToDonorArr[i], i, 0f);
 		}
 	}
 
@@ -251,7 +280,7 @@ public class Ring: MonoBehaviour
 			sj.connectedBody = ringA.GetComponent<Rigidbody>();
 
 			float connectedAnchorX = sjRadialOffset * (Mathf.Sin((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
-			float connectedAnchorY = -0.39f;
+			float connectedAnchorY = -0.39f; // -0.39f;
 			float connectedAnchorZ = sjRadialOffset * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
 
 			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
@@ -292,7 +321,7 @@ public class Ring: MonoBehaviour
 			sj.connectedBody = ringD.GetComponent<Rigidbody>();
 
 			float connectedAnchorX = sjRadialOffset * (Mathf.Sin((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
-			float connectedAnchorY = 0.39f;
+			float connectedAnchorY = 0.39f; // 0.39f;
 			float connectedAnchorZ = sjRadialOffset * (Mathf.Cos((i * (Mathf.Deg2Rad * 60.0f)) + (Mathf.Deg2Rad * rotationOffsetAngle)));
 
 			sj.connectedAnchor = new Vector3(connectedAnchorX, connectedAnchorY, connectedAnchorZ);
@@ -326,26 +355,32 @@ public class Ring: MonoBehaviour
 
 	public void RingSwitchOffDonorToAcceptorConstraints()
 	{
-		for (int i = 0; i < 6; i++)
+		if (sjDonorToAcceptorOn == true)
 		{
-			var sj = sjDonorToAcceptorArr[i];
-			sj.connectedBody = null;
-			sj.damper = 0;
-			sj.spring = 0f;
+			for (int i = 0; i < 6; i++)
+			{
+				var sj = sjDonorToAcceptorArr[i];
+				sj.connectedBody = null;
+				sj.damper = 0;
+				sj.spring = 0f;
+			}
+			sjDonorToAcceptorOn = false;
 		}
-		sjDonorToAcceptorOn = false;
 	}
 
 	public void RingSwitchOffAcceptorToDonorConstraints()
 	{
-		for (int i = 0; i < 6; i++)
+		if (sjAcceptorToDonorOn == true)
 		{
-			var sj = sjAcceptorToDonorArr[i];
-			sj.connectedBody = null;
-			sj.damper = 0;
-			sj.spring = 0f;
+			for (int i = 0; i < 6; i++)
+			{
+				var sj = sjAcceptorToDonorArr[i];
+				sj.connectedBody = null;
+				sj.damper = 0;
+				sj.spring = 0f;
+			}
+			sjAcceptorToDonorOn = false;
 		}
-		sjAcceptorToDonorOn = false;
 	}
 
 	public void SetShaderTrans()

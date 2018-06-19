@@ -24,7 +24,7 @@ public class SimulationSwitch : MonoBehaviour {
 		}
 		else
 		{
-			simulationText.text = "tranforms";
+			simulationText.text = "transforms";
 			simulationUsesSprings = false;
 		}
 	}
