@@ -146,30 +146,61 @@ public class Ring: MonoBehaviour
 
 	}
 
+	void ResetNanoParticle()
+	{
+		age = 0f;
+		psAccretion01Emission.rateOverTime = 0.0f;
+		ringHasNanoParticle = false;
+		//myNanoParticle.transform.localScale = 0f * myNanoParticleLocalScaleInit;
+		SetNanoParticleScale(0f);
+		if (fishtankScript.doNanoParticles)
+		{
+			ringCanStack = false;
+		}
+	}
+
+	void SetNanoParticleScale(float scale)
+	{
+		myNanoParticle.transform.localScale = scale * myNanoParticleLocalScaleInit;
+		myRingLightCurrentIntensity = myRingLightMaxIntensity * scale;
+		myRingLight.intensity = myRingLightCurrentIntensity;
+	}
+
 	void Update()
 	{
 		//psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
 		age = age + Time.deltaTime;
 
-		if (age < (delayToGrowNanoParticle + timeToGrowNanoParticle))
+		if (fishtankScript.doNanoParticles)
 		{
-			float scaleRelativeF = ((age - delayToGrowNanoParticle) / timeToGrowNanoParticle);
-			if (scaleRelativeF < 0f)
+			if (age < (delayToGrowNanoParticle + timeToGrowNanoParticle))
 			{
-				scaleRelativeF = 0f;
+				float scaleRelativeF = ((age - delayToGrowNanoParticle) / timeToGrowNanoParticle);
+				if (scaleRelativeF < 0f)
+				{
+					scaleRelativeF = 0f;
+				}
+
+				SetNanoParticleScale(scaleRelativeF);
+				//myNanoParticle.transform.localScale = scaleRelativeF * myNanoParticleLocalScaleInit;
+				//myRingLightCurrentIntensity = myRingLightMaxIntensity * scaleRelativeF;
+				//myRingLight.intensity = myRingLightCurrentIntensity;
+
+				psAccretion01Emission.rateOverTime = psAccretion01EmissionRateInit * (1.05f - scaleRelativeF);
+
+				ringHasNanoParticle = false;
 			}
-			myNanoParticle.transform.localScale = scaleRelativeF * myNanoParticleLocalScaleInit;
-			myRingLightCurrentIntensity = myRingLightMaxIntensity * scaleRelativeF;
-			myRingLight.intensity = myRingLightCurrentIntensity;
-
-			psAccretion01Emission.rateOverTime = psAccretion01EmissionRateInit * (1.05f - scaleRelativeF);
-
-			ringHasNanoParticle = false;
+			else
+			{
+					ringHasNanoParticle = true;	
+			}
 		}
 		else
 		{
-				ringHasNanoParticle = true;	
+			ResetNanoParticle();
+			ringCanStack = true;
 		}
+
 
 		if (!ringInterlocked)
 		{
@@ -180,11 +211,15 @@ public class Ring: MonoBehaviour
 		}
 		else
 		{
-			age = 0f;
-			psAccretion01Emission.rateOverTime = 0.0f;
-			ringHasNanoParticle = false;
-			ringCanStack = false;
+			ResetNanoParticle();
+			//age = 0f;
+			//psAccretion01Emission.rateOverTime = 0.0f;
+			//ringHasNanoParticle = false;
+			//ringCanStack = false;
 		}
+
+
+
 
 		if (!ringCanStack) 
 		{

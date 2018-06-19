@@ -101,7 +101,7 @@ public class Fishtank : MonoBehaviour
 	private bool renderCartoonLast = false;
 	public bool partyMode = false;
 
-	public bool doNanowires = false;
+	public bool doNanoParticles = false;
 
 	public float fishtankScaleFactor = 1.0f;
 	private Vector3 fishtankScaleInit = new Vector3(1f, 1f, 1f);
@@ -117,6 +117,7 @@ public class Fishtank : MonoBehaviour
 	public GameObject fishtankScaleUI;
 	public GameObject partyModeUI;
 	public GameObject simulationUI;
+	public GameObject nanoUI;
 	public GameObject menuHintUI;
 	public GameObject teleportHintUI;
 
@@ -124,6 +125,7 @@ public class Fishtank : MonoBehaviour
 	public CartoonModeSwitch cartoonModeSwitch;
 	public ScaleSlider scaleModeSlider;
 	public SimulationSwitch simulationSwitch;
+	public NanoParticleSwitch nanoSwitch;
 
 	public ChartStats chartStats;
 
@@ -1325,63 +1327,71 @@ public class Fishtank : MonoBehaviour
 		// turns on fx for rings in stacks of 3 or more
 		// this method avoids keeping arrays or lists for stacks ;)
 
-
-		if (!r.dockedToAcceptor && !r.dockedToDonor)
+		if (doNanoParticles)
 		{
-			//free ring
+			if (!r.dockedToAcceptor && !r.dockedToDonor)
+			{
+				//free ring
+				NanoWireOff(r);
+			}
+			else if (r.dockedToAcceptor && r.dockedToDonor)
+			{
+				// two neighbours docked either side
+				NanoWireOn(r);
+			}
+
+
+			if (r.dockedToAcceptor && !r.dockedToDonor)
+			{
+				if (r.partnerAcceptor != null)
+				{
+					var myAcceptorRing = r.partnerAcceptor.GetComponent<Ring>();
+					if (myAcceptorRing.dockedToAcceptor)
+					{
+						//(at least) two neighbours docked on Acceptor side
+						NanoWireOn(r);
+					}
+					else
+					{
+						NanoWireOff(r);
+					}
+				}
+				else
+				{
+					NanoWireOff(r);
+				}
+
+			}
+
+			if (!r.dockedToAcceptor && r.dockedToDonor)
+			{
+				if (r.partnerDonor != null)
+				{
+					var myDonorRing = r.partnerDonor.GetComponent<Ring>();
+					if (myDonorRing.dockedToDonor)
+					{
+						//(at least) two neighbours docked on Donor side
+						NanoWireOn(r);
+					}
+					else
+					{
+						NanoWireOff(r);
+					}
+				}
+				else
+				{
+					NanoWireOff(r);
+				}
+
+
+			}
+		}
+		else
+		{
 			NanoWireOff(r);
 		}
-		else if (r.dockedToAcceptor && r.dockedToDonor)
-		{
-			// two neighbours docked either side
-			NanoWireOn(r);
-		}
 
 
-		if (r.dockedToAcceptor && !r.dockedToDonor)
-		{
-			if (r.partnerAcceptor != null)
-			{
-				var myAcceptorRing = r.partnerAcceptor.GetComponent<Ring>();
-				if (myAcceptorRing.dockedToAcceptor)
-				{
-					//(at least) two neighbours docked on Acceptor side
-					NanoWireOn(r);
-				}
-				else
-				{
-					NanoWireOff(r);
-				}
-			}
-			else
-			{
-				NanoWireOff(r);
-			}
-
-		}
-
-		if (!r.dockedToAcceptor && r.dockedToDonor)
-		{
-			if (r.partnerDonor != null)
-			{
-				var myDonorRing = r.partnerDonor.GetComponent<Ring>();
-				if (myDonorRing.dockedToDonor)
-				{
-					//(at least) two neighbours docked on Donor side
-					NanoWireOn(r);
-				}
-				else
-				{
-					NanoWireOff(r);
-				}
-			}
-			else
-			{
-				NanoWireOff(r);
-			}
-
-
-		}
 
 
 	}
@@ -1647,6 +1657,11 @@ public class Fishtank : MonoBehaviour
 		ringsUseSpringConstraints = simulationSwitch.GetSimulationMode();
 	}
 
+	void UpdateNanoMode()
+	{
+		doNanoParticles = nanoSwitch.GetNanoParticleMode();
+	}
+
 	void SetMenuUIComponents(int mode)
 	{
 		switch (mode)
@@ -1657,6 +1672,7 @@ public class Fishtank : MonoBehaviour
 				fishtankScaleUI.SetActive(false);
 				partyModeUI.SetActive(false);
 				simulationUI.SetActive(false);
+				nanoUI.SetActive(false);
 				break;
 			case 1:
 				pHSliderUI.SetActive(false);
@@ -1664,6 +1680,7 @@ public class Fishtank : MonoBehaviour
 				fishtankScaleUI.SetActive(false);
 				partyModeUI.SetActive(false);
 				simulationUI.SetActive(false);
+				nanoUI.SetActive(false);
 				break;
 			case 2:
 				pHSliderUI.SetActive(false);
@@ -1671,6 +1688,7 @@ public class Fishtank : MonoBehaviour
 				fishtankScaleUI.SetActive(true);
 				partyModeUI.SetActive(false);
 				simulationUI.SetActive(false);
+				nanoUI.SetActive(false);
 				break;
 			case 3:
 				pHSliderUI.SetActive(false);
@@ -1678,6 +1696,7 @@ public class Fishtank : MonoBehaviour
 				fishtankScaleUI.SetActive(false);
 				partyModeUI.SetActive(true);
 				simulationUI.SetActive(false);
+				nanoUI.SetActive(false);
 				break;
 			case 4:
 				pHSliderUI.SetActive(false);
@@ -1685,6 +1704,7 @@ public class Fishtank : MonoBehaviour
 				fishtankScaleUI.SetActive(false);
 				partyModeUI.SetActive(false);
 				simulationUI.SetActive(true);
+				nanoUI.SetActive(false);
 				break;
 			case 5:
 				pHSliderUI.SetActive(false);
@@ -1692,13 +1712,22 @@ public class Fishtank : MonoBehaviour
 				fishtankScaleUI.SetActive(false);
 				partyModeUI.SetActive(false);
 				simulationUI.SetActive(false);
+				nanoUI.SetActive(true);
+				break;
+			case 6:
+				pHSliderUI.SetActive(false);
+				cartoonRenderUI.SetActive(false);
+				fishtankScaleUI.SetActive(false);
+				partyModeUI.SetActive(false);
+				simulationUI.SetActive(false);
+				nanoUI.SetActive(false);
 				break;
 		}
 	}
 
 	void SwitchMenuUIMode(int direction)
 	{
-		var numUIModes = 6;
+		var numUIModes = 7;
 
 		if (direction > 0)
 		{
@@ -1818,6 +1847,7 @@ public class Fishtank : MonoBehaviour
 		UpdateScale();
 		UpdatePartyMode();
 		UpdateSimulationMode();
+		UpdateNanoMode();
 		//UpdateUIMode();
 		UpdateViveControllers();
 	}
