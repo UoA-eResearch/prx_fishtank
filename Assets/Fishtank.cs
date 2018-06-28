@@ -103,6 +103,9 @@ public class Fishtank : MonoBehaviour
 
 	public bool doNanoParticles = true;
 
+	public AudioSource bgm_serious;
+	public AudioSource bgm_party;
+
 	public float fishtankScaleFactor = 1.0f;
 	private Vector3 fishtankScaleInit = new Vector3(1f, 1f, 1f);
 	private Vector3 fishtankPositionInit = new Vector3(0f, 0f, 0f);
@@ -1616,6 +1619,19 @@ public class Fishtank : MonoBehaviour
 	void UpdatePartyMode()
 	{
 		partyMode = partyModeSwitch.GetPartyMode();
+
+		float crossfadeLerp = 0.1f;
+
+		if (partyMode == true)
+		{
+			bgm_party.volume = Mathf.Lerp(bgm_party.volume, 0.05f, crossfadeLerp);
+			bgm_serious.volume = Mathf.Lerp(bgm_serious.volume, 0f, crossfadeLerp);
+		}
+		else
+		{
+			bgm_party.volume = Mathf.Lerp(bgm_party.volume, 0f, crossfadeLerp);
+			bgm_serious.volume = Mathf.Lerp(bgm_serious.volume, 0.05f, crossfadeLerp);
+		}
 	}
 
 	void UpdateScale()
