@@ -637,7 +637,7 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 1, g: 0.9158116, b: 0.68620694, a: 1}
   m_Intensity: 0.8
   m_Range: 10
   m_SpotAngle: 30
@@ -651,7 +651,7 @@ Light:
     m_NormalBias: 0.4
     m_NearPlane: 0.2
   m_Cookie: {fileID: 0}
-  m_DrawHalo: 0
+  m_DrawHalo: 1
   m_Flare: {fileID: 0}
   m_RenderMode: 0
   m_CullingMask:
@@ -3813,6 +3813,8 @@ MonoBehaviour:
   nanoUI: {fileID: 1271221871}
   menuHintUI: {fileID: 1754973600}
   teleportHintUI: {fileID: 1829653320}
+  signSplash: {fileID: 1376851952}
+  chartStatsGO: {fileID: 1411235740}
   partyModeSwitch: {fileID: 1288313465}
   cartoonModeSwitch: {fileID: 844004221}
   scaleModeSlider: {fileID: 2032115209}
@@ -5431,7 +5433,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.391, y: 1}
+  m_AnchoredPosition: {x: 0.39100003, y: 0.05000305}
   m_SizeDelta: {x: 250, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &607224407
@@ -5658,7 +5660,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.132, y: -0.842}
+  m_AnchoredPosition: {x: 0.13199997, y: -1.5519991}
   m_SizeDelta: {x: 3, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &615956754
@@ -8059,7 +8061,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0.347, y: -0.18}
+  m_AnchoredPosition: {x: 0.347, y: -1.13}
   m_SizeDelta: {x: 350, y: 200}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &935459611
@@ -9498,7 +9500,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -1.317, y: -0.834}
+  m_AnchoredPosition: {x: -1.317, y: -1.5439991}
   m_SizeDelta: {x: 2, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1126692990
@@ -11836,6 +11838,7 @@ GameObject:
   - component: {fileID: 1376851955}
   - component: {fileID: 1376851954}
   - component: {fileID: 1376851953}
+  - component: {fileID: 1376851959}
   m_Layer: 5
   m_Name: Splash
   m_TagString: Untagged
@@ -11855,7 +11858,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 0.9411765}
+  m_Color: {r: 0, g: 0, b: 0, a: 0.98039216}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -11940,7 +11943,7 @@ RectTransform:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 1376851952}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: -0.5}
+  m_LocalPosition: {x: 0, y: 0, z: -0.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 607224406}
@@ -11954,8 +11957,19 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: -2, y: 0}
-  m_SizeDelta: {x: 4, y: 2.5}
+  m_SizeDelta: {x: 4, y: 4}
   m_Pivot: {x: 0, y: 0}
+--- !u!225 &1376851959
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1376851952}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1394375849
 GameObject:
   m_ObjectHideFlags: 0
@@ -12231,6 +12245,7 @@ GameObject:
   - component: {fileID: 1411235744}
   - component: {fileID: 1411235743}
   - component: {fileID: 1411235742}
+  - component: {fileID: 1411235746}
   m_Layer: 0
   m_Name: ChartStatistics
   m_TagString: Untagged
@@ -12339,6 +12354,17 @@ Canvas:
   m_SortingLayerID: 0
   m_SortingOrder: 0
   m_TargetDisplay: 0
+--- !u!225 &1411235746
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1411235740}
+  m_Enabled: 1
+  m_Alpha: 0
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &1413451281
 Prefab:
   m_ObjectHideFlags: 0
@@ -15889,8 +15915,8 @@ Light:
   m_Enabled: 1
   serializedVersion: 8
   m_Type: 1
-  m_Color: {r: 0.44604236, g: 0.8016644, b: 0.9191176, a: 1}
-  m_Intensity: 0.4
+  m_Color: {r: 0.52294624, g: 0.8207578, b: 0.9191176, a: 1}
+  m_Intensity: 0.8
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -18365,7 +18391,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 1.429, y: -0.858}
+  m_AnchoredPosition: {x: 1.4289999, y: -1.5679991}
   m_SizeDelta: {x: 1, y: 1}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1853170076

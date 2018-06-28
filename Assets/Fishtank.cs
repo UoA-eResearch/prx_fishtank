@@ -121,6 +121,9 @@ public class Fishtank : MonoBehaviour
 	public GameObject menuHintUI;
 	public GameObject teleportHintUI;
 
+	public GameObject signSplash;
+	public GameObject chartStatsGO;
+
 	public PartyModeSwitch partyModeSwitch;
 	public CartoonModeSwitch cartoonModeSwitch;
 	public ScaleSlider scaleModeSlider;
@@ -1833,6 +1836,29 @@ public class Fishtank : MonoBehaviour
 
 	}
 
+	void UpdateSigns()
+	{
+		// hacky fixed timing test for appearances
+
+		if (System.Math.Round(Time.timeSinceLevelLoad, 1) > 6.0f)
+		{
+			if (signSplash.GetComponent<CanvasGroup>().alpha > 0)
+				{
+					signSplash.GetComponent<CanvasGroup>().alpha -= 0.004f;
+				}
+		}
+
+		if (System.Math.Round(Time.timeSinceLevelLoad, 1) > 12.0f)
+		{
+			if (chartStatsGO.GetComponent<CanvasGroup>().alpha < 1.0f)
+			{
+				chartStatsGO.GetComponent<CanvasGroup>().alpha += 0.002f;
+			}
+		}
+
+
+	}
+
 	// Update is called once per frame
 	void Update()
 	{
@@ -1850,5 +1876,6 @@ public class Fishtank : MonoBehaviour
 		UpdateNanoMode();
 		//UpdateUIMode();
 		UpdateViveControllers();
+		UpdateSigns();
 	}
 }
