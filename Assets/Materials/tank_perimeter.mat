@@ -6,14 +6,15 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: TeleportAreaVisibleBright
+  m_Name: tank_perimeter
   m_Shader: {fileID: 4800000, guid: 787d7485aa6482341a9f55fa37fb84f1, type: 3}
-  m_ShaderKeywords: RECEIVE_SHADOWS S_SPECULAR_NONE S_UNLIT _ALPHAPREMULTIPLY_ON _EMISSION
-  m_LightmapFlags: 0
+  m_ShaderKeywords: S_SPECULAR_NONE S_UNLIT _ALPHAPREMULTIPLY_ON _EMISSION
+  m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
   m_DoubleSidedGI: 0
   m_CustomRenderQueue: 3000
   stringTagMap:
+    OriginalShader: Standard
     RenderType: Transparent
   disabledShaderPasses: []
   m_SavedProperties:
@@ -39,14 +40,6 @@ Material:
         m_Texture: {fileID: 2800000, guid: f33ccd07f9433f44f8c5430938b168ac, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _FalloffTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _Illum:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: 79a627fbb1f88ed4f82172b1cb97275e, type: 3}
         m_Scale: {x: 1, y: 1}
@@ -63,10 +56,6 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _ShadowTex:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
     - _SpecGlossMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -77,16 +66,14 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Floats:
     - _BumpScale: 1
-    - _ColorMask: 15
     - _Cutoff: 0.5
-    - _Darken: 0.706
+    - _Darken: 0.935
     - _DetailNormalMapScale: 1
     - _DstBlend: 10
-    - _Emission: 0.01
     - _EmissionScaleUI: 0
     - _FogMultiplier: 1
-    - _Glossiness: 0
-    - _Metallic: 0
+    - _Glossiness: 0.126
+    - _Metallic: 0.368
     - _Mode: 3
     - _OcclusionStrength: 1
     - _OcclusionStrengthDirectDiffuse: 1
@@ -94,17 +81,11 @@ Material:
     - _OcclusionStrengthIndirectDiffuse: 1
     - _OcclusionStrengthIndirectSpecular: 1
     - _Parallax: 0.02
-    - _SeeThru: 0.38
-    - _SpecularMode: 1
+    - _SeeThru: 0
+    - _SpecularMode: 2
     - _SrcBlend: 1
-    - _Stencil: 0
-    - _StencilComp: 8
-    - _StencilOp: 0
-    - _StencilReadMask: 255
-    - _StencilWriteMask: 255
     - _UVSec: 0
     - _ZWrite: 0
-    - g_bEnableMetallic: 0
     - g_bReceiveShadows: 1
     - g_bUnlit: 1
     - g_bWorldAlignedTexture: 0
@@ -114,12 +95,11 @@ Material:
     - g_flReflectanceMin: 0
     - g_flReflectanceScale: 1
     m_Colors:
-    - _Color: {r: 0.26374358, g: 0.6344103, b: 0.834, a: 0.61960787}
-    - _EmissionColor: {r: 0.52702695, g: 0.6689188, b: 0.75, a: 1}
+    - _Color: {r: 0.18325105, g: 0.7196769, b: 0.743, a: 0.61960787}
+    - _EmissionColor: {r: 0.25824147, g: 0.91758215, b: 1, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
-    - _SpecColor: {r: 0.2, g: 0.2, b: 0.2, a: 1}
-    - _Specular: {r: 0, g: 0, b: 0, a: 0}
-    - _TintColor: {r: 0.376465, g: 0.6063015, b: 0.731, a: 0.591}
+    - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
+    - _TintColor: {r: 0.44255167, g: 0.8118274, b: 0.828, a: 0.291}
     - g_vWorldAlignedNormalTangentU: {r: -1, g: 0, b: 0, a: 0}
     - g_vWorldAlignedNormalTangentV: {r: 0, g: 0, b: 1, a: 0}
     - g_vWorldAlignedTextureNormal: {r: 0, g: 1, b: 0, a: 0}

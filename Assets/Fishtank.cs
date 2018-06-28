@@ -63,7 +63,7 @@ public class Fishtank : MonoBehaviour
 	private int probabilityRingMake;
 	private int probabilityRingBreak;
 	private int probabilityStackMake;
-	private float fishtankAlpha = 0.01f;
+	private float fishtankAlpha = 0.0004f;
 
 	// dot product thresholds for ring pairing
 	private float alignLimitDot = 0.5f;
@@ -101,7 +101,7 @@ public class Fishtank : MonoBehaviour
 	private bool renderCartoonLast = false;
 	public bool partyMode = false;
 
-	public bool doNanoParticles = false;
+	public bool doNanoParticles = true;
 
 	public float fishtankScaleFactor = 1.0f;
 	private Vector3 fishtankScaleInit = new Vector3(1f, 1f, 1f);
@@ -1848,11 +1848,11 @@ public class Fishtank : MonoBehaviour
 				}
 		}
 
-		if (System.Math.Round(Time.timeSinceLevelLoad, 1) > 12.0f)
+		if (System.Math.Round(Time.timeSinceLevelLoad, 1) > 10.0f)
 		{
 			if (chartStatsGO.GetComponent<CanvasGroup>().alpha < 1.0f)
 			{
-				chartStatsGO.GetComponent<CanvasGroup>().alpha += 0.002f;
+				chartStatsGO.GetComponent<CanvasGroup>().alpha += 0.001f;
 			}
 		}
 

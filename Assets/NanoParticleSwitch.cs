@@ -8,7 +8,7 @@ public class NanoParticleSwitch : MonoBehaviour {
 
 	public LinearMapping nanoLM;
 	public Text nanoText;
-	public bool useNanoParticles = false;
+	public bool useNanoParticles = true;
 
 	// Use this for initialization
 	void Start () {
