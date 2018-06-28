@@ -17,6 +17,10 @@ public class Monomer : MonoBehaviour {
 
 	private Rigidbody myRigidbody;
 
+	public Fishtank fishtankScript;
+	public ParticleSystem psPartyTrail;
+
+
 	// Use this for initialization
 	void Start () {
 		myCapsuleCollider = gameObject.GetComponent<CapsuleCollider>();
@@ -27,15 +31,36 @@ public class Monomer : MonoBehaviour {
 
 		myRigidbody = gameObject.GetComponent<Rigidbody>();
 	}
-	
+
+	private void Awake()
+	{
+		GameObject fishtankGO = GameObject.Find("fishtank");
+		fishtankScript = fishtankGO.GetComponent<Fishtank>();
+	}
+
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
 		age = age + Time.deltaTime;
 		if (doScaleColliders)
 		{
 			updateScaleColliders();
 		}
 
+		if (fishtankScript.partyMode == true)
+		{
+			if (psPartyTrail.isStopped)
+			{
+				psPartyTrail.Play();
+			}
+		}
+		else
+		{
+			if (psPartyTrail.isPlaying)
+			{
+				psPartyTrail.Stop();
+			}
+		}
 	}
 
 	void updateScaleColliders()

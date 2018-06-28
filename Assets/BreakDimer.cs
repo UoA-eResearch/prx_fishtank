@@ -19,12 +19,32 @@ public class BreakDimer : MonoBehaviour
 	public Fishtank fishtankScript;
 	public GameObject fishtankGO;
 
+	public ParticleSystem psPartyTrail;
+
 	void Awake()
 	{
 		velEst = GetComponent<VelocityEstimator>();
 		fishtank = transform.parent;
 		GameObject fishtankGO = GameObject.Find("fishtank");
 		fishtankScript = fishtankGO.GetComponent<Fishtank>();
+	}
+
+	void Update()
+	{
+		if (fishtankScript.partyMode == true)
+		{
+			if (psPartyTrail.isStopped)
+			{
+				psPartyTrail.Play();
+			}
+		}
+		else
+		{
+			if (psPartyTrail.isPlaying)
+			{
+				psPartyTrail.Stop();
+			}
+		}
 	}
 
 	void breakDimer(Hand hand)
