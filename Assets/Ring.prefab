@@ -10562,7 +10562,7 @@ MonoBehaviour:
   sjDonorToAcceptorOn: 0
   sjAcceptorToDonorOn: 0
   ringAudioSource: {fileID: 0}
-  sfxRingSpawn: {fileID: 8300000, guid: ffb159a21c8a04135a5616979c828fab, type: 3}
+  sfxRingSpawn: {fileID: 8300000, guid: ffd146fc7d429044096363f6c1adb5e3, type: 3}
 --- !u!114 &114916512091932642
 MonoBehaviour:
   m_ObjectHideFlags: 1
