@@ -21,6 +21,7 @@ public class Fishtank : MonoBehaviour
 	public Text stackLongestTxt;
 	public Text stackNumberTxt;
 	public Text pHValueChartStatisticsTxt;
+	public Text pHValueChartFishtankLabelTxt;
 	private bool hasWon = false;
 	private bool confettiDone = false;
 	private GameObject myConfettiGO;
@@ -1180,6 +1181,7 @@ public class Fishtank : MonoBehaviour
 		gameObject.GetComponent<Renderer>().material.color = col;
 
 		pHValueChartStatisticsTxt.text = phSlider.GetPhValueStr();
+		pHValueChartFishtankLabelTxt.text = phSlider.GetPhValueStr();
 
 		{
 			// visualise pH in solvent particle systems
