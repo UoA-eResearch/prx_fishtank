@@ -10,8 +10,10 @@ public class Fishtank : MonoBehaviour
 	public GameObject monomerPrefab;
 	public GameObject dimerPrefab;
 	public GameObject ringPrefab;
-	public Text timer;
-	public Text timer2;
+	public Text scoreboardTimerLabel;
+	public Text scoreboardTimerValue;
+	public Text scoreboardTimerSecs;
+	public Text handheldTimerValue;
 	public Text monomerCount;
 	public Text dimerCount;
 	public Text ringCount;
@@ -1651,8 +1653,10 @@ public class Fishtank : MonoBehaviour
 		if (Time.timeSinceLevelLoad < partyStartTime)
 		{
 			//Party about to start
-			timer.text = "Get Ready!";
-			timer2.text = "Get Ready!";
+			scoreboardTimerLabel.text = "   Get Ready!";
+			scoreboardTimerValue.text = "";
+			scoreboardTimerSecs.text = "";
+			handheldTimerValue.text = "Get Ready!";
 		}
 		else
 		{
@@ -1666,8 +1670,10 @@ public class Fishtank : MonoBehaviour
 			timePartyingD = (Time.timeSinceLevelLoad - partyStartTime);
 			double timePartyingRounded = System.Math.Round(timePartyingD, 1);
 			timePartyingF = (float)timePartyingRounded;
-			timer.text = timePartyingRounded.ToString() + "s";
-			timer2.text = timePartyingRounded.ToString();
+			scoreboardTimerLabel.text = "#time";
+			scoreboardTimerValue.text = timePartyingRounded.ToString();
+			scoreboardTimerSecs.text = "secs";
+			handheldTimerValue.text = timePartyingRounded.ToString() + "s";
 		}
 
 		if (partyMode && !partyIntro && hasWon && !confettiDone)

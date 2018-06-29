@@ -1586,7 +1586,7 @@ GameObject:
   - component: {fileID: 109928919}
   - component: {fileID: 109928918}
   m_Layer: 5
-  m_Name: SbTime (2)
+  m_Name: SbTimeSecs
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3888,8 +3888,10 @@ MonoBehaviour:
   dimerPrefab: {fileID: 1097768174719004, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
     type: 2}
   ringPrefab: {fileID: 1314551590984416, guid: 1f167db1ea1f3d849b8e0666d81c121d, type: 2}
-  timer: {fileID: 1469374994}
-  timer2: {fileID: 506315237}
+  scoreboardTimerLabel: {fileID: 1637180182}
+  scoreboardTimerValue: {fileID: 506315237}
+  scoreboardTimerSecs: {fileID: 109928918}
+  handheldTimerValue: {fileID: 1469374994}
   monomerCount: {fileID: 2124588040}
   dimerCount: {fileID: 999339090}
   ringCount: {fileID: 1570141264}
@@ -15076,7 +15078,7 @@ GameObject:
   - component: {fileID: 1637180183}
   - component: {fileID: 1637180182}
   m_Layer: 5
-  m_Name: SbTime (1)
+  m_Name: SbTimeLabel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
