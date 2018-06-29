@@ -14,6 +14,9 @@ public class PHSlider : MonoBehaviour
 	private GameObject phCanvas;
 	private Text phText;
 
+	public GameObject myHandle;
+	private LinearDrive myLinearDrive;
+
 	//-------------------------------------------------
 	void Awake()
     {
@@ -24,12 +27,16 @@ public class PHSlider : MonoBehaviour
 
 		phCanvas = GameObject.Find("pHCanvas");
 		phText = phCanvas.GetComponentInChildren<Text>();
+
+		//myLinearDrive = myHandle.GetComponent<LinearDrive>();
     }
 
 
     //-------------------------------------------------
     void Update()
     {
+		
+
         if (currentLinearMapping != linearMapping.value)
         {
             currentLinearMapping = linearMapping.value;
@@ -65,5 +72,11 @@ public class PHSlider : MonoBehaviour
 	public string GetPhValueStr()
 	{
 		return phText.text;
+	}
+
+	public void ResetPhHigh()
+	{
+		linearMapping.value = 1;
+		//myHandle.transform.position = myLinearDrive.startPosition.localPosition;
 	}
 }

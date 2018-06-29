@@ -3903,6 +3903,7 @@ MonoBehaviour:
   beepDownSound: {fileID: 8300000, guid: a84c867a78564fe4e8338816553cf704, type: 3}
   sfxElectricity01: {fileID: 8300000, guid: 706ffd57b55cd0b4bbe2d5f3367e631f, type: 3}
   sfxElectricity02: {fileID: 8300000, guid: 9174cfd9d08c7734fafbf032fbe65cc7, type: 3}
+  sfxCheer: {fileID: 8300000, guid: ee6e09ad6cbd1ac48baf4a77932bc992, type: 3}
   ringPS: {fileID: 1484392153784674, guid: d0d693bd5d104404cac722a049742c7a, type: 2}
   confettiPS: {fileID: 1436732341807552, guid: 820976cf41c9be14c926c89edf470e8b, type: 2}
   solventH: {fileID: 1343720090702508, guid: 46d5d3d631859224aa75481c6a3579f7, type: 2}
@@ -3948,6 +3949,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   linearMapping: {fileID: 1680598871}
+  myHandle: {fileID: 0}
 --- !u!82 &469726002
 AudioSource:
   m_ObjectHideFlags: 0
@@ -10946,7 +10948,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1271221872
 Transform:
   m_ObjectHideFlags: 0

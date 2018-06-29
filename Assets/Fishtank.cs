@@ -21,9 +21,20 @@ public class Fishtank : MonoBehaviour
 	public Text pHValueChartStatisticsTxt;
 	private bool hasWon = false;
 	private bool confettiDone = false;
+	private GameObject myConfettiGO;
+	private bool confettiOn = false;
 
 	private int stackLongest = 0;
 	private int stacks = 0;
+
+	private bool partyModeLast = false;
+	private bool partyIntro = false;
+
+	private double partyStartTime;
+	private double timePartyingD;
+	private float timePartyingF = 0f;
+	private float thisWinTime = float.PositiveInfinity;
+	private float bestWinTime = float.PositiveInfinity;
 
 	public int numMonomers = 180;
 	private Dictionary<GameObject, GameObject> pairs;
@@ -38,6 +49,7 @@ public class Fishtank : MonoBehaviour
 	public AudioClip beepDownSound;
 	public AudioClip sfxElectricity01;
 	public AudioClip sfxElectricity02;
+	public AudioClip sfxCheer;
 
 	public GameObject ringPS;
 	public GameObject confettiPS;
@@ -1236,7 +1248,7 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
-	void UpdateTimer()
+	void UpdateStatistics()
 	{
 		var monomers = GameObject.FindGameObjectsWithTag("monomer");
 		var dimers = GameObject.FindGameObjectsWithTag("dimer");
@@ -1294,7 +1306,10 @@ public class Fishtank : MonoBehaviour
 			}
 			if (stackLongest == numMonomers / 2 / 6)
 			{
-				hasWon = true;
+				if (partyMode && !partyIntro)
+				{
+					hasWon = true;
+				}
 			}
 		}
 		stackLongestTxt.text = stackLongest.ToString();
@@ -1307,20 +1322,13 @@ public class Fishtank : MonoBehaviour
 		float stackFraction = (numRingsInAllStacks * 12.0f) / numMonomers;
 		chartStats.SetStats(monomerFraction, dimerFraction, ringFraction, stackFraction);
 
-		if (!hasWon)
-		{
-			// update timer if we have not yet won
-			double timeD = System.Math.Round(Time.timeSinceLevelLoad, 1);
-			timer.text = timeD.ToString() + "s";
-			timer2.text = timeD.ToString();
-		}
-		if (hasWon && !confettiDone && partyMode) //partyModeSwitch.partying)
-		{
-			fishtankAudioSource.Play();
-			Vector3 confettiOffset = new Vector3(0f, 2.5f, 0f);
-			Instantiate(confettiPS, (gameObject.transform.position + confettiOffset), Quaternion.identity);
-			confettiDone = true;
-		}
+		//if (hasWon && !confettiDone && partyMode) 
+		//{
+		//	fishtankAudioSource.Play();
+		//	Vector3 confettiOffset = new Vector3(0f, 2.5f, 0f);
+		//	Instantiate(confettiPS, (gameObject.transform.position + confettiOffset), Quaternion.identity);
+		//	confettiDone = true;
+		//}
 
 
 	}
@@ -1616,10 +1624,68 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
+
 	void UpdatePartyMode()
 	{
+
 		partyMode = partyModeSwitch.GetPartyMode();
 
+		SetBGM();
+
+		if (partyModeLast == false && partyMode == true)
+		{
+			//Party just started
+			partyStartTime = Time.timeSinceLevelLoad + 3;
+			phSlider.ResetPhHigh();
+			hasWon = false;
+			confettiDone = false;
+			partyIntro = true;
+		}
+
+		if (partyModeLast == true && partyMode == false)
+		{
+			//Party just stopped
+			ConfettiOff();
+		}
+
+		if (Time.timeSinceLevelLoad < partyStartTime)
+		{
+			//Party about to start
+			timer.text = "Get Ready!";
+			timer2.text = "Get Ready!";
+		}
+		else
+		{
+			//Party intro over
+			partyIntro = false;
+		}
+
+		if (partyMode && !partyIntro && !hasWon)
+		{
+			//Party in progress
+			timePartyingD = (Time.timeSinceLevelLoad - partyStartTime);
+			double timePartyingRounded = System.Math.Round(timePartyingD, 1);
+			timePartyingF = (float)timePartyingRounded;
+			timer.text = timePartyingRounded.ToString() + "s";
+			timer2.text = timePartyingRounded.ToString();
+		}
+
+		if (partyMode && !partyIntro && hasWon && !confettiDone)
+		{
+			//Win
+			thisWinTime = timePartyingF;
+			if (thisWinTime < bestWinTime)
+			{
+				bestWinTime = thisWinTime;
+			}
+			ConfettiOn();
+		}
+
+		partyModeLast = partyMode;
+	}
+
+	void SetBGM()
+	{
 		float crossfadeLerp = 0.1f;
 
 		if (partyMode == true)
@@ -1630,7 +1696,33 @@ public class Fishtank : MonoBehaviour
 		else
 		{
 			bgm_party.volume = Mathf.Lerp(bgm_party.volume, 0f, crossfadeLerp);
-			bgm_serious.volume = Mathf.Lerp(bgm_serious.volume, 0.05f, crossfadeLerp);
+			bgm_serious.volume = Mathf.Lerp(bgm_serious.volume, 0.06f, crossfadeLerp);
+		}
+	}
+
+	void ConfettiOn()
+	{
+		if (confettiOn == false)
+		{
+			//fishtankAudioSource.Play();
+			fishtankAudioSource.PlayOneShot(sfxCheer, 0.8f);
+			Vector3 confettiOffset = new Vector3(0f, 2.5f, 0f);
+			myConfettiGO = Instantiate(confettiPS, (gameObject.transform.position + confettiOffset), Quaternion.identity);
+			confettiOn = true;
+			confettiDone = true;
+			Invoke("ConfettiOff", 15);
+		}
+	}
+
+	void ConfettiOff()
+	{
+		if (confettiOn == true)
+		{
+			if (myConfettiGO != null)
+			{
+				GameObject.Destroy(myConfettiGO);
+				confettiOn = false;
+			}
 		}
 	}
 
@@ -1721,8 +1813,8 @@ public class Fishtank : MonoBehaviour
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
-				partyModeUI.SetActive(false);
-				simulationUI.SetActive(true);
+				partyModeUI.SetActive(true);
+				simulationUI.SetActive(false);
 				nanoUI.SetActive(false);
 				break;
 			case 5:
@@ -1884,7 +1976,7 @@ public class Fishtank : MonoBehaviour
 		FixHoverlock();
 		//RingRepel();
 		ClampRigidBodyDynamics();
-		UpdateTimer();
+		UpdateStatistics();
 		UpdateCartoon();
 		UpdateScale();
 		UpdatePartyMode();

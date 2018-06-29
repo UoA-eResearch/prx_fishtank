@@ -9,12 +9,14 @@ public class PartyModeSwitch : MonoBehaviour {
 	public LinearMapping linearMapping;
 	public Text text;
 	private bool partyMode = false;
+
 	public GameObject scoreboard;
 	public GameObject chartStats;
 	public GameObject heldScoreboard;
 	
 	// Update is called once per frame
-	void Update () {
+	void Update ()
+	{
 		if (linearMapping.value < .5)
 		{
 			text.text = "Party!";
@@ -32,6 +34,7 @@ public class PartyModeSwitch : MonoBehaviour {
 			heldScoreboard.SetActive(false);
 		}
 	}
+
 	public bool GetPartyMode()
 	{
 		return partyMode;
