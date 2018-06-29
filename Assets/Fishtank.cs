@@ -1637,7 +1637,7 @@ public class Fishtank : MonoBehaviour
 		if (partyModeLast == false && partyMode == true)
 		{
 			//Party just started
-			partyStartTime = Time.timeSinceLevelLoad + 3;
+			partyStartTime = Time.timeSinceLevelLoad + 3; //extra time for intro
 			phSlider.ResetPhHigh();
 			hasWon = false;
 			confettiDone = false;
@@ -1819,8 +1819,8 @@ public class Fishtank : MonoBehaviour
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
-				partyModeUI.SetActive(true);
-				simulationUI.SetActive(false);
+				partyModeUI.SetActive(false);
+				simulationUI.SetActive(true);
 				nanoUI.SetActive(false);
 				break;
 			case 5:

@@ -4701,6 +4701,10 @@ Prefab:
       propertyPath: randomSeed
       value: -1394511773
       objectReference: {fileID: 0}
+    - target: {fileID: 1902089067336918, guid: 4c5ac25890db3cb4b9113b3e96ff6550, type: 2}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 4c5ac25890db3cb4b9113b3e96ff6550, type: 2}
   m_IsPrefabParent: 0

@@ -39,6 +39,7 @@ public class Ring: MonoBehaviour
 	public GameObject goElectric01;
 	public ParticleSystem psElectric01;
 	public ParticleSystem.MainModule psElectric01Main;
+	public ParticleSystem psPartyTrail;
 
 	public GameObject goAccretion01;
 	public ParticleSystem psAccretion01;
@@ -201,6 +202,20 @@ public class Ring: MonoBehaviour
 			ringCanStack = true;
 		}
 
+		if (fishtankScript.partyMode == true)
+		{
+			if (psPartyTrail.isStopped)
+			{
+				psPartyTrail.Play();
+			}
+		}
+		else
+		{
+			if (psPartyTrail.isPlaying)
+			{
+				psPartyTrail.Stop();
+			}
+		}
 
 		if (!ringInterlocked)
 		{
