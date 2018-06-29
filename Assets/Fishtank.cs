@@ -1115,7 +1115,7 @@ public class Fishtank : MonoBehaviour
 		{
 
 			case 9:
-				probabilityDimerMake = 1;
+				probabilityDimerMake = 5; //1
 				probabilityDimerBreak = 50;
 				probabilityRingMake = 0;
 				probabilityRingBreak = 100;
@@ -1124,7 +1124,7 @@ public class Fishtank : MonoBehaviour
 				break;
 
 			case 8:
-				probabilityDimerMake = 10;
+				probabilityDimerMake = 20; //10
 				probabilityDimerBreak = 1;
 				probabilityRingMake = 0;
 				probabilityRingBreak = 100;
@@ -1133,17 +1133,17 @@ public class Fishtank : MonoBehaviour
 				break;
 
 			case 7:
-				probabilityDimerMake = 100;
-				probabilityDimerBreak = 0;
+				probabilityDimerMake = 50; //100
+				probabilityDimerBreak = 5; //0
 				probabilityRingMake = 10;
-				probabilityRingBreak = 5;
-				probabilityStackMake = 1;
+				probabilityRingBreak = 2; //5
+				probabilityStackMake = 2; //1
 				col = Color.gray;
 				break;
 
 			case 6:
 				probabilityDimerMake = 100;
-				probabilityDimerBreak = 0;
+				probabilityDimerBreak = 2; //0
 				probabilityRingMake = 50;
 				probabilityRingBreak = 2;
 				probabilityStackMake = 1;
@@ -1164,7 +1164,7 @@ public class Fishtank : MonoBehaviour
 				probabilityDimerBreak = 0;
 				probabilityRingMake = 100;
 				probabilityRingBreak = 1;
-				probabilityStackMake = 50;
+				probabilityStackMake = 70; //50
 				col = Color.red;
 				break;
 
