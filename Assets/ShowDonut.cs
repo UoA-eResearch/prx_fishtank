@@ -69,7 +69,7 @@ public class ShowDonut : MonoBehaviour {
 		if (other.name == "ringCenter" && !rustyDonut.activeInHierarchy && myFishtank.partyMode) // partyModeSwitch.partying)
 		{
 			rustyDonut.SetActive(true);
-			ringAudioSource.PlayOneShot(rustyDonutSpawnSound);
+			ringAudioSource.PlayOneShot(rustyDonutSpawnSound, 0.2f);
 		}
 		if (other.name == "ringCenter")
 		{

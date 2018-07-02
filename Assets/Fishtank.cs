@@ -13,6 +13,7 @@ public class Fishtank : MonoBehaviour
 	public Text scoreboardTimerLabel;
 	public Text scoreboardTimerValue;
 	public Text scoreboardTimerSecs;
+	public Text scoreboardBestTime;
 	public Text handheldTimerValue;
 	public Text monomerCount;
 	public Text dimerCount;
@@ -22,9 +23,16 @@ public class Fishtank : MonoBehaviour
 	public Text stackNumberTxt;
 	public Text pHValueChartStatisticsTxt;
 	public Text pHValueChartFishtankLabelTxt;
+
 	private bool hasWon = false;
 	private bool confettiDone = false;
-	private GameObject myConfettiGO;
+
+	private GameObject myConfettiFern;
+	private ParticleSystem.EmissionModule emitFern;
+	private GameObject myConfettiDonut;
+	private ParticleSystem.EmissionModule emitDonut;
+	private GameObject myConfettiHeart;
+	private ParticleSystem.EmissionModule emitHeart;
 	private bool confettiOn = false;
 
 	private int stackLongest = 0;
@@ -55,7 +63,9 @@ public class Fishtank : MonoBehaviour
 	public AudioClip sfxCheer;
 
 	public GameObject ringPS;
-	public GameObject confettiPS;
+	public GameObject confettiFern;
+	public GameObject confettiDonut;
+	public GameObject confettiHeart;
 	public GameObject solventH;
 	public GameObject solventOH;
 	public GameObject solventH2O;
@@ -1268,6 +1278,13 @@ public class Fishtank : MonoBehaviour
 		stacks = 0;
 		stackLongest = 0;
 
+		// force instant win - for testing
+		//if (partyMode && !partyIntro)
+		//{
+		//	hasWon = true;
+		//}
+
+
 		if (rings.Length > 0) // we have rings
 		{
 			foreach (var ring in rings)
@@ -1655,7 +1672,7 @@ public class Fishtank : MonoBehaviour
 		if (Time.timeSinceLevelLoad < partyStartTime)
 		{
 			//Party about to start
-			scoreboardTimerLabel.text = "   Get Ready!";
+			scoreboardTimerLabel.text = "Get Ready!";
 			scoreboardTimerValue.text = "";
 			scoreboardTimerSecs.text = "";
 			handheldTimerValue.text = "Get Ready!";
@@ -1672,7 +1689,7 @@ public class Fishtank : MonoBehaviour
 			timePartyingD = (Time.timeSinceLevelLoad - partyStartTime);
 			double timePartyingRounded = System.Math.Round(timePartyingD, 1);
 			timePartyingF = (float)timePartyingRounded;
-			scoreboardTimerLabel.text = "#time";
+			scoreboardTimerLabel.text = "";
 			scoreboardTimerValue.text = timePartyingRounded.ToString();
 			scoreboardTimerSecs.text = "secs";
 			handheldTimerValue.text = timePartyingRounded.ToString() + "s";
@@ -1687,6 +1704,15 @@ public class Fishtank : MonoBehaviour
 				bestWinTime = thisWinTime;
 			}
 			ConfettiOn();
+		}
+
+		if (bestWinTime < float.PositiveInfinity)
+		{
+			scoreboardBestTime.text = bestWinTime.ToString();
+		}
+		else
+		{
+			scoreboardBestTime.text = "???";
 		}
 
 		partyModeLast = partyMode;
@@ -1715,10 +1741,30 @@ public class Fishtank : MonoBehaviour
 			//fishtankAudioSource.Play();
 			fishtankAudioSource.PlayOneShot(sfxCheer, 0.8f);
 			Vector3 confettiOffset = new Vector3(0f, 2.5f, 0f);
-			myConfettiGO = Instantiate(confettiPS, (gameObject.transform.position + confettiOffset), Quaternion.identity);
+
+			if (myConfettiFern == null)
+			{
+				myConfettiFern = Instantiate(confettiFern, (gameObject.transform.position + confettiOffset), Quaternion.Euler(new Vector3(90, 0, 0)));
+			}
+			if (myConfettiDonut == null)
+			{
+				myConfettiDonut = Instantiate(confettiDonut, (gameObject.transform.position + confettiOffset), Quaternion.Euler(new Vector3(90, 0, 0)));
+			}
+			if (myConfettiHeart == null)
+			{
+				myConfettiHeart = Instantiate(confettiHeart, (gameObject.transform.position + confettiOffset), Quaternion.Euler(new Vector3(90, 0, 0)));
+			}
+
+			emitFern = myConfettiFern.GetComponent<ParticleSystem>().emission;
+			emitFern.rateOverTime = 100f;
+			emitDonut = myConfettiDonut.GetComponent<ParticleSystem>().emission;
+			emitDonut.rateOverTime = 100f;
+			emitHeart = myConfettiHeart.GetComponent<ParticleSystem>().emission;
+			emitHeart.rateOverTime = 20f;
+
 			confettiOn = true;
 			confettiDone = true;
-			Invoke("ConfettiOff", 15);
+			Invoke("ConfettiOff", 6);
 		}
 	}
 
@@ -1726,11 +1772,10 @@ public class Fishtank : MonoBehaviour
 	{
 		if (confettiOn == true)
 		{
-			if (myConfettiGO != null)
-			{
-				GameObject.Destroy(myConfettiGO);
-				confettiOn = false;
-			}
+			emitFern.rateOverTime = 0f;
+			emitDonut.rateOverTime = 0f;
+			emitHeart.rateOverTime = 0f;
+			confettiOn = false;
 		}
 	}
 

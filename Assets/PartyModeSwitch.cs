@@ -11,6 +11,7 @@ public class PartyModeSwitch : MonoBehaviour {
 	private bool partyMode = false;
 
 	public GameObject scoreboard;
+	public GameObject scoreboardbest;
 	public GameObject chartStats;
 	public GameObject heldScoreboard;
 	
@@ -22,6 +23,7 @@ public class PartyModeSwitch : MonoBehaviour {
 			text.text = "Party!";
 			partyMode = true;
 			scoreboard.SetActive(true);
+			scoreboardbest.SetActive(true);
 			chartStats.SetActive(false);
 			heldScoreboard.SetActive(true);
 		}
@@ -30,6 +32,7 @@ public class PartyModeSwitch : MonoBehaviour {
 			text.text = "Serious";
 			partyMode = false;
 			scoreboard.SetActive(false);
+			scoreboardbest.SetActive(false);
 			chartStats.SetActive(true);
 			heldScoreboard.SetActive(false);
 		}
