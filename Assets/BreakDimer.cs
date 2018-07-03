@@ -56,17 +56,21 @@ public class BreakDimer : MonoBehaviour
 
 		breakApartDimer();
 
-		var distanceToM1 = Vector3.Distance(monomer1.transform.position, hand.otherHand.hoverSphereTransform.position);
-		var distanceToM2 = Vector3.Distance(monomer2.transform.position, hand.otherHand.hoverSphereTransform.position);
-		var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachOthers;
-		if (distanceToM1 < distanceToM2)
+		if ((monomer1 != null) && (monomer2 != null))
 		{
-			hand.otherHand.AttachObject(monomer1, attachmentFlags);
+			var distanceToM1 = Vector3.Distance(monomer1.transform.position, hand.otherHand.hoverSphereTransform.position);
+			var distanceToM2 = Vector3.Distance(monomer2.transform.position, hand.otherHand.hoverSphereTransform.position);
+			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachOthers;
+			if (distanceToM1 < distanceToM2)
+			{
+				hand.otherHand.AttachObject(monomer1, attachmentFlags);
+			}
+			else
+			{
+				hand.otherHand.AttachObject(monomer2, attachmentFlags);
+			}
 		}
-		else
-		{
-			hand.otherHand.AttachObject(monomer2, attachmentFlags);
-		}
+
 	}
 
 	public void breakApartDimer()
@@ -85,8 +89,6 @@ public class BreakDimer : MonoBehaviour
 		//Debug.Log("Destroying " + gameObject.name);
 		Destroy(gameObject);
 	}
-
-
 
 	void OnHandHoverBegin(Hand hand)
 	{

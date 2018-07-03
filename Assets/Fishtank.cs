@@ -169,6 +169,21 @@ public class Fishtank : MonoBehaviour
 	//public float ringMinSpringStrength = 0f; 
 
 
+	void DropObjectIfAttached(GameObject go)
+	{
+		var lh = Player.instance.leftHand;
+		var rh = Player.instance.rightHand;
+
+		if (lh.currentAttachedObject == go)
+		{
+			lh.DetachObject(lh.currentAttachedObject);
+		}
+		if (rh.currentAttachedObject == go)
+		{
+			rh.DetachObject(rh.currentAttachedObject);
+		}
+	}
+
 	void FindPairs()
 	{
 		//print(Time.realtimeSinceStartup);
@@ -213,7 +228,11 @@ public class Fishtank : MonoBehaviour
 
 					if (Random.Range(1, 100) <= probabilityDimerBreak)
 					{
+
+						// breaking this object will destroy it - so detach from hand (if attached)
+						DropObjectIfAttached(a);
 						a.GetComponent<BreakDimer>().breakApartDimer();
+
 					}
 					else if (Random.Range(1, 100) <= probabilityRingMake)
 					{
@@ -309,6 +328,8 @@ public class Fishtank : MonoBehaviour
 			var bestAcceptorScore = float.PositiveInfinity;
 			if (Random.Range(1, 100) <= probabilityRingBreak)
 			{
+				// breaking this object will destroy it - so detach from hand (if attached)
+				DropObjectIfAttached(a);
 				a.GetComponent<Ring>().breakRing(null);
 			}
 			else if ((Random.Range(1, 100) <= probabilityStackMake) && (a.GetComponent<Ring>().ringCanStack))
