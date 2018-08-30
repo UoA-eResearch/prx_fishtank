@@ -93,6 +93,8 @@ public class SteamVR_LaserPointer : MonoBehaviour
         RaycastHit hit;
         bool bHit = Physics.Raycast(raycast, out hit);
 
+        reference = hit.transform;
+
         if(previousContact && previousContact != hit.transform)
         {
             PointerEventArgs args = new PointerEventArgs();

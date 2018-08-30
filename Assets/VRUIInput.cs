@@ -28,6 +28,7 @@ public class VRUIInput : MonoBehaviour
 
 	private void HandleTriggerClicked(object sender, ClickedEventArgs e)
 	{
+        Debug.Log("Handle trigger click fired on tracker controller for laser pointer");
 		if (EventSystem.current.currentSelectedGameObject != null)
 		{
 			ExecuteEvents.Execute(EventSystem.current.currentSelectedGameObject, new PointerEventData(EventSystem.current), ExecuteEvents.submitHandler);

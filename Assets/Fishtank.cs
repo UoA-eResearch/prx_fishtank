@@ -1822,7 +1822,6 @@ public class Fishtank : MonoBehaviour
             {
                 foreach(Transform child in hand.transform)
                 {
-                    Debug.Log(fishtankScaleInit);
                     if (System.Array.IndexOf(scalableHoldableObjects, child.gameObject.tag) > -1)
                     {
                         child.transform.localScale = ( (fishtankScaleInit * monomerPrefab.transform.localScale.x ) * fishtankScaleFactor);
@@ -2034,7 +2033,27 @@ public class Fishtank : MonoBehaviour
 			}
 		}
 
-	}
+        // using the squeeze pads for activating a tractor beam?
+        // testing with hand2 for now.
+        if (myHand1.controller != null)
+        {
+            if (myHand1.controller.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
+            {
+                Debug.Log("Hand 1 is being squeezed");
+                SteamVR_LaserPointer laserPointer = myHand1.GetComponent<SteamVR_LaserPointer>();
+                laserPointer.enabled = true;
+            }
+        }
+        if (myHand2.controller != null)
+        {
+            if (myHand2.controller.GetPressDown(SteamVR_Controller.ButtonMask.Grip))
+            {
+                Debug.Log("Hand 2 is being squeezed");
+                SteamVR_LaserPointer laserPointer = myHand2.GetComponent<SteamVR_LaserPointer>();
+                laserPointer.enabled = true;
+            }
+        }
+    }
 
 	void UpdateSigns()
 	{
