@@ -1822,9 +1822,10 @@ public class Fishtank : MonoBehaviour
             {
                 foreach(Transform child in hand.transform)
                 {
-                     if (System.Array.IndexOf(scalableHoldableObjects, child.gameObject.tag) > -1)
+                    Debug.Log(fishtankScaleInit);
+                    if (System.Array.IndexOf(scalableHoldableObjects, child.gameObject.tag) > -1)
                     {
-                        child.transform.localScale = ( (Vector3.one * (2.5f * 0.1f) ) * fishtankScaleFactor);
+                        child.transform.localScale = ( (fishtankScaleInit * monomerPrefab.transform.localScale.x ) * fishtankScaleFactor);
                     }
                 }
             }
