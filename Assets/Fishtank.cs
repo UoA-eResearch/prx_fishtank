@@ -133,6 +133,7 @@ public class Fishtank : MonoBehaviour
 
 	public float fishtankScaleFactor = 1.0f;
 	private Vector3 fishtankScaleInit = new Vector3(1f, 1f, 1f);
+    private Vector3 handObjectsScaleInit = Vector3.one;
 	private Vector3 fishtankPositionInit = new Vector3(0f, 0f, 0f);
 	private Vector3 fishtankPositionCurrent = new Vector3(0f, 0f, 0f);
 
@@ -1807,13 +1808,29 @@ public class Fishtank : MonoBehaviour
 		{
 			//fishtankScaleFactor = cartoonModeSwitch.GetFishtankScale();
 			fishtankScaleFactor = scaleModeSlider.GetFishtankScale();
-			//fishtank
+            //fishtank
 			gameObject.transform.localScale = fishtankScaleInit * fishtankScaleFactor;
 			fishtankPositionCurrent.y = fishtankPositionInit.y * fishtankScaleFactor;
 			gameObject.transform.localPosition = fishtankPositionCurrent;
 
-			//particles
-			ParticleSystem.ShapeModule psHShape = psSolventH.shape;
+            // held objects
+            List<GameObject> hands = new List<GameObject>();
+            string[] scalableHoldableObjects = { "monomer", "dimer", "ring" };
+            hands.Add(myHand1.gameObject);
+            hands.Add(myHand2.gameObject);
+            foreach (GameObject hand in hands)
+            {
+                foreach(Transform child in hand.transform)
+                {
+                     if (System.Array.IndexOf(scalableHoldableObjects, child.gameObject.tag) > -1)
+                    {
+                        child.transform.localScale = ( (Vector3.one * (2.5f * 0.1f) ) * fishtankScaleFactor);
+                    }
+                }
+            }
+
+            //particles
+            ParticleSystem.ShapeModule psHShape = psSolventH.shape;
 			ParticleSystem.ShapeModule psH2OShape = psSolventH2O.shape;
 			psHShape.scale = gameObject.transform.localScale;
 			psH2OShape.scale = gameObject.transform.localScale;
