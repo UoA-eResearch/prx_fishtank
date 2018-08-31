@@ -1959,7 +1959,6 @@ public class Fishtank : MonoBehaviour
 
     void ActivateTractorBeam(Hand hand, SteamVR_LaserPointer laser)
     {
-        Debug.Log("Hand 1 is being squeezed");
         laser.enabled = true;
         if (laser.holder != null)
         {
@@ -2059,31 +2058,27 @@ public class Fishtank : MonoBehaviour
 		}
 
         // using grip buttons to activate tractor beam
+        ulong gripButton = SteamVR_Controller.ButtonMask.Grip;
         if (myHand1.controller != null)
         {
-            ulong gripButton = SteamVR_Controller.ButtonMask.Grip;
             SteamVR_LaserPointer laserPointer = myHand1.GetComponent<SteamVR_LaserPointer>();
-            // if being squeeze
             if (myHand1.controller.GetPress(gripButton))
             {
-                Debug.Log("Hand 1 is being squeezed");
-                laserPointer.enabled = true;
-                if (laserPointer.holder != null)
-                {
-                    laserPointer.holder.SetActive(true);
-                }
-                if (laserPointer.reference != null)
-                {
-                    GameObject targetObject = laserPointer.reference.gameObject;
-                    if (System.Array.IndexOf(manipulableObjects, targetObject.tag) > -1)
-                    {
-                        targetObject.GetComponent<Rigidbody>().AddForce((myHand1.transform.position - targetObject.transform.position) * tractorBeamAttractionFactor, ForceMode.Acceleration);
-                    }
-                }
+                ActivateTractorBeam(myHand1, laserPointer);
             } else if (myHand1.controller.GetPressUp(gripButton)){
-                Debug.Log("grip button released");
-                laserPointer.holder.SetActive(false);
-                laserPointer.enabled = false;
+                DeactivateTractorBeam(myHand1, laserPointer);
+            }
+        }
+        if (myHand2.controller != null)
+        {
+            SteamVR_LaserPointer laserPointer = myHand2.GetComponent<SteamVR_LaserPointer>();
+            if (myHand2.controller.GetPress(gripButton))
+            {
+                ActivateTractorBeam(myHand2, laserPointer);
+            }
+            else if (myHand1.controller.GetPressUp(gripButton))
+            {
+                DeactivateTractorBeam(myHand2, laserPointer);
             }
         }
     }
