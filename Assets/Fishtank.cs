@@ -163,7 +163,7 @@ public class Fishtank : MonoBehaviour
 
 	public Hand myHand1;
 	public Hand myHand2;
-    public string[] manipulableObjects = { "monomer", "dimer", "ring" };
+
     public float tractorBeamAttractionFactor = 50;
 
     private bool myHand1TouchPressedLastLastUpdate = false; // debouncing
@@ -1823,7 +1823,7 @@ public class Fishtank : MonoBehaviour
             {
                 foreach(Transform child in hand.transform)
                 {
-                    if (System.Array.IndexOf(manipulableObjects, child.gameObject.tag) > -1)
+                    if (System.Array.IndexOf(tags, child.gameObject.tag) > -1)
                     {
                         child.transform.localScale = ( (fishtankScaleInit * monomerPrefab.transform.localScale.x ) * fishtankScaleFactor);
                     }
@@ -1967,7 +1967,7 @@ public class Fishtank : MonoBehaviour
         if (laser.reference != null)
         {
             GameObject targetObject = laser.reference.gameObject;
-            if (System.Array.IndexOf(manipulableObjects, targetObject.tag) > -1)
+            if (System.Array.IndexOf(tags, targetObject.tag) > -1)
             {
                 targetObject.GetComponent<Rigidbody>().AddForce((hand.transform.position - targetObject.transform.position) * tractorBeamAttractionFactor, ForceMode.Acceleration);
             }

@@ -4089,10 +4089,11 @@ MonoBehaviour:
   chartStats: {fileID: 1411235742}
   myHand1: {fileID: 1795045923}
   myHand2: {fileID: 49516981}
-  scalableHoldableObjects:
+  manipulableObjects:
   - monomer
   - dimer
   - ring
+  tractorBeamAttractionFactor: 20
   ringsUseSpringConstraints: 0
 --- !u!114 &469726001
 MonoBehaviour:
