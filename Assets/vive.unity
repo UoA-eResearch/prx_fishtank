@@ -4089,6 +4089,10 @@ MonoBehaviour:
   chartStats: {fileID: 1411235742}
   myHand1: {fileID: 1795045923}
   myHand2: {fileID: 49516981}
+  scalableHoldableObjects:
+  - monomer
+  - dimer
+  - ring
   ringsUseSpringConstraints: 0
 --- !u!114 &469726001
 MonoBehaviour:
@@ -20967,7 +20971,7 @@ Prefab:
     - target: {fileID: 114150292401664452, guid: dc06161b6d97feb419f45f03b62e14b9,
         type: 2}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114531126441257938, guid: dc06161b6d97feb419f45f03b62e14b9,
         type: 2}
@@ -20977,7 +20981,7 @@ Prefab:
     - target: {fileID: 114939645672358796, guid: dc06161b6d97feb419f45f03b62e14b9,
         type: 2}
       propertyPath: m_Enabled
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114843119877589472, guid: dc06161b6d97feb419f45f03b62e14b9,
         type: 2}

@@ -25,6 +25,7 @@ public class SteamVR_LaserPointer : MonoBehaviour
     public Transform reference;
     public event PointerEventHandler PointerIn;
     public event PointerEventHandler PointerOut;
+    
 
     Transform previousContact = null;
 
@@ -84,6 +85,7 @@ public class SteamVR_LaserPointer : MonoBehaviour
             isActive = true;
             this.transform.GetChild(0).gameObject.SetActive(true);
         }
+
 
         float dist = 100f;
 
