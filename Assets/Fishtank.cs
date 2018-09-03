@@ -2076,7 +2076,7 @@ public class Fishtank : MonoBehaviour
             {
                 ActivateTractorBeam(myHand2, laserPointer);
             }
-            else if (myHand1.controller.GetPressUp(gripButton))
+            else if (myHand2.controller.GetPressUp(gripButton))
             {
                 DeactivateTractorBeam(myHand2, laserPointer);
             }
