@@ -795,6 +795,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fishtankScript: {fileID: 0}
   psPartyTrail: {fileID: 198361624637824808}
+  psAttractionTrail: {fileID: 198525320856250484}
 --- !u!114 &114656648200094392
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -4282,7 +4283,7 @@ ParticleSystem:
   stopAction: 0
   looping: 1
   prewarm: 0
-  playOnAwake: 1
+  playOnAwake: 0
   useUnscaledTime: 0
   autoRandomSeed: 1
   useRigidbodyForVelocity: 1

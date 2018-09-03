@@ -757,6 +757,19 @@ public class Fishtank : MonoBehaviour
 							float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f); //
 							go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
 							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+
+                            // Turn on attraction particle effect here?
+                            Monomer monomer = go.GetComponent<Monomer>();
+                            ParticleSystem ps = monomer.psAttractionTrail;
+                            if (distanceFromTarget < 0.3f)
+                            {
+                                Quaternion lookAt = Quaternion.LookRotation(partner.transform.position - ps.transform.position);
+                                ps.transform.rotation = lookAt;
+                                ps.Play();
+                            } else
+                            {
+                                
+                            }
 						}
 						else
 						{

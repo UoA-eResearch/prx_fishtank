@@ -20,6 +20,9 @@ public class Monomer : MonoBehaviour {
 	public Fishtank fishtankScript;
 	public ParticleSystem psPartyTrail;
 
+    // WIP adding attraction particle.
+    public ParticleSystem psAttractionTrail;
+
 
 	// Use this for initialization
 	void Start () {
