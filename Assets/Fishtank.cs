@@ -1982,8 +1982,11 @@ public class Fishtank : MonoBehaviour
             GameObject targetObject = laser.reference.gameObject;
             if (System.Array.IndexOf(tags, targetObject.tag) > -1)
             {
-                targetObject.GetComponent<Rigidbody>().AddForce((hand.transform.position - targetObject.transform.position) * tractorBeamAttractionFactor, ForceMode.Acceleration);
-            }
+				Vector3 tractorBeam = hand.transform.position - targetObject.transform.position;
+				float tractorBeamScale = Mathf.Max(2.0f, tractorBeamAttractionFactor * (Vector3.Magnitude(tractorBeam) / 500.0f));
+				targetObject.GetComponent<Rigidbody>().AddForce((tractorBeam * tractorBeamScale), ForceMode.Acceleration);
+				//targetObject.GetComponent<Rigidbody>().AddForce((hand.transform.position - targetObject.transform.position) * tractorBeamAttractionFactor, ForceMode.Acceleration);
+			}
         }
     }
 
