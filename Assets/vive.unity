@@ -3941,7 +3941,7 @@ GameObject:
   - component: {fileID: 469726000}
   - component: {fileID: 469726001}
   - component: {fileID: 469726002}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: fishtank
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4089,10 +4089,11 @@ MonoBehaviour:
   chartStats: {fileID: 1411235742}
   myHand1: {fileID: 1795045923}
   myHand2: {fileID: 49516981}
-  scalableHoldableObjects:
+  manipulableObjects:
   - monomer
   - dimer
   - ring
+  tractorBeamAttractionFactor: 50
   ringsUseSpringConstraints: 0
 --- !u!114 &469726001
 MonoBehaviour:
