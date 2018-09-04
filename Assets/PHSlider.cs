@@ -36,7 +36,6 @@ public class PHSlider : MonoBehaviour
     //-------------------------------------------------
     void Update()
     {
-        // RepositionHandle();
         if (currentLinearMapping != linearMapping.value)
         {
             currentLinearMapping = linearMapping.value;
