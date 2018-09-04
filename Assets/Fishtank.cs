@@ -165,6 +165,7 @@ public class Fishtank : MonoBehaviour
 	public Hand myHand2;
 
     public float tractorBeamAttractionFactor = 50;
+    public float attractionParticleThreshold = 2.0f;
 
     private bool myHand1TouchPressedLastLastUpdate = false; // debouncing
 
@@ -758,11 +759,12 @@ public class Fishtank : MonoBehaviour
 							go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
 							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
 
-                            // Turn on attraction particle effect here?
                             Monomer goMonomer = go.GetComponent<Monomer>();
                             Monomer partnerMonomer = partner.GetComponent<Monomer>();
-                            if (distanceFromTarget < 2)
+                            // play attraction particle when within threshold proximity.
+                            if (distanceFromTarget < attractionParticleThreshold)
                             {
+                                // need to increase maximum particles if threshold increases too much
                                 goMonomer.ActivateAttractionParticle(partnerPos, distanceFromTarget);
                                 partnerMonomer.ActivateAttractionParticle(go.transform, distanceFromTarget);
                             }

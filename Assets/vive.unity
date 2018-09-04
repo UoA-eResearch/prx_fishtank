@@ -4045,7 +4045,7 @@ MonoBehaviour:
   stackNumberTxt: {fileID: 1607203883}
   pHValueChartStatisticsTxt: {fileID: 1653070495}
   pHValueChartFishtankLabelTxt: {fileID: 1778033739}
-  numMonomers: 193
+  numMonomers: 192
   fishtankAudioSource: {fileID: 469726002}
   beepUpSound: {fileID: 8300000, guid: 19f89c6e740e7447f9e12a8310d3e973, type: 3}
   beepDownSound: {fileID: 8300000, guid: a84c867a78564fe4e8338816553cf704, type: 3}
@@ -4090,6 +4090,7 @@ MonoBehaviour:
   myHand1: {fileID: 1795045923}
   myHand2: {fileID: 49516981}
   tractorBeamAttractionFactor: 50
+  attractionParticleThreshold: 0.76
   ringsUseSpringConstraints: 0
 --- !u!114 &469726001
 MonoBehaviour:
