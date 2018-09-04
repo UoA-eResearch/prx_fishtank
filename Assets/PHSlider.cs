@@ -9,13 +9,14 @@ public class PHSlider : MonoBehaviour
 {
 
     public LinearMapping linearMapping;
+    public LinearDrive myLinearDrive;
+
     private float currentLinearMapping = float.NaN;
 	private int phValue;
 	private GameObject phCanvas;
 	private Text phText;
 
 	public GameObject myHandle;
-	private LinearDrive myLinearDrive;
 
 	//-------------------------------------------------
 	void Awake()
@@ -35,8 +36,7 @@ public class PHSlider : MonoBehaviour
     //-------------------------------------------------
     void Update()
     {
-		
-
+        // RepositionHandle();
         if (currentLinearMapping != linearMapping.value)
         {
             currentLinearMapping = linearMapping.value;
@@ -77,6 +77,6 @@ public class PHSlider : MonoBehaviour
 	public void ResetPhHigh()
 	{
 		linearMapping.value = 1;
-		//myHandle.transform.position = myLinearDrive.startPosition.localPosition;
-	}
+        myHandle.transform.position = Vector3.Lerp(myLinearDrive.startPosition.position, myLinearDrive.endPosition.position, linearMapping.value);
+    }
 }

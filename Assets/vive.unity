@@ -4104,7 +4104,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   linearMapping: {fileID: 1680598871}
-  myHandle: {fileID: 0}
+  myLinearDrive: {fileID: 1473468484}
+  myHandle: {fileID: 1473468481}
 --- !u!82 &469726002
 AudioSource:
   m_ObjectHideFlags: 0
