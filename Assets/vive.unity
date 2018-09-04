@@ -4045,7 +4045,7 @@ MonoBehaviour:
   stackNumberTxt: {fileID: 1607203883}
   pHValueChartStatisticsTxt: {fileID: 1653070495}
   pHValueChartFishtankLabelTxt: {fileID: 1778033739}
-  numMonomers: 192
+  numMonomers: 193
   fishtankAudioSource: {fileID: 469726002}
   beepUpSound: {fileID: 8300000, guid: 19f89c6e740e7447f9e12a8310d3e973, type: 3}
   beepDownSound: {fileID: 8300000, guid: a84c867a78564fe4e8338816553cf704, type: 3}
@@ -4089,10 +4089,6 @@ MonoBehaviour:
   chartStats: {fileID: 1411235742}
   myHand1: {fileID: 1795045923}
   myHand2: {fileID: 49516981}
-  manipulableObjects:
-  - monomer
-  - dimer
-  - ring
   tractorBeamAttractionFactor: 50
   ringsUseSpringConstraints: 0
 --- !u!114 &469726001
@@ -16612,7 +16608,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 46f8e9e70f68ee3418ad85992778c116, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  value: 1
+  value: 0
 --- !u!4 &1680598872
 Transform:
   m_ObjectHideFlags: 0

@@ -568,8 +568,7 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
-
-	void PushTogether()
+    void PushTogether()
 	{
 		foreach (var tag in tags)
 		{
@@ -655,10 +654,11 @@ public class Fishtank : MonoBehaviour
 					//partner = pairs[go];
 					var targetPos = partner.transform.position;
 					var targetRotation = partner.transform.rotation;
+                    Transform partnerPos = null;
 
 					if (tag == "monomer")
 					{
-						var partnerPos = partner.transform.Find("partnerPos");
+						partnerPos = partner.transform.Find("partnerPos");
 						targetPos = partnerPos.position;
 						targetRotation = partnerPos.rotation;
 					}
@@ -759,18 +759,19 @@ public class Fishtank : MonoBehaviour
 							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
 
                             // Turn on attraction particle effect here?
-                            Monomer monomer = go.GetComponent<Monomer>();
-                            ParticleSystem ps = monomer.psAttractionTrail;
-                            if (distanceFromTarget < 0.3f)
+                            Monomer goMonomer = go.GetComponent<Monomer>();
+                            Monomer partnerMonomer = partner.GetComponent<Monomer>();
+                            if (distanceFromTarget < 2)
                             {
-                                Quaternion lookAt = Quaternion.LookRotation(partner.transform.position - ps.transform.position);
-                                ps.transform.rotation = lookAt;
-                                ps.Play();
-                            } else
-                            {
-                                
+                                goMonomer.ActivateAttractionParticle(partnerPos, distanceFromTarget);
+                                partnerMonomer.ActivateAttractionParticle(go.transform, distanceFromTarget);
                             }
-						}
+                            else
+                            {
+                                goMonomer.DeactivateAttractionParticle();
+                                partnerMonomer.DeactivateAttractionParticle();
+                            }
+                        }
 						else
 						{
 							//Debug.Log(dimer.name);

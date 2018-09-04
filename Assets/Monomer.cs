@@ -21,7 +21,7 @@ public class Monomer : MonoBehaviour {
 	public ParticleSystem psPartyTrail;
 
     // WIP adding attraction particle.
-    public ParticleSystem psAttractionTrail;
+    public ParticleSystem psAttraction;
 
 
 	// Use this for initialization
@@ -80,4 +80,18 @@ public class Monomer : MonoBehaviour {
 		myCapsuleCollider.height = scaleColliders * myCapsuleColliderHeightInit;
 		mySphereCollider.radius = scaleColliders * myShereColliderRaduiusInit;
 	}
+
+    public void ActivateAttractionParticle(Transform target, float distance)
+    {
+        Quaternion lookAt = Quaternion.LookRotation(target.transform.position - transform.position);
+        psAttraction.transform.rotation = lookAt;
+        var particleMain = psAttraction.main;
+        particleMain.startLifetime = (distance / particleMain.startSpeed.constantMax)/ 1.9f;
+        psAttraction.Play();
+    }
+
+    public void DeactivateAttractionParticle()
+    {
+        psAttraction.Stop();
+    }
 }
