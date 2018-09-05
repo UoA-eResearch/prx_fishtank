@@ -2043,7 +2043,7 @@ public class Fishtank : MonoBehaviour
             if (System.Array.IndexOf(tags, targetObject.tag) > -1)
             {
 				Vector3 tractorBeam = hand.transform.position - targetObject.transform.position;
-				float tractorBeamScale = Mathf.Max(50.0f, tractorBeamAttractionFactor * (Vector3.Magnitude(tractorBeam) / 500.0f));
+				float tractorBeamScale = Mathf.Max(4.0f, tractorBeamAttractionFactor * (Vector3.Magnitude(tractorBeam) / 500.0f));
 				targetObject.GetComponent<Rigidbody>().AddForce((tractorBeam * tractorBeamScale), ForceMode.Acceleration);
 				//targetObject.GetComponent<Rigidbody>().AddForce((hand.transform.position - targetObject.transform.position) * tractorBeamAttractionFactor, ForceMode.Acceleration);
 			}
