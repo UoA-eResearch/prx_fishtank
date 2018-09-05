@@ -590,9 +590,10 @@ public class Fishtank : MonoBehaviour
 					}
 					else
 					{
-						// directly manipulating transforms for these objects will look strange
-						// so we skip the push together
-						continue;
+                        // directly manipulating transforms for these objects will look strange
+                        // so we skip the push together
+                        continue;
+
 					}
 
 				}
@@ -758,21 +759,6 @@ public class Fishtank : MonoBehaviour
 							float maxPush = Mathf.Min(distanceFromTarget * 5.0f, 0.5f); //
 							go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((targetPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
 							go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
-
-                            Monomer goMonomer = go.GetComponent<Monomer>();
-                            Monomer partnerMonomer = partner.GetComponent<Monomer>();
-                            // play attraction particle when within threshold proximity.
-                            if (distanceFromTarget < attractionParticleThreshold)
-                            {
-                                // need to increase maximum particles if threshold increases too much
-                                goMonomer.ActivateAttractionParticle(partnerPos, distanceFromTarget);
-                                partnerMonomer.ActivateAttractionParticle(go.transform, distanceFromTarget);
-                            }
-                            else
-                            {
-                                goMonomer.DeactivateAttractionParticle();
-                                partnerMonomer.DeactivateAttractionParticle();
-                            }
                         }
 						else
 						{
@@ -816,6 +802,68 @@ public class Fishtank : MonoBehaviour
 			}
 		}
 	}
+
+    void UpdateAttractionHaptics()
+    {
+        // Some duplicate code from push together but separated into a function to maintain readability.
+        foreach (var hand in Player.instance.hands)
+        {
+            GameObject go = new GameObject();
+            if (hand.currentAttachedObject != null)
+            {
+                go = hand.currentAttachedObject;
+                if (go.tag == "monomer")
+                {
+                    // check for partner, if present, vibrate based on distance + acidity.
+                    GameObject partner;
+                    if (pairs.TryGetValue(go, out partner) && partner)
+                    {
+                        Vector3 goBondPos = go.transform.Find("partnerPos").position;
+                        Vector3 partnerBondPos = partner.transform.position;
+                        float bondSiteDist = Vector3.Distance(goBondPos, partnerBondPos);
+                        Debug.Log(bondSiteDist);
+                        // clamp distance to .1 (i.e trigger mult will be 10 at most.
+                        if (bondSiteDist < .1)
+                        {
+                            bondSiteDist = .1f;
+                        }
+                        ushort pulseStrength = System.Convert.ToUInt16((50 / bondSiteDist));
+                        hand.controller.TriggerHapticPulse(pulseStrength);
+
+                        // compare rotation
+                        // if rot is 90/180 different then do repel pulse.
+                    }
+                }
+            }
+        }
+    }
+
+    void UpdateMonomerAttractionParticle()
+    {
+       foreach (var go in GameObject.FindGameObjectsWithTag("monomer"))
+        {
+            GameObject partner;
+            if (pairs.TryGetValue(go, out partner) && partner)
+            {
+                Monomer goMonomer = go.GetComponent<Monomer>();
+                Monomer partnerMonomer = partner.GetComponent<Monomer>();
+                // play attraction particle when within threshold proximity.
+                Transform partnerPos = partner.transform.Find("partnerPos");
+                var distanceFromTarget = Vector3.Distance(go.transform.position, partner.transform.position);
+                if (distanceFromTarget < attractionParticleThreshold)
+                {
+                    // need to increase maximum particles if threshold increases too much
+                    goMonomer.ActivateAttractionParticle(partnerPos, distanceFromTarget);
+                    partnerMonomer.ActivateAttractionParticle(go.transform, distanceFromTarget);
+                }
+                else
+                {
+                    goMonomer.DeactivateAttractionParticle();
+                    partnerMonomer.DeactivateAttractionParticle();
+                }
+            }
+        }
+    }
 
 	void PushRingsWithSprings(GameObject go)
 	{
@@ -2143,5 +2191,7 @@ public class Fishtank : MonoBehaviour
 		//UpdateUIMode();
 		UpdateViveControllers();
 		UpdateSigns();
+        UpdateAttractionHaptics();
+        UpdateMonomerAttractionParticle();
 	}
 }

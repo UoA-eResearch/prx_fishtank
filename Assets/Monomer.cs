@@ -83,6 +83,7 @@ public class Monomer : MonoBehaviour {
 
     public void ActivateAttractionParticle(Transform target, float distance)
     {
+        // TODO: move particle system origin to the partnerPos
         Quaternion lookAt = Quaternion.LookRotation(target.transform.position - transform.position);
         psAttraction.transform.rotation = lookAt;
         var particleMain = psAttraction.main;
