@@ -805,7 +805,6 @@ public class Fishtank : MonoBehaviour
 
     void UpdateAttractionHaptics()
     {
-        // Some duplicate code from push together but separated into a function to maintain readability.
         foreach (var hand in Player.instance.hands)
         {
             GameObject go = new GameObject();
@@ -818,20 +817,30 @@ public class Fishtank : MonoBehaviour
                     GameObject partner;
                     if (pairs.TryGetValue(go, out partner) && partner)
                     {
-                        Vector3 goBondPos = go.transform.Find("partnerPos").position;
-                        Vector3 partnerBondPos = partner.transform.position;
-                        float bondSiteDist = Vector3.Distance(goBondPos, partnerBondPos);
-                        Debug.Log(bondSiteDist);
+                        Transform goBondPos = go.transform.Find("partnerPos");
+                        Transform partnerBondPos = partner.transform;
+                        float pulseStrength = 50;
+                        float distanceFactor = Vector3.Distance(goBondPos.position, partnerBondPos.position);
                         // clamp distance to .1 (i.e trigger mult will be 10 at most.
-                        if (bondSiteDist < .1)
+                        if (distanceFactor < .1)
                         {
-                            bondSiteDist = .1f;
+                            distanceFactor = .1f;
                         }
-                        ushort pulseStrength = System.Convert.ToUInt16((50 / bondSiteDist));
-                        hand.controller.TriggerHapticPulse(pulseStrength);
-
-                        // compare rotation
-                        // if rot is 90/180 different then do repel pulse.
+                        // apply distance and pH factors
+                        pulseStrength /= distanceFactor;
+                        pulseStrength *= 1 + ((9 - phValue) * 0.1f);
+                        Quaternion desiredAngle = Quaternion.LookRotation(goBondPos.position, partnerBondPos.position);
+                        float angleDiff = Quaternion.Angle(go.transform.rotation, desiredAngle);
+                        if (angleDiff > 90)
+                        {
+                            // range * sin(time * frequency) + offset)
+                            float amplitude = pulseStrength * 1.0f;
+                            float freq = 45;
+                            float offset = pulseStrength;
+                            pulseStrength = (amplitude * Mathf.Sin(Time.time * freq)) + offset;
+                        }
+                        // Debug.Log("ph : " + phValue + " distance: " + distanceFactor + "haptic value: " + pulseStrength);
+                        hand.controller.TriggerHapticPulse(System.Convert.ToUInt16(pulseStrength));
                     }
                 }
             }
@@ -2034,7 +2043,7 @@ public class Fishtank : MonoBehaviour
             if (System.Array.IndexOf(tags, targetObject.tag) > -1)
             {
 				Vector3 tractorBeam = hand.transform.position - targetObject.transform.position;
-				float tractorBeamScale = Mathf.Max(2.0f, tractorBeamAttractionFactor * (Vector3.Magnitude(tractorBeam) / 500.0f));
+				float tractorBeamScale = Mathf.Max(50.0f, tractorBeamAttractionFactor * (Vector3.Magnitude(tractorBeam) / 500.0f));
 				targetObject.GetComponent<Rigidbody>().AddForce((tractorBeam * tractorBeamScale), ForceMode.Acceleration);
 				//targetObject.GetComponent<Rigidbody>().AddForce((hand.transform.position - targetObject.transform.position) * tractorBeamAttractionFactor, ForceMode.Acceleration);
 			}
@@ -2176,7 +2185,7 @@ public class Fishtank : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
-		ClearRingDockedFlags();
+        ClearRingDockedFlags();
 		PushTogether();
 		SetRingDockedFlags();
 		FixHoverlock();

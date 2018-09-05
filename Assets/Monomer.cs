@@ -83,6 +83,11 @@ public class Monomer : MonoBehaviour {
 
     public void ActivateAttractionParticle(Transform target, float distance)
     {
+        // if particle system not positioned at bond site, relocate.
+        if (psAttraction.transform.position != transform.Find("partnerPos").position)
+        {
+            psAttraction.transform.position = transform.Find("partnerPos").position;
+        }
         // TODO: move particle system origin to the partnerPos
         Quaternion lookAt = Quaternion.LookRotation(target.transform.position - transform.position);
         psAttraction.transform.rotation = lookAt;
