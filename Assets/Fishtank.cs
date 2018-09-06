@@ -1534,14 +1534,13 @@ public class Fishtank : MonoBehaviour
 		if (!r.psElectric01.isPlaying)
 		{
 			r.psElectric01.Play();
-			r.SetShaderTrans();
-
-			//
+            Debug.Log("setting shader trans");
+            //r.SetShaderTrans(1.0f);
+            StartCoroutine(r.TransitionShaderTrans(3.0f));
 
 			if (Random.value < 0.5f)
 			{
 				r.ringAudioSource.clip = sfxElectricity01;
-
 			}
 			else
 			{
@@ -1560,7 +1559,6 @@ public class Fishtank : MonoBehaviour
 		{
 			r.psElectric01.Stop();
 			r.SetShaderVertexCol();
-
 			r.ringAudioSource.Stop();
 		}
 	}

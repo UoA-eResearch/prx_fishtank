@@ -169,8 +169,8 @@ public class Ring: MonoBehaviour
 
 	void Update()
 	{
-		//psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
-		age = age + Time.deltaTime;
+        //psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
+        age = age + Time.deltaTime;
 
 		if (fishtankScript.doNanoParticles)
 		{
@@ -433,17 +433,43 @@ public class Ring: MonoBehaviour
 		}
 	}
 
-	public void SetShaderTrans()
+    // TEMP: Added ringMaterial with standard shader while material changes undecided.
+    public Material ringMaterial;
+	public IEnumerator TransitionShaderTrans(float duration)
 	{
-		myMeshPart0Renderer.material.shader = shaderTrans;
-		myMeshPart1Renderer.material.shader = shaderTrans;
-	}
+        // TODO: Figure out what the similar settings are for standard shader material vs the vertex colored, apply to the molecule meshes and then for setting back to full alpha it should be similar.
+        myMeshPart0Renderer.material = ringMaterial;
+        myMeshPart1Renderer.material = ringMaterial;
+        Renderer[] subMeshRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
 
-	public void SetShaderVertexCol()
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            foreach (Renderer subMeshRenderer in subMeshRenderers)
+            {
+                // Wouldn't let me set individual colour values. 
+                Color curColor = subMeshRenderer.material.color;
+                Color newColor = curColor;
+                newColor.a = 1 - ((elapsedTime / duration) * .9f);
+                subMeshRenderer.material.color = newColor;
+                elapsedTime += Time.deltaTime;
+            }
+            yield return null;
+        }
+        Debug.Log("Finished at alpha: " + myMeshPart0Renderer.material.color.a);
+    }
+
+    public void SetShaderTrans()
+    {
+        myMeshPart0Renderer.material.shader = shaderTrans;
+        myMeshPart1Renderer.material.shader = shaderTrans;
+    }
+
+    public void SetShaderVertexCol()
 	{
-		myMeshPart0Renderer.material.shader = shaderVert;
-		myMeshPart1Renderer.material.shader = shaderVert;
-	}
+        myMeshPart0Renderer.material.shader = shaderVert;
+        myMeshPart1Renderer.material.shader = shaderVert;
+    }
 
 	public void breakRing(Hand currentHand)
 	{
