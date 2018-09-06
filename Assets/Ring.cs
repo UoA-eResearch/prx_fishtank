@@ -84,8 +84,8 @@ public class Ring: MonoBehaviour
 	{
 		// runtime shader swap setup
 
-		shaderVert = Shader.Find(" Vertex Colored"); // WTF? unbelievably this shader name has a <space> before the 'V'
-		shaderTrans = Shader.Find("Transparent/Diffuse");
+		// shaderVert = Shader.Find(" Vertex Colored"); // WTF? unbelievably this shader name has a <space> before the 'V'
+		// shaderTrans = Shader.Find("Transparent/Diffuse");
 
 		meshPart0 = gameObject.transform.Find("Ring_MeshPart0").gameObject;
 		meshPart1 = gameObject.transform.Find("Ring_MeshPart1").gameObject;
