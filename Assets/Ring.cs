@@ -84,8 +84,8 @@ public class Ring: MonoBehaviour
 	{
 		// runtime shader swap setup
 
-		// shaderVert = Shader.Find(" Vertex Colored"); // WTF? unbelievably this shader name has a <space> before the 'V'
-		// shaderTrans = Shader.Find("Transparent/Diffuse");
+		shaderVert = Shader.Find(" Vertex Colored"); // WTF? unbelievably this shader name has a <space> before the 'V'
+		shaderTrans = Shader.Find("Transparent/Diffuse");
 
 		meshPart0 = gameObject.transform.Find("Ring_MeshPart0").gameObject;
 		meshPart1 = gameObject.transform.Find("Ring_MeshPart1").gameObject;
@@ -434,14 +434,10 @@ public class Ring: MonoBehaviour
 	}
 
     // TEMP: Added ringMaterial with standard shader while material changes undecided.
-    public Material ringMaterial;
 	public IEnumerator TransitionShaderTrans(float duration)
 	{
         // TODO: Figure out what the similar settings are for standard shader material vs the vertex colored, apply to the molecule meshes and then for setting back to full alpha it should be similar.
-        myMeshPart0Renderer.material = ringMaterial;
-        myMeshPart1Renderer.material = ringMaterial;
         Renderer[] subMeshRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
-
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
