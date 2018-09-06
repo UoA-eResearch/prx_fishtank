@@ -807,7 +807,7 @@ public class Fishtank : MonoBehaviour
     {
         foreach (var hand in Player.instance.hands)
         {
-            GameObject go = new GameObject();
+            GameObject go;
             if (hand.currentAttachedObject != null)
             {
                 go = hand.currentAttachedObject;
@@ -829,17 +829,15 @@ public class Fishtank : MonoBehaviour
                         // apply distance and pH factors
                         pulseStrength /= distanceFactor;
                         pulseStrength *= 1 + ((9 - phValue) * 0.1f);
-                        Quaternion desiredAngle = Quaternion.LookRotation(goBondPos.position, partnerBondPos.position);
+                        Quaternion desiredAngle = Quaternion.LookRotation(go.transform.position, partnerBondPos.position);
                         float angleDiff = Quaternion.Angle(go.transform.rotation, desiredAngle);
                         if (angleDiff > 90)
                         {
-                            // range * sin(time * frequency) + offset)
                             float amplitude = pulseStrength * 1.0f;
-                            float freq = 45;
+                            float freq = 30;
                             float offset = pulseStrength;
                             pulseStrength = (amplitude * Mathf.Sin(Time.time * freq)) + offset;
                         }
-                        // Debug.Log("ph : " + phValue + " distance: " + distanceFactor + "haptic value: " + pulseStrength);
                         hand.controller.TriggerHapticPulse(System.Convert.ToUInt16(pulseStrength));
                     }
                 }
