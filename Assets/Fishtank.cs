@@ -849,10 +849,10 @@ public class Fishtank : MonoBehaviour
     {
        foreach (var go in GameObject.FindGameObjectsWithTag("monomer"))
         {
+            Monomer goMonomer = go.GetComponent<Monomer>();
             GameObject partner;
             if (pairs.TryGetValue(go, out partner) && partner)
             {
-                Monomer goMonomer = go.GetComponent<Monomer>();
                 Monomer partnerMonomer = partner.GetComponent<Monomer>();
                 // play attraction particle when within threshold proximity.
                 Transform partnerPos = partner.transform.Find("partnerPos");
@@ -868,6 +868,9 @@ public class Fishtank : MonoBehaviour
                     goMonomer.DeactivateAttractionParticle();
                     partnerMonomer.DeactivateAttractionParticle();
                 }
+            } else
+            {
+                goMonomer.DeactivateAttractionParticle();
             }
         }
     }
