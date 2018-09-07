@@ -446,7 +446,7 @@ public class Ring: MonoBehaviour
                 // Wouldn't let me set individual colour values. 
                 Color curColor = subMeshRenderer.material.color;
                 Color newColor = curColor;
-                newColor.a = 1 - ((elapsedTime / duration) * .9f);
+                newColor.a = 1 - ((elapsedTime / duration));
                 subMeshRenderer.material.color = newColor;
                 elapsedTime += Time.deltaTime;
             }
