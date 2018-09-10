@@ -1535,7 +1535,7 @@ public class Fishtank : MonoBehaviour
 		{
 			r.psElectric01.Play();
             //r.SetShaderTrans(1.0f);
-            StartCoroutine(r.TransitionToTransparent(3.0f));
+            StartCoroutine(r.TransitionToTransparent(0.8f));
 
 			if (Random.value < 0.5f)
 			{
@@ -1558,7 +1558,7 @@ public class Fishtank : MonoBehaviour
 		{
 			r.psElectric01.Stop();
 			// r.SetShaderVertexCol();
-			StartCoroutine(r.TransitionToOpaque(3.0f));
+			StartCoroutine(r.TransitionToOpaque(0.8f));
 			r.ringAudioSource.Stop();
 		}
 	}

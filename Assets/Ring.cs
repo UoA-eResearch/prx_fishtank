@@ -440,26 +440,23 @@ public class Ring: MonoBehaviour
     // TEMP: Added ringMaterial with standard shader while material changes undecided.
 	public IEnumerator TransitionToTransparent(float duration)
 	{
-        // TODO: Figure out what the similar settings are for standard shader material vs the vertex colored, apply to the molecule meshes and then for setting back to full alpha it should be similar.
-        Renderer[] subMeshRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
+		// FIXME: When string stack is grabbed it runs the transition to transparent co-routine
+        Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
         float elapsedTime = 0f;
 		// switch to transparent material
-		foreach (Renderer subMeshRenderer in subMeshRenderers) {
-			subMeshRenderer.material = transparentMaterial;
-			// if (subMeshRenderer.material != transparentMaterial) {
-			// }
+		foreach (Renderer r in subRenderers) {
+			r.material = transparentMaterial;
 		}
-		Debug.Log("OUT OF LOOP" + this.transform.gameObject.name);
         while (elapsedTime < duration)
         {
-			Debug.Log("IN WHILE LOOP" + this.transform.gameObject.name);
-            foreach (Renderer subMeshRenderer in subMeshRenderers)
+            foreach (Renderer r in subRenderers)
             {
                 // Wouldn't let me set individual colour values.
-                Color curColor = subMeshRenderer.material.color;
+                Color curColor = r.material.color;
                 Color newColor = curColor;
-                newColor.a = 1 - ((elapsedTime / duration));
-                subMeshRenderer.material.color = newColor;
+                // newColor.a = 1 - ((elapsedTime / duration));
+				newColor.a = Mathf.Lerp(1, 0, elapsedTime/duration);
+                r.material.color = newColor;
                 elapsedTime += Time.deltaTime;
             }
             yield return null;
@@ -468,27 +465,25 @@ public class Ring: MonoBehaviour
 
 	public IEnumerator TransitionToOpaque(float duration)
 	{
-        // TODO: Figure out what the similar settings are for standard shader material vs the vertex colored, apply to the molecule meshes and then for setting back to full alpha it should be similar.
-        Renderer[] subMeshRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
+		// FIXME: Ring sometimes gets stuck on opaque material when docked.
+        Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
         float elapsedTime = 0f;
         while (elapsedTime < duration)
         {
-            foreach (Renderer subMeshRenderer in subMeshRenderers)
+            foreach (Renderer r in subRenderers)
             {
                 // Wouldn't let me set individual colour values.
-                Color curColor = subMeshRenderer.material.color;
+                Color curColor = r.material.color;
                 Color newColor = curColor;
                 newColor.a = elapsedTime / duration;
-                subMeshRenderer.material.color = newColor;
+                r.material.color = newColor;
                 elapsedTime += Time.deltaTime;
             }
             yield return null;
         }
 		// switch to opaque material
-		foreach (Renderer subMeshRenderer in subMeshRenderers) {
+		foreach (Renderer subMeshRenderer in subRenderers) {
 			subMeshRenderer.material = opaqueMaterial;
-			// if (subMeshRenderer.material != opaqueMaterial) {
-			// }
 		}
     }
 
