@@ -10753,7 +10753,8 @@ MonoBehaviour:
   sjAcceptorToDonorOn: 0
   ringAudioSource: {fileID: 0}
   sfxRingSpawn: {fileID: 8300000, guid: ffd146fc7d429044096363f6c1adb5e3, type: 3}
-  ringMaterial: {fileID: 2100000, guid: cd48cdd7ffd85a7469b7a83bbc0dc02a, type: 2}
+  opaqueMaterial: {fileID: 2100000, guid: b836044584d01d54696b77b7cfa74c63, type: 2}
+  transparentMaterial: {fileID: 2100000, guid: 32848f2287766e045a89d06eea845975, type: 2}
 --- !u!114 &114916512091932642
 MonoBehaviour:
   m_ObjectHideFlags: 1

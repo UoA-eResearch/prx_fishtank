@@ -80,6 +80,10 @@ public class Ring: MonoBehaviour
 	public AudioSource ringAudioSource;
 	public AudioClip sfxRingSpawn;
 
+	// public vars
+	public Material opaqueMaterial;
+	public Material transparentMaterial;
+
 	void Start()
 	{
 		// runtime shader swap setup
@@ -434,16 +438,24 @@ public class Ring: MonoBehaviour
 	}
 
     // TEMP: Added ringMaterial with standard shader while material changes undecided.
-	public IEnumerator TransitionShaderTrans(float duration)
+	public IEnumerator TransitionToTransparent(float duration)
 	{
         // TODO: Figure out what the similar settings are for standard shader material vs the vertex colored, apply to the molecule meshes and then for setting back to full alpha it should be similar.
         Renderer[] subMeshRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
         float elapsedTime = 0f;
+		// switch to transparent material
+		foreach (Renderer subMeshRenderer in subMeshRenderers) {
+			subMeshRenderer.material = transparentMaterial;
+			// if (subMeshRenderer.material != transparentMaterial) {
+			// }
+		}
+		Debug.Log("OUT OF LOOP" + this.transform.gameObject.name);
         while (elapsedTime < duration)
         {
+			Debug.Log("IN WHILE LOOP" + this.transform.gameObject.name);
             foreach (Renderer subMeshRenderer in subMeshRenderers)
             {
-                // Wouldn't let me set individual colour values. 
+                // Wouldn't let me set individual colour values.
                 Color curColor = subMeshRenderer.material.color;
                 Color newColor = curColor;
                 newColor.a = 1 - ((elapsedTime / duration));
@@ -452,7 +464,32 @@ public class Ring: MonoBehaviour
             }
             yield return null;
         }
-        Debug.Log("Finished at alpha: " + myMeshPart0Renderer.material.color.a);
+    }
+
+	public IEnumerator TransitionToOpaque(float duration)
+	{
+        // TODO: Figure out what the similar settings are for standard shader material vs the vertex colored, apply to the molecule meshes and then for setting back to full alpha it should be similar.
+        Renderer[] subMeshRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
+        float elapsedTime = 0f;
+        while (elapsedTime < duration)
+        {
+            foreach (Renderer subMeshRenderer in subMeshRenderers)
+            {
+                // Wouldn't let me set individual colour values.
+                Color curColor = subMeshRenderer.material.color;
+                Color newColor = curColor;
+                newColor.a = elapsedTime / duration;
+                subMeshRenderer.material.color = newColor;
+                elapsedTime += Time.deltaTime;
+            }
+            yield return null;
+        }
+		// switch to opaque material
+		foreach (Renderer subMeshRenderer in subMeshRenderers) {
+			subMeshRenderer.material = opaqueMaterial;
+			// if (subMeshRenderer.material != opaqueMaterial) {
+			// }
+		}
     }
 
     public void SetShaderTrans()

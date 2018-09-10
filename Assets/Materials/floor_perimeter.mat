@@ -7,7 +7,7 @@ Material:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_Name: floor_perimeter
-  m_Shader: {fileID: 4800000, guid: 7e766122cba6bdf47bf4902f68be22c9, type: 3}
+  m_Shader: {fileID: 4800000, guid: 787d7485aa6482341a9f55fa37fb84f1, type: 3}
   m_ShaderKeywords: S_SPECULAR_NONE S_UNLIT _ALPHAPREMULTIPLY_ON _EMISSION
   m_LightmapFlags: 1
   m_EnableInstancingVariants: 0
@@ -81,8 +81,10 @@ Material:
     - _OcclusionStrengthIndirectSpecular: 1
     - _Parallax: 0.02
     - _SeeThru: 0
+    - _Shininess: 0.7
     - _SpecularMode: 2
     - _SrcBlend: 1
+    - _Transparency: 0.9
     - _UVSec: 0
     - _ZWrite: 0
     - g_bReceiveShadows: 1
@@ -95,6 +97,7 @@ Material:
     - g_flReflectanceScale: 1
     m_Colors:
     - _Color: {r: 0.18325105, g: 0.7196769, b: 0.743, a: 0.61960787}
+    - _Emission: {r: 0, g: 0, b: 0, a: 0}
     - _EmissionColor: {r: 0.25824147, g: 0.91758215, b: 1, a: 1}
     - _EmissionColorUI: {r: 1, g: 1, b: 1, a: 1}
     - _SpecColor: {r: 0.19999996, g: 0.19999996, b: 0.19999996, a: 1}
