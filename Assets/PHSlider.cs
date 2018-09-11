@@ -73,9 +73,26 @@ public class PHSlider : MonoBehaviour
 		return phText.text;
 	}
 
-	public void ResetPhHigh()
+	public void ResetPhValue()
 	{
 		linearMapping.value = 1;
-        myHandle.transform.position = Vector3.Lerp(myLinearDrive.startPosition.position, myLinearDrive.endPosition.position, linearMapping.value);
+		SynchronizeHandleToValue();
     }
+
+	public void UpdatePhValue(float val) {
+		// Clamping values within 0-1
+		float newValue = linearMapping.value + val;
+		if (newValue > 1) {
+			newValue = 1;
+		}
+		if (newValue < 0) {
+			newValue = 0;
+		}
+		linearMapping.value = newValue;
+		SynchronizeHandleToValue();
+	}
+
+	private void SynchronizeHandleToValue(){
+		myHandle.transform.position = Vector3.Lerp(myLinearDrive.startPosition.position, myLinearDrive.endPosition.position, linearMapping.value);
+	}
 }

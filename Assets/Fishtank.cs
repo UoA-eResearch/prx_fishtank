@@ -1755,7 +1755,7 @@ public class Fishtank : MonoBehaviour
 		{
 			//Party just started
 			partyStartTime = Time.timeSinceLevelLoad + 3; //extra time for intro
-			phSlider.ResetPhHigh();
+			phSlider.ResetPhValue();
 			hasWon = false;
 			confettiDone = false;
 			partyIntro = true;
@@ -2160,6 +2160,47 @@ public class Fishtank : MonoBehaviour
         }
     }
 
+	private GameObject GetActiveMenu() {
+		GameObject[] menus = {
+			pHSliderUI, 
+			cartoonRenderUI, 
+			fishtankScaleUI, 
+			partyModeUI, 
+			simulationUI, 
+			nanoUI 
+		};
+
+		int activeCheck = 0;
+		GameObject activeMenu = null;
+		foreach (GameObject menu in menus){
+			if (menu.active) {
+				activeMenu = menu;
+				activeCheck++;
+			}
+		}
+		if (activeCheck > 1) {
+			Debug.Log("Error: More than one menu active");
+		}
+		return activeMenu;
+	}
+
+	void UpdateKeyboardInput() {
+		if (Input.GetKeyDown(KeyCode.UpArrow)) {
+			phSlider.UpdatePhValue(0.1f);
+		}
+		if (Input.GetKeyDown(KeyCode.DownArrow)) {
+			phSlider.UpdatePhValue(-0.1f);
+		}
+
+		// toggle menus with side arrows.
+		if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+			SwitchMenuUIMode(-1);
+		}
+		if (Input.GetKeyDown(KeyCode.RightArrow)) {
+			SwitchMenuUIMode(1);
+		}
+	}
+
 	void UpdateSigns()
 	{
 		// hacky fixed timing test for appearances
@@ -2200,6 +2241,7 @@ public class Fishtank : MonoBehaviour
 		UpdateNanoMode();
 		//UpdateUIMode();
 		UpdateViveControllers();
+		UpdateKeyboardInput();
 		UpdateSigns();
         UpdateAttractionHaptics();
         UpdateMonomerAttractionParticle();
