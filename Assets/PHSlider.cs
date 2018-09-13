@@ -99,4 +99,6 @@ public class PHSlider : MonoBehaviour, IMenu
 	public void SynchronizeHandleToValue(){
 		myHandle.transform.position = Vector3.Lerp(myLinearDrive.startPosition.position, myLinearDrive.endPosition.position, linearMapping.value);
 	}
+
+	
 }

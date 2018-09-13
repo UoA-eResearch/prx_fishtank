@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Valve.VR.InteractionSystem;
 
-public class ScaleSlider : MonoBehaviour {
+public class ScaleSlider : MonoBehaviour, IMenu {
 
 	public LinearMapping fishtankScaleLM;
 	public Text fishtankScaleText;

@@ -78,7 +78,6 @@ public class Fishtank : MonoBehaviour
 	private string[] tags;
 
 	private List<GameObject> masterDimers;
-	private PHSlider phSlider;
 	private int phValue;
 	//public int phMonomer2Dimer;
 	//public int phDimer2Ring;
@@ -153,6 +152,7 @@ public class Fishtank : MonoBehaviour
 	public GameObject signSplash;
 	public GameObject chartStatsGO;
 
+	public PHSlider phSlider;
 	public PartyModeSwitch partyModeSwitch;
 	public CartoonModeSwitch cartoonModeSwitch;
 	public ScaleSlider scaleModeSlider;
@@ -1108,8 +1108,6 @@ public class Fishtank : MonoBehaviour
 		fishtankPositionCurrent = gameObject.transform.position;
 
 		SetMenuUIComponents(modeUI);
-
-		phSlider = gameObject.GetComponent<PHSlider>();
 
 		// initialise solvent particle systems
 		var mysolventH = Instantiate(solventH, gameObject.transform); // gameObject.transform.position, Quaternion.identity);

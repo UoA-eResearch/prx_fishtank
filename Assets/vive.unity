@@ -3939,7 +3939,6 @@ GameObject:
   - component: {fileID: 469725997}
   - component: {fileID: 469725996}
   - component: {fileID: 469726000}
-  - component: {fileID: 469726001}
   - component: {fileID: 469726002}
   m_Layer: 2
   m_Name: fishtank
@@ -4081,6 +4080,7 @@ MonoBehaviour:
   teleportHintUI: {fileID: 1829653320}
   signSplash: {fileID: 1376851952}
   chartStatsGO: {fileID: 1411235740}
+  phSlider: {fileID: 1680598873}
   partyModeSwitch: {fileID: 1288313465}
   cartoonModeSwitch: {fileID: 844004221}
   scaleModeSlider: {fileID: 2032115209}
@@ -4092,20 +4092,6 @@ MonoBehaviour:
   tractorBeamAttractionFactor: 50
   attractionParticleThreshold: 0.76
   ringsUseSpringConstraints: 0
---- !u!114 &469726001
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 469725995}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0200eb05bcf97794ba35e883ab309698, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  linearMapping: {fileID: 1680598871}
-  myLinearDrive: {fileID: 1473468484}
-  myHandle: {fileID: 1473468481}
 --- !u!82 &469726002
 AudioSource:
   m_ObjectHideFlags: 0
@@ -16601,6 +16587,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1680598872}
   - component: {fileID: 1680598871}
+  - component: {fileID: 1680598873}
   m_Layer: 0
   m_Name: pHSlider_LinearMapping
   m_TagString: Untagged
@@ -16633,6 +16620,20 @@ Transform:
   m_Father: {fileID: 890592590}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1680598873
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1680598870}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0200eb05bcf97794ba35e883ab309698, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  linearMapping: {fileID: 1680598871}
+  myLinearDrive: {fileID: 1473468484}
+  myHandle: {fileID: 1473468481}
 --- !u!1 &1711519296
 GameObject:
   m_ObjectHideFlags: 0
