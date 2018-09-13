@@ -4,11 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using Valve.VR.InteractionSystem;
 
-public class NanoParticleSwitch : MonoBehaviour {
+public class NanoParticleSwitch : MonoBehaviour, IMenu {
 
 	public LinearMapping nanoLM;
 	public Text nanoText;
 	public bool useNanoParticles = true;
+	public Transform start;
+	public Transform end;
+	public GameObject myHandle;
 
 	// Use this for initialization
 	void Start () {
@@ -30,6 +33,20 @@ public class NanoParticleSwitch : MonoBehaviour {
 			nanoText.text = "ON";
 			useNanoParticles = true;
 		}
+	}
+
+	public void IncrementValue(){
+		nanoLM.value = 1f;
+		SynchronizeHandleToValue();
+	}
+
+	public void DecrementValue() {
+		nanoLM.value = 0f;
+		SynchronizeHandleToValue();
+	}
+
+	public void SynchronizeHandleToValue(){
+		myHandle.transform.position = Vector3.Lerp(start.position, end.position, nanoLM.value);
 	}
 
 	public bool GetNanoParticleMode()

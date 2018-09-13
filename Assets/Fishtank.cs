@@ -2173,7 +2173,7 @@ public class Fishtank : MonoBehaviour
 		int activeCheck = 0;
 		GameObject activeMenu = null;
 		foreach (GameObject menu in menus){
-			if (menu.active) {
+			if (menu.activeInHierarchy) {
 				activeMenu = menu;
 				activeCheck++;
 			}
@@ -2181,16 +2181,17 @@ public class Fishtank : MonoBehaviour
 		if (activeCheck > 1) {
 			Debug.Log("Error: More than one menu active");
 		}
+		Debug.Log("Active menu is " + activeMenu.name);
 		return activeMenu;
 	}
 
 	void UpdateKeyboardInput() {
-		if (Input.GetKeyDown(KeyCode.UpArrow)) {
-			phSlider.UpdatePhValue(0.1f);
-		}
-		if (Input.GetKeyDown(KeyCode.DownArrow)) {
-			phSlider.UpdatePhValue(-0.1f);
-		}
+		// if (Input.GetKeyDown(KeyCode.UpArrow)) {
+		// 	phSlider.UpdatePhValue(0.1f);
+		// }
+		// if (Input.GetKeyDown(KeyCode.DownArrow)) {
+		// 	phSlider.UpdatePhValue(-0.1f);
+		// }
 
 		// toggle menus with side arrows.
 		if (Input.GetKeyDown(KeyCode.LeftArrow)) {
@@ -2199,12 +2200,24 @@ public class Fishtank : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.RightArrow)) {
 			SwitchMenuUIMode(1);
 		}
+		if (Input.GetKeyDown(KeyCode.UpArrow)) {
+			var curMenu = GetActiveMenu().GetComponentInChildren<IMenu>();
+			if (curMenu != null) {
+				Debug.Log("attempting to run increment value");
+				curMenu.IncrementValue();
+			}
+		}
+		if (Input.GetKeyDown(KeyCode.DownArrow)) {
+			var curMenu = GetActiveMenu().GetComponentInChildren<IMenu>();
+			if (curMenu != null) {
+				curMenu.DecrementValue();
+			}
+		}
 	}
 
 	void UpdateSigns()
 	{
 		// hacky fixed timing test for appearances
-
 		if (System.Math.Round(Time.timeSinceLevelLoad, 1) > 6.0f)
 		{
 			if (signSplash.GetComponent<CanvasGroup>().alpha > 0)
@@ -2212,7 +2225,6 @@ public class Fishtank : MonoBehaviour
 					signSplash.GetComponent<CanvasGroup>().alpha -= 0.004f;
 				}
 		}
-
 		if (System.Math.Round(Time.timeSinceLevelLoad, 1) > 10.0f)
 		{
 			if (chartStatsGO.GetComponent<CanvasGroup>().alpha < 1.0f)
@@ -2220,8 +2232,6 @@ public class Fishtank : MonoBehaviour
 				chartStatsGO.GetComponent<CanvasGroup>().alpha += 0.001f;
 			}
 		}
-
-
 	}
 
 	// Update is called once per frame

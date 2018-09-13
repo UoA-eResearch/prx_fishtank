@@ -6319,6 +6319,9 @@ MonoBehaviour:
   nanoLM: {fileID: 673149122}
   nanoText: {fileID: 1544772552}
   useNanoParticles: 1
+  start: {fileID: 998032767}
+  end: {fileID: 841676533}
+  myHandle: {fileID: 2144256549}
 --- !u!4 &673149124
 Transform:
   m_ObjectHideFlags: 0
@@ -7658,6 +7661,9 @@ MonoBehaviour:
   renderCartoonLM: {fileID: 844004220}
   renderCartoonText: {fileID: 1126763590}
   renderCartoon: 0
+  start: {fileID: 1763711203}
+  end: {fileID: 946013143}
+  myHandle: {fileID: 1827122854}
 --- !u!4 &844004222
 Transform:
   m_ObjectHideFlags: 0
@@ -11501,6 +11507,9 @@ MonoBehaviour:
   scoreboardbest: {fileID: 199174584}
   chartStats: {fileID: 1411235740}
   heldScoreboard: {fileID: 81891953}
+  start: {fileID: 640736133}
+  end: {fileID: 1535946704}
+  myHandle: {fileID: 2083942048}
 --- !u!4 &1288313466
 Transform:
   m_ObjectHideFlags: 0
@@ -20856,6 +20865,9 @@ MonoBehaviour:
   fishtankScaleLM: {fileID: 2032115207}
   fishtankScaleText: {fileID: 1583525688}
   fishtankScale: 1
+  start: {fileID: 654551045}
+  end: {fileID: 1848556323}
+  myHandle: {fileID: 1799510874}
 --- !u!1 &2035473037
 GameObject:
   m_ObjectHideFlags: 0
@@ -21196,6 +21208,9 @@ MonoBehaviour:
   simulationLM: {fileID: 2065548867}
   simulationText: {fileID: 467196340}
   simulationUsesSprings: 0
+  start: {fileID: 1097040070}
+  end: {fileID: 146746437}
+  myHandle: {fileID: 1867827246}
 --- !u!4 &2065548869
 Transform:
   m_ObjectHideFlags: 0
