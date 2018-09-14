@@ -78,7 +78,6 @@ public class Fishtank : MonoBehaviour
 	private string[] tags;
 
 	private List<GameObject> masterDimers;
-	private PHSlider phSlider;
 	private int phValue;
 	//public int phMonomer2Dimer;
 	//public int phDimer2Ring;
@@ -153,6 +152,7 @@ public class Fishtank : MonoBehaviour
 	public GameObject signSplash;
 	public GameObject chartStatsGO;
 
+	public PHSlider phSlider;
 	public PartyModeSwitch partyModeSwitch;
 	public CartoonModeSwitch cartoonModeSwitch;
 	public ScaleSlider scaleModeSlider;
@@ -1109,8 +1109,6 @@ public class Fishtank : MonoBehaviour
 
 		SetMenuUIComponents(modeUI);
 
-		phSlider = gameObject.GetComponent<PHSlider>();
-
 		// initialise solvent particle systems
 		var mysolventH = Instantiate(solventH, gameObject.transform); // gameObject.transform.position, Quaternion.identity);
 		var mysolventOH = Instantiate(solventOH, gameObject.transform); //gameObject.transform.position, Quaternion.identity);
@@ -1753,7 +1751,7 @@ public class Fishtank : MonoBehaviour
 		{
 			//Party just started
 			partyStartTime = Time.timeSinceLevelLoad + 3; //extra time for intro
-			phSlider.ResetPhHigh();
+			phSlider.ResetPhValue();
 			hasWon = false;
 			confettiDone = false;
 			partyIntro = true;
@@ -2158,10 +2156,64 @@ public class Fishtank : MonoBehaviour
         }
     }
 
+	private GameObject GetActiveMenu() {
+		GameObject[] menus = {
+			pHSliderUI, 
+			cartoonRenderUI, 
+			fishtankScaleUI, 
+			partyModeUI, 
+			simulationUI, 
+			nanoUI 
+		};
+
+		int activeCheck = 0;
+		GameObject activeMenu = null;
+		foreach (GameObject menu in menus){
+			if (menu.activeInHierarchy) {
+				activeMenu = menu;
+				activeCheck++;
+			}
+		}
+		if (activeCheck > 1) {
+			Debug.Log("Error: More than one menu active");
+		}
+		Debug.Log("Active menu is " + activeMenu.name);
+		return activeMenu;
+	}
+
+	void UpdateKeyboardInput() {
+		// if (Input.GetKeyDown(KeyCode.UpArrow)) {
+		// 	phSlider.UpdatePhValue(0.1f);
+		// }
+		// if (Input.GetKeyDown(KeyCode.DownArrow)) {
+		// 	phSlider.UpdatePhValue(-0.1f);
+		// }
+
+		// toggle menus with side arrows.
+		if (Input.GetKeyDown(KeyCode.LeftArrow)) {
+			SwitchMenuUIMode(-1);
+		}
+		if (Input.GetKeyDown(KeyCode.RightArrow)) {
+			SwitchMenuUIMode(1);
+		}
+		if (Input.GetKeyDown(KeyCode.UpArrow)) {
+			var curMenu = GetActiveMenu().GetComponentInChildren<IMenu>();
+			if (curMenu != null) {
+				Debug.Log("attempting to run increment value");
+				curMenu.IncrementValue();
+			}
+		}
+		if (Input.GetKeyDown(KeyCode.DownArrow)) {
+			var curMenu = GetActiveMenu().GetComponentInChildren<IMenu>();
+			if (curMenu != null) {
+				curMenu.DecrementValue();
+			}
+		}
+	}
+
 	void UpdateSigns()
 	{
 		// hacky fixed timing test for appearances
-
 		if (System.Math.Round(Time.timeSinceLevelLoad, 1) > 6.0f)
 		{
 			if (signSplash.GetComponent<CanvasGroup>().alpha > 0)
@@ -2169,7 +2221,6 @@ public class Fishtank : MonoBehaviour
 					signSplash.GetComponent<CanvasGroup>().alpha -= 0.004f;
 				}
 		}
-
 		if (System.Math.Round(Time.timeSinceLevelLoad, 1) > 10.0f)
 		{
 			if (chartStatsGO.GetComponent<CanvasGroup>().alpha < 1.0f)
@@ -2177,8 +2228,6 @@ public class Fishtank : MonoBehaviour
 				chartStatsGO.GetComponent<CanvasGroup>().alpha += 0.001f;
 			}
 		}
-
-
 	}
 
 	// Update is called once per frame
@@ -2198,6 +2247,7 @@ public class Fishtank : MonoBehaviour
 		UpdateNanoMode();
 		//UpdateUIMode();
 		UpdateViveControllers();
+		UpdateKeyboardInput();
 		UpdateSigns();
         UpdateAttractionHaptics();
         UpdateMonomerAttractionParticle();

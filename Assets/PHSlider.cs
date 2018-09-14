@@ -5,17 +5,14 @@ using UnityEngine.UI;
 using Valve.VR.InteractionSystem;
 
 
-public class PHSlider : MonoBehaviour
+public class PHSlider : MonoBehaviour, IMenu
 {
-
     public LinearMapping linearMapping;
     public LinearDrive myLinearDrive;
-
     private float currentLinearMapping = float.NaN;
 	private int phValue;
 	private GameObject phCanvas;
 	private Text phText;
-
 	public GameObject myHandle;
 
 	//-------------------------------------------------
@@ -73,9 +70,35 @@ public class PHSlider : MonoBehaviour
 		return phText.text;
 	}
 
-	public void ResetPhHigh()
+	public void ResetPhValue()
 	{
 		linearMapping.value = 1;
-        myHandle.transform.position = Vector3.Lerp(myLinearDrive.startPosition.position, myLinearDrive.endPosition.position, linearMapping.value);
+		SynchronizeHandleToValue();
     }
+
+	public void IncrementValue() {
+		if (linearMapping.value + 0.1f > 1) {
+			linearMapping.value = 1;
+		}
+		else {
+			linearMapping.value += 0.1f;
+		}
+		SynchronizeHandleToValue();
+	}
+
+	public void DecrementValue() {
+		if (linearMapping.value - 0.1f < 0) {
+			linearMapping.value = 0;
+		}
+		else {
+			linearMapping.value -= 0.1f;
+		}
+		SynchronizeHandleToValue();
+	}
+
+	public void SynchronizeHandleToValue(){
+		myHandle.transform.position = Vector3.Lerp(myLinearDrive.startPosition.position, myLinearDrive.endPosition.position, linearMapping.value);
+	}
+
+	
 }

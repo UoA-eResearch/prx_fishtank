@@ -4,7 +4,8 @@ using UnityEngine;
 using UnityEngine.UI;
 using Valve.VR.InteractionSystem;
 
-public class PartyModeSwitch : MonoBehaviour {
+public class PartyModeSwitch : MonoBehaviour, IMenu
+{
 
 	public LinearMapping linearMapping;
 	public Text text;
@@ -14,6 +15,9 @@ public class PartyModeSwitch : MonoBehaviour {
 	public GameObject scoreboardbest;
 	public GameObject chartStats;
 	public GameObject heldScoreboard;
+	public Transform start;
+	public Transform end;
+	public GameObject myHandle;
 	
 	// Update is called once per frame
 	void Update ()
@@ -37,6 +41,20 @@ public class PartyModeSwitch : MonoBehaviour {
 			heldScoreboard.SetActive(false);
 		}
 	}
+
+		public void IncrementValue(){
+		linearMapping.value = 1f;
+		SynchronizeHandleToValue();
+		}
+
+		public void DecrementValue() {
+			linearMapping.value = 0f;
+			SynchronizeHandleToValue();
+		}
+
+		public void SynchronizeHandleToValue(){
+			myHandle.transform.position = Vector3.Lerp(start.position, end.position, linearMapping.value);
+		}
 
 	public bool GetPartyMode()
 	{
