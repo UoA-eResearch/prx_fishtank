@@ -72,7 +72,9 @@ public class PHSlider : MonoBehaviour, IMenu
 
 	public void ResetPhValue()
 	{
+		Debug.Log("ph value was: " + linearMapping.value);
 		linearMapping.value = 1;
+		Debug.Log("ph value is now: " + linearMapping.value);
 		SynchronizeHandleToValue();
     }
 
@@ -97,7 +99,14 @@ public class PHSlider : MonoBehaviour, IMenu
 	}
 
 	public void SynchronizeHandleToValue(){
+		// Debug.Log("handle position was: " + myHandle.transform.position);
+		Vector3 originalPos = myHandle.transform.position;
 		myHandle.transform.position = Vector3.Lerp(myLinearDrive.startPosition.position, myLinearDrive.endPosition.position, linearMapping.value);
+		Vector3 newPos = myHandle.transform.position;
+		// Debug.Log("handle position is now: " + myHandle.transform.position);
+		if (originalPos != newPos) {
+			Debug.Log("position was changed");
+		}
 	}
 
 	

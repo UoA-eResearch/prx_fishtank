@@ -84,6 +84,9 @@ public class Ring: MonoBehaviour
 	public Material opaqueMaterial;
 	public Material transparentMaterial;
 
+	public AudioClip sfxElectricity01;
+	public AudioClip sfxElectricity02;
+
 	void Start()
 	{
 		// runtime shader swap setup
@@ -437,6 +440,27 @@ public class Ring: MonoBehaviour
 		}
 	}
 
+	public void NanoWireOn(){
+		if (!psElectric01.isPlaying)
+		{
+			psElectric01.Play();
+            //r.SetShaderTrans(1.0f);
+            StartCoroutine(TransitionToTransparent(0.8f));
+
+			if (Random.value < 0.5f)
+			{
+				ringAudioSource.clip = sfxElectricity01;
+			}
+			else
+			{
+				ringAudioSource.clip = sfxElectricity02;
+			}
+			ringAudioSource.volume = 0.05f;
+			ringAudioSource.loop = true;
+			ringAudioSource.Play();			
+		}
+	}
+
     // TEMP: Added ringMaterial with standard shader while material changes undecided.
 	public IEnumerator TransitionToTransparent(float duration)
 	{
@@ -489,12 +513,14 @@ public class Ring: MonoBehaviour
 
     public void SetShaderTrans()
     {
+		// note: currently replaced by TransitionToTransparent()
         myMeshPart0Renderer.material.shader = shaderTrans;
         myMeshPart1Renderer.material.shader = shaderTrans;
     }
 
     public void SetShaderVertexCol()
 	{
+		// note: currently replaced by TransitionToOpaque()
         myMeshPart0Renderer.material.shader = shaderVert;
         myMeshPart1Renderer.material.shader = shaderVert;
     }

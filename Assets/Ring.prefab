@@ -10755,6 +10755,8 @@ MonoBehaviour:
   sfxRingSpawn: {fileID: 8300000, guid: ffd146fc7d429044096363f6c1adb5e3, type: 3}
   opaqueMaterial: {fileID: 2100000, guid: b836044584d01d54696b77b7cfa74c63, type: 2}
   transparentMaterial: {fileID: 2100000, guid: 32848f2287766e045a89d06eea845975, type: 2}
+  sfxElectricity01: {fileID: 8300000, guid: 706ffd57b55cd0b4bbe2d5f3367e631f, type: 3}
+  sfxElectricity02: {fileID: 8300000, guid: 9174cfd9d08c7734fafbf032fbe65cc7, type: 3}
 --- !u!114 &114916512091932642
 MonoBehaviour:
   m_ObjectHideFlags: 1
