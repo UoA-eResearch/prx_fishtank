@@ -87,6 +87,10 @@ public class Ring: MonoBehaviour
 	public AudioClip sfxElectricity01;
 	public AudioClip sfxElectricity02;
 
+	private bool nanoWireOn = false;
+
+	public float materialTransitionSpeed = 0.8f;
+
 	void Start()
 	{
 		// runtime shader swap setup
@@ -178,6 +182,9 @@ public class Ring: MonoBehaviour
 	{
         //psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
         age = age + Time.deltaTime;
+
+		UpdateRingMaterials();
+		
 
 		if (fishtankScript.doNanoParticles)
 		{
@@ -441,11 +448,15 @@ public class Ring: MonoBehaviour
 	}
 
 	public void NanoWireOn(){
+		if (nanoWireOn) {
+			return;
+		}
+		nanoWireOn = true;
 		if (!psElectric01.isPlaying)
 		{
 			psElectric01.Play();
             //r.SetShaderTrans(1.0f);
-            StartCoroutine(TransitionToTransparent(0.8f));
+            // StartCoroutine(TransitionToTransparent());
 
 			if (Random.value < 0.5f)
 			{
@@ -461,55 +472,82 @@ public class Ring: MonoBehaviour
 		}
 	}
 
-    // TEMP: Added ringMaterial with standard shader while material changes undecided.
-	public IEnumerator TransitionToTransparent(float duration)
+	public void NanoWireOff()
 	{
-		// FIXME: When string stack is grabbed it runs the transition to transparent co-routine
-        Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
-        float elapsedTime = 0f;
-		// switch to transparent material
-		foreach (Renderer r in subRenderers) {
+		if (!nanoWireOn) {
+			return;
+		}
+		nanoWireOn = false;
+		if (psElectric01.isPlaying)
+		{
+			psElectric01.Stop();
+			// r.SetShaderVertexCol();
+			ringAudioSource.Stop();
+		}
+	}
+
+	public void TransitionToTransparent(Renderer r) {
+		if (!nanoWireOn) {
+			return;
+		}
+		if (r.material.name.Contains("Transparent")) {
+			Debug.Log(r.material.name);
+		} else {
 			r.material = transparentMaterial;
 		}
-        while (elapsedTime < duration)
-        {
-            foreach (Renderer r in subRenderers)
-            {
-                // Wouldn't let me set individual colour values.
-                Color curColor = r.material.color;
-                Color newColor = curColor;
+		if (r.material.color.a > 0) {
+			Color curColor = r.material.color;
+			Color newColor = curColor;
                 // newColor.a = 1 - ((elapsedTime / duration));
-				newColor.a = Mathf.Lerp(1, 0, elapsedTime/duration);
-                r.material.color = newColor;
-                elapsedTime += Time.deltaTime;
-            }
-            yield return null;
-        }
-    }
-
-	public IEnumerator TransitionToOpaque(float duration)
-	{
-		// FIXME: Ring sometimes gets stuck on opaque material when docked.
-        Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
-        float elapsedTime = 0f;
-        while (elapsedTime < duration)
-        {
-            foreach (Renderer r in subRenderers)
-            {
-                // Wouldn't let me set individual colour values.
-                Color curColor = r.material.color;
-                Color newColor = curColor;
-                newColor.a = elapsedTime / duration;
-                r.material.color = newColor;
-                elapsedTime += Time.deltaTime;
-            }
-            yield return null;
-        }
-		// switch to opaque material
-		foreach (Renderer subMeshRenderer in subRenderers) {
-			subMeshRenderer.material = opaqueMaterial;
+			newColor.a = Mathf.Clamp(newColor.a - (Time.deltaTime/materialTransitionSpeed), 0.1f, 1);
+			r.material.color = newColor;
 		}
-    }
+	}
+
+	public void TransitionToOpaque(Renderer r) {
+		if (nanoWireOn) {
+			return;
+		}
+		if (r.material.color.a == 1) {
+			if (r.material.name.Contains("Transparent")) {
+				r.material = opaqueMaterial;
+			}
+		} else {
+			Color curColor = r.material.color;
+			Color newColor = curColor;
+			newColor.a = Mathf.Clamp(newColor.a + (Time.deltaTime/materialTransitionSpeed), 0.1f, 1);
+			r.material.color = newColor;
+		}
+	}
+
+	private void UpdateRingMaterials() {
+		Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
+		foreach (Renderer r in subRenderers) {
+			if (nanoWireOn) {
+				if (!r.material.name.Contains("Transparent")) {
+					r.material = transparentMaterial;
+				}
+				if (r.material.color.a > 0) {
+					Color curColor = r.material.color;
+					Color newColor = curColor;
+						// newColor.a = 1 - ((elapsedTime / duration));
+					newColor.a = Mathf.Clamp(newColor.a - (Time.deltaTime/materialTransitionSpeed), 0.1f, 1);
+					r.material.color = newColor;
+				}
+			} else {
+				if (r.material.color.a == 1) {
+					if (r.material.name.Contains("Transparent")) {
+						r.material = opaqueMaterial;
+					}
+				} else {
+					Color curColor = r.material.color;
+					Color newColor = curColor;
+					newColor.a = Mathf.Clamp(newColor.a + (Time.deltaTime/materialTransitionSpeed), 0.1f, 1);
+					r.material.color = newColor;
+				}
+			}
+		}
+	}
 
     public void SetShaderTrans()
     {
