@@ -6629,7 +6629,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: b836044584d01d54696b77b7cfa74c63, type: 2}
+  - {fileID: 2100000, guid: 943f31fdee1036241be287b55b889862, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -7649,7 +7649,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: b836044584d01d54696b77b7cfa74c63, type: 2}
+  - {fileID: 2100000, guid: 943f31fdee1036241be287b55b889862, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -10753,11 +10753,13 @@ MonoBehaviour:
   sjAcceptorToDonorOn: 0
   ringAudioSource: {fileID: 0}
   sfxRingSpawn: {fileID: 8300000, guid: ffd146fc7d429044096363f6c1adb5e3, type: 3}
-  opaqueMaterial: {fileID: 2100000, guid: b836044584d01d54696b77b7cfa74c63, type: 2}
-  transparentMaterial: {fileID: 2100000, guid: 32848f2287766e045a89d06eea845975, type: 2}
+  opaqueMaterial: {fileID: 2100000, guid: 943f31fdee1036241be287b55b889862, type: 2}
+  transparentMaterial: {fileID: 2100000, guid: 2fafbef6cce9e074891cf8a4642dd290, type: 2}
   sfxElectricity01: {fileID: 8300000, guid: 706ffd57b55cd0b4bbe2d5f3367e631f, type: 3}
   sfxElectricity02: {fileID: 8300000, guid: 9174cfd9d08c7734fafbf032fbe65cc7, type: 3}
-  materialTransitionSpeed: 0.8
+  materialTransitionSpeed: 5
+  minTransparence: 0.3
+  maxTransparence: 1
 --- !u!114 &114916512091932642
 MonoBehaviour:
   m_ObjectHideFlags: 1

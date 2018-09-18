@@ -89,7 +89,9 @@ public class Ring: MonoBehaviour
 
 	private bool nanoWireOn = false;
 
-	public float materialTransitionSpeed = 0.8f;
+	public float materialTransitionSpeed = 2.0f;
+	public float minTransparence = 0.3f;
+	public float maxTransparence = 1.0f;
 
 	void Start()
 	{
@@ -486,63 +488,35 @@ public class Ring: MonoBehaviour
 		}
 	}
 
-	public void TransitionToTransparent(Renderer r) {
-		if (!nanoWireOn) {
-			return;
-		}
-		if (r.material.name.Contains("Transparent")) {
-			Debug.Log(r.material.name);
-		} else {
-			r.material = transparentMaterial;
-		}
-		if (r.material.color.a > 0) {
-			Color curColor = r.material.color;
-			Color newColor = curColor;
-                // newColor.a = 1 - ((elapsedTime / duration));
-			newColor.a = Mathf.Clamp(newColor.a - (Time.deltaTime/materialTransitionSpeed), 0.1f, 1);
-			r.material.color = newColor;
-		}
-	}
-
-	public void TransitionToOpaque(Renderer r) {
-		if (nanoWireOn) {
-			return;
-		}
-		if (r.material.color.a == 1) {
-			if (r.material.name.Contains("Transparent")) {
-				r.material = opaqueMaterial;
-			}
-		} else {
-			Color curColor = r.material.color;
-			Color newColor = curColor;
-			newColor.a = Mathf.Clamp(newColor.a + (Time.deltaTime/materialTransitionSpeed), 0.1f, 1);
-			r.material.color = newColor;
-		}
-	}
-
 	private void UpdateRingMaterials() {
 		Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
 		foreach (Renderer r in subRenderers) {
 			if (nanoWireOn) {
 				if (!r.material.name.Contains("Transparent")) {
+					// make sure transparence 1 before transitioning.
+					if (transparentMaterial.color.a != 1) {
+						Color c = transparentMaterial.color;
+						c.a = 0;
+						transparentMaterial.color = c;
+					}
 					r.material = transparentMaterial;
 				}
-				if (r.material.color.a > 0) {
+				if (r.material.color.a > minTransparence) {
 					Color curColor = r.material.color;
 					Color newColor = curColor;
 						// newColor.a = 1 - ((elapsedTime / duration));
-					newColor.a = Mathf.Clamp(newColor.a - (Time.deltaTime/materialTransitionSpeed), 0.1f, 1);
+					newColor.a = Mathf.Clamp(newColor.a - (Time.deltaTime/materialTransitionSpeed), minTransparence, maxTransparence);
 					r.material.color = newColor;
 				}
 			} else {
-				if (r.material.color.a == 1) {
+				if (r.material.color.a == maxTransparence) {
 					if (r.material.name.Contains("Transparent")) {
 						r.material = opaqueMaterial;
 					}
 				} else {
 					Color curColor = r.material.color;
 					Color newColor = curColor;
-					newColor.a = Mathf.Clamp(newColor.a + (Time.deltaTime/materialTransitionSpeed), 0.1f, 1);
+					newColor.a = Mathf.Clamp(newColor.a + (Time.deltaTime/materialTransitionSpeed), minTransparence, maxTransparence);
 					r.material.color = newColor;
 				}
 			}
