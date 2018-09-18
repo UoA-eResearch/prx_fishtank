@@ -80,6 +80,19 @@ public class Ring: MonoBehaviour
 	public AudioSource ringAudioSource;
 	public AudioClip sfxRingSpawn;
 
+	// public vars
+	public Material opaqueMaterial;
+	public Material transparentMaterial;
+
+	public AudioClip sfxElectricity01;
+	public AudioClip sfxElectricity02;
+
+	private bool nanoWireOn = false;
+
+	public float materialTransitionSpeed = 1.0f;
+	public float minTransparence = 0.2f;
+	public float maxTransparence = 1.0f;
+
 	void Start()
 	{
 		// runtime shader swap setup
@@ -169,8 +182,11 @@ public class Ring: MonoBehaviour
 
 	void Update()
 	{
-		//psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
-		age = age + Time.deltaTime;
+        //psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
+        age = age + Time.deltaTime;
+
+		UpdateRingMaterials();
+		
 
 		if (fishtankScript.doNanoParticles)
 		{
@@ -433,17 +449,93 @@ public class Ring: MonoBehaviour
 		}
 	}
 
-	public void SetShaderTrans()
-	{
-		myMeshPart0Renderer.material.shader = shaderTrans;
-		myMeshPart1Renderer.material.shader = shaderTrans;
+	public void NanoWireOn(){
+		if (nanoWireOn) {
+			return;
+		}
+		nanoWireOn = true;
+		if (!psElectric01.isPlaying)
+		{
+			psElectric01.Play();
+            //r.SetShaderTrans(1.0f);
+            // StartCoroutine(TransitionToTransparent());
+
+			if (Random.value < 0.5f)
+			{
+				ringAudioSource.clip = sfxElectricity01;
+			}
+			else
+			{
+				ringAudioSource.clip = sfxElectricity02;
+			}
+			ringAudioSource.volume = 0.05f;
+			ringAudioSource.loop = true;
+			ringAudioSource.Play();			
+		}
 	}
 
-	public void SetShaderVertexCol()
+	public void NanoWireOff()
 	{
-		myMeshPart0Renderer.material.shader = shaderVert;
-		myMeshPart1Renderer.material.shader = shaderVert;
+		if (!nanoWireOn) {
+			return;
+		}
+		nanoWireOn = false;
+		if (psElectric01.isPlaying)
+		{
+			psElectric01.Stop();
+			// r.SetShaderVertexCol();
+			ringAudioSource.Stop();
+		}
 	}
+
+	private void UpdateRingMaterials() {
+		Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
+		foreach (Renderer r in subRenderers) {
+			if (nanoWireOn) {
+				if (!r.material.name.Contains("Transparent")) {
+					// make sure transparence 1 before transitioning.
+					if (transparentMaterial.color.a != 1) {
+						Color c = transparentMaterial.color;
+						c.a = 0;
+						transparentMaterial.color = c;
+					}
+					r.material = transparentMaterial;
+				}
+				if (r.material.color.a > minTransparence) {
+					Color curColor = r.material.color;
+					Color newColor = curColor;
+						// newColor.a = 1 - ((elapsedTime / duration));
+					newColor.a = Mathf.Clamp(newColor.a - (Time.deltaTime/materialTransitionSpeed), minTransparence, maxTransparence);
+					r.material.color = newColor;
+				}
+			} else {
+				if (r.material.color.a == maxTransparence) {
+					if (r.material.name.Contains("Transparent")) {
+						r.material = opaqueMaterial;
+					}
+				} else {
+					Color curColor = r.material.color;
+					Color newColor = curColor;
+					newColor.a = Mathf.Clamp(newColor.a + (Time.deltaTime/materialTransitionSpeed), minTransparence, maxTransparence);
+					r.material.color = newColor;
+				}
+			}
+		}
+	}
+
+    public void SetShaderTrans()
+    {
+		// note: currently replaced by TransitionToTransparent()
+        myMeshPart0Renderer.material.shader = shaderTrans;
+        myMeshPart1Renderer.material.shader = shaderTrans;
+    }
+
+    public void SetShaderVertexCol()
+	{
+		// note: currently replaced by TransitionToOpaque()
+        myMeshPart0Renderer.material.shader = shaderVert;
+        myMeshPart1Renderer.material.shader = shaderVert;
+    }
 
 	public void breakRing(Hand currentHand)
 	{

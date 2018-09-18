@@ -1453,22 +1453,20 @@ public class Fishtank : MonoBehaviour
 
 	void UpdateNanoWireFx(Ring r)
 	{
-
 		// nanowire electric particles
 		// turns on fx for rings in stacks of 3 or more
 		// this method avoids keeping arrays or lists for stacks ;)
-
 		if (doNanoParticles)
 		{
 			if (!r.dockedToAcceptor && !r.dockedToDonor)
 			{
 				//free ring
-				NanoWireOff(r);
+				r.NanoWireOff();
 			}
 			else if (r.dockedToAcceptor && r.dockedToDonor)
 			{
 				// two neighbours docked either side
-				NanoWireOn(r);
+				r.NanoWireOn();
 			}
 
 
@@ -1480,16 +1478,17 @@ public class Fishtank : MonoBehaviour
 					if (myAcceptorRing.dockedToAcceptor)
 					{
 						//(at least) two neighbours docked on Acceptor side
-						NanoWireOn(r);
+						r.NanoWireOn();
+
 					}
 					else
 					{
-						NanoWireOff(r);
+						r.NanoWireOff();
 					}
 				}
 				else
 				{
-					NanoWireOff(r);
+					r.NanoWireOff();
 				}
 
 			}
@@ -1502,67 +1501,24 @@ public class Fishtank : MonoBehaviour
 					if (myDonorRing.dockedToDonor)
 					{
 						//(at least) two neighbours docked on Donor side
-						NanoWireOn(r);
+						r.NanoWireOn();
 					}
 					else
 					{
-						NanoWireOff(r);
+						r.NanoWireOff();
 					}
 				}
 				else
 				{
-					NanoWireOff(r);
+					r.NanoWireOff();
 				}
-
-
 			}
 		}
 		else
 		{
-			NanoWireOff(r);
-		}
-
-
-
-
-	}
-
-	void NanoWireOn(Ring r)
-	{
-		if (!r.psElectric01.isPlaying)
-		{
-			r.psElectric01.Play();
-			r.SetShaderTrans();
-
-			//
-
-			if (Random.value < 0.5f)
-			{
-				r.ringAudioSource.clip = sfxElectricity01;
-
-			}
-			else
-			{
-				r.ringAudioSource.clip = sfxElectricity02;
-			}
-			r.ringAudioSource.volume = 0.05f;
-			r.ringAudioSource.loop = true;
-			r.ringAudioSource.Play();			
-		}
-
-	}
-
-	void NanoWireOff(Ring r)
-	{
-		if (r.psElectric01.isPlaying)
-		{
-			r.psElectric01.Stop();
-			r.SetShaderVertexCol();
-
-			r.ringAudioSource.Stop();
+			r.NanoWireOff();
 		}
 	}
-
 
 	void DetectAntiparallel()
 	{
@@ -2179,19 +2135,10 @@ public class Fishtank : MonoBehaviour
 		if (activeCheck > 1) {
 			Debug.Log("Error: More than one menu active");
 		}
-		Debug.Log("Active menu is " + activeMenu.name);
 		return activeMenu;
 	}
 
 	void UpdateKeyboardInput() {
-		// if (Input.GetKeyDown(KeyCode.UpArrow)) {
-		// 	phSlider.UpdatePhValue(0.1f);
-		// }
-		// if (Input.GetKeyDown(KeyCode.DownArrow)) {
-		// 	phSlider.UpdatePhValue(-0.1f);
-		// }
-
-		// toggle menus with side arrows.
 		if (Input.GetKeyDown(KeyCode.LeftArrow)) {
 			SwitchMenuUIMode(-1);
 		}
