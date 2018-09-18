@@ -89,8 +89,8 @@ public class Ring: MonoBehaviour
 
 	private bool nanoWireOn = false;
 
-	public float materialTransitionSpeed = 2.0f;
-	public float minTransparence = 0.3f;
+	public float materialTransitionSpeed = 1.0f;
+	public float minTransparence = 0.2f;
 	public float maxTransparence = 1.0f;
 
 	void Start()

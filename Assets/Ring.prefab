@@ -10757,8 +10757,8 @@ MonoBehaviour:
   transparentMaterial: {fileID: 2100000, guid: 2fafbef6cce9e074891cf8a4642dd290, type: 2}
   sfxElectricity01: {fileID: 8300000, guid: 706ffd57b55cd0b4bbe2d5f3367e631f, type: 3}
   sfxElectricity02: {fileID: 8300000, guid: 9174cfd9d08c7734fafbf032fbe65cc7, type: 3}
-  materialTransitionSpeed: 5
-  minTransparence: 0.3
+  materialTransitionSpeed: 1
+  minTransparence: 0.2
   maxTransparence: 1
 --- !u!114 &114916512091932642
 MonoBehaviour:
