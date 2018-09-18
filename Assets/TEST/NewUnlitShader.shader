@@ -18,6 +18,8 @@
         Pass
         {
             CGPROGRAM
+// Upgrade NOTE: excluded shader from DX11; has structs without semantics (struct v2f members color)
+#pragma exclude_renderers d3d11
             #pragma vertex vert
             #pragma fragment frag
 
@@ -26,12 +28,13 @@
             struct appdata
             {
                 float4 vertex : POSITION;
-                float2 uv : TEXCOORD0;
+                float2 app_uv : TEXCOORD0;
             };
 
+            // This is the v object.
             struct v2f
             {
-                float2 uv : TEXCOORD0;
+                float2 other_uv : TEXCOORD0;
                 float4 vertex : SV_POSITION;
             };
 
@@ -45,14 +48,14 @@
                 v2f o;
                 // v.vertex.x += sin(_Time.y * _Speed + v.vertex.y * _Amplitude) * _Distance * _Amount;
                 o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = TRANSFORM_TEX(v.uv, _MainTex);
+                o.other_uv = TRANSFORM_TEX(v.app_uv, _MainTex);
                 return o;
             }
             
             fixed4 frag (v2f i) : SV_Target
             {
                 // sample the texture
-                fixed4 col = tex2D(_MainTex, i.uv) + i.vertex * _TintColor;
+                fixed4 col = tex2D(_MainTex, i.other_uv) + i.vertex * _TintColor;
                 col.a = _Transparency;
                 // clip(col.r - _CutoutThresh);
                 return col;
