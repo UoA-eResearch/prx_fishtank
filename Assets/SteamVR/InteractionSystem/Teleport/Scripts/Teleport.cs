@@ -1140,7 +1140,6 @@ namespace Valve.VR.InteractionSystem
 				{
 					Vector2 touchpad = (hand.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
 					if (gameSettingsManager.getTouchCycling()) {
-						Debug.Log("from teleport script, using touch cycling");
 						if (touchpad.y > 0.25)
 						{
 							return hand.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad);
@@ -1150,7 +1149,6 @@ namespace Valve.VR.InteractionSystem
 							return false;
 						}
 					} else {
-						Debug.Log("from teleport script, NOT using touch cycling");
 						return hand.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad);
 					}
 				}

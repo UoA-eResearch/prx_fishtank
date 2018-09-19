@@ -2025,6 +2025,7 @@ public class Fishtank : MonoBehaviour
 			bool showMenuHint = false;
 			Vector2 touchpad = (myHand1.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
 			if (gameSettingsManager.getTouchCycling() == false) {
+				// determined by true or false text in Assets/StreamingAssets/config.xml
 				teleportHintUI.SetActive(true);
 				menuHintUI.SetActive(false);
 			} else {

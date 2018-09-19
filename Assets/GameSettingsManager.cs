@@ -11,7 +11,7 @@ public class GameSettingsManager : MonoBehaviour {
 	void Awake()
 	{
 		XmlDocument doc = new XmlDocument();
-		string settingsPath = Application.streamingAssetsPath + "/settings.xml";
+		string settingsPath = Application.streamingAssetsPath + "/config.xml";
 		doc.Load(settingsPath);
 		XmlNode touchCycling = doc.DocumentElement.SelectSingleNode("/root/input/touchpad-menu-cycling");
 		if (touchCycling.InnerText == "true") {
@@ -29,7 +29,7 @@ public class GameSettingsManager : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-		
+
 	}
 
 	public bool getTouchCycling() {
