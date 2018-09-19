@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class Fishtank : MonoBehaviour
 {
-
+	public GameSettingsManager gameSettingsManager;
 	public GameObject monomerPrefab;
 	public GameObject dimerPrefab;
 	public GameObject ringPrefab;
@@ -2024,49 +2024,49 @@ public class Fishtank : MonoBehaviour
 		{
 			bool showMenuHint = false;
 			Vector2 touchpad = (myHand1.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
-			if ((touchpad.x < -0.2) && (touchpad.y < 0.2))
-			{
-				if (!myHand1TouchPressedLastLastUpdate &&  myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
-				{
-					myHand1TouchPressedLastLastUpdate = true;
-					//Debug.Log("Pad Press left!");
-					SwitchMenuUIMode(-1);
-				}
-				showMenuHint = true;
-
-			}
-			if ((touchpad.x > 0.2) && (touchpad.y < 0.2))
-			{
-				if (!myHand1TouchPressedLastLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
-				{
-					myHand1TouchPressedLastLastUpdate = true;
-					//Debug.Log("Pad Press right!");
-					SwitchMenuUIMode(1);
-				}
-				showMenuHint = true;
-			}
-
-			if (showMenuHint)
-			{
-				menuHintUI.SetActive(true);
-			}
-			else
-			{
-				menuHintUI.SetActive(false);
-			}
-
-			if (touchpad.y > 0.25) // value set in teleport.cs
-			{
+			if (gameSettingsManager.getTouchCycling() == false) {
 				teleportHintUI.SetActive(true);
-			}
-			else
-			{
-				teleportHintUI.SetActive(false);
-			}
-
-			if (!myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
-			{
-				myHand1TouchPressedLastLastUpdate = false;
+				menuHintUI.SetActive(false);
+			} else {
+				if ((touchpad.x < -0.2) && (touchpad.y < 0.2)) {
+					if (!myHand1TouchPressedLastLastUpdate &&  myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+					{
+						myHand1TouchPressedLastLastUpdate = true;
+						//Debug.Log("Pad Press left!");
+						SwitchMenuUIMode(-1);
+					}
+					showMenuHint = true;
+				}
+				if ((touchpad.x > 0.2) && (touchpad.y < 0.2))
+				{
+					if (!myHand1TouchPressedLastLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+					{
+						myHand1TouchPressedLastLastUpdate = true;
+						//Debug.Log("Pad Press right!");
+						SwitchMenuUIMode(1);
+					}
+					showMenuHint = true;
+				}
+				if (showMenuHint)
+				{
+					menuHintUI.SetActive(true);
+				}
+				else
+				{
+					menuHintUI.SetActive(false);
+				}
+				if (touchpad.y > 0.25) // value set in teleport.cs
+				{
+					teleportHintUI.SetActive(true);
+				}
+				else
+				{
+					teleportHintUI.SetActive(false);
+				}
+				if (!myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+				{
+					myHand1TouchPressedLastLastUpdate = false;
+				}
 			}
 		}
 

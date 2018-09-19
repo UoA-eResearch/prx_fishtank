@@ -13,6 +13,7 @@ namespace Valve.VR.InteractionSystem
 	//-------------------------------------------------------------------------
 	public class Teleport : MonoBehaviour
 	{
+		public GameSettingsManager gameSettingsManager;
 		public LayerMask traceLayerMask;
 		public LayerMask floorFixupTraceLayerMask;
 		public float floorFixupMaximumTraceDistance = 1.0f;
@@ -1138,13 +1139,19 @@ namespace Valve.VR.InteractionSystem
 				else
 				{
 					Vector2 touchpad = (hand.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
-					if (touchpad.y > 0.25)
-					{
+					if (gameSettingsManager.getTouchCycling()) {
+						Debug.Log("from teleport script, using touch cycling");
+						if (touchpad.y > 0.25)
+						{
+							return hand.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad);
+						}
+						else
+						{
+							return false;
+						}
+					} else {
+						Debug.Log("from teleport script, NOT using touch cycling");
 						return hand.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad);
-					}
-					else
-					{
-						return false;
 					}
 				}
 			}
