@@ -49,17 +49,8 @@ public class Ring: MonoBehaviour
 	//public float psAccretion01EmissionRateCurrent;
 
 	// Runtime Shader Interaction
-	public Shader shaderVert;
-	public Shader shaderTrans;
-
-	public GameObject meshPart0;
-	public GameObject meshPart1;
-
 	public Renderer myMeshPart0Renderer;
 	public Renderer myMeshPart1Renderer;
-
-	public Color colorMeshPart0;
-	public Color colorMeshPart1;
 
 	//public SpringJoint sjDonorToAcceptor;
 	//public SpringJoint sjAcceptorToDonor;
@@ -81,46 +72,28 @@ public class Ring: MonoBehaviour
 	public AudioClip sfxRingSpawn;
 
 	// public vars
-	public Material opaqueMaterial;
-	public Material transparentMaterial;
-
 	public AudioClip sfxElectricity01;
 	public AudioClip sfxElectricity02;
 
 	private bool nanoWireOn = false;
-
 	public float materialTransitionSpeed = 1.0f;
 	public float minTransparence = 0.2f;
 	public float maxTransparence = 1.0f;
 
 	void Start()
 	{
-		// runtime shader swap setup
-
-		shaderVert = Shader.Find(" Vertex Colored"); // WTF? unbelievably this shader name has a <space> before the 'V'
-		shaderTrans = Shader.Find("Transparent/Diffuse");
-
-		meshPart0 = gameObject.transform.Find("Ring_MeshPart0").gameObject;
-		meshPart1 = gameObject.transform.Find("Ring_MeshPart1").gameObject;
-
-		myMeshPart0Renderer = meshPart0.GetComponent<Renderer>();
-		myMeshPart1Renderer = meshPart1.GetComponent<Renderer>();
-
-		colorMeshPart0 = myMeshPart0Renderer.material.color;
-		colorMeshPart0.a = 0.1f;
-		myMeshPart0Renderer.material.SetColor("_Color", colorMeshPart0);
-
-		colorMeshPart1 = myMeshPart1Renderer.material.color;
-		colorMeshPart1.a = 0.1f;
-		myMeshPart1Renderer.material.SetColor("_Color", colorMeshPart1);
-
-		myNanoParticle = gameObject.transform.Find("Wire").gameObject;
+		// scripted fail safe references to certain assets
+		if (myNanoParticle == null) {
+			myNanoParticle = gameObject.transform.Find("Wire").gameObject;
+		}
 		myNanoParticle.SetActive(true);
 		myNanoParticleLocalScaleInit = myNanoParticle.transform.localScale;
 		myNanoParticle.transform.localScale = 0.0f * myNanoParticleLocalScaleInit;
 
-		GameObject myRingLightGO = gameObject.transform.Find("ringLight").gameObject;
-		myRingLight = myRingLightGO.GetComponent<Light>();
+		if (myRingLight != null) {
+			GameObject myRingLightGO = gameObject.transform.Find("ringLight").gameObject;
+			myRingLight = myRingLightGO.GetComponent<Light>();
+		}
 		myRingLightMaxIntensity = myRingLight.intensity;
 		myRingLight.intensity = 0.0f;
 	}
@@ -483,7 +456,6 @@ public class Ring: MonoBehaviour
 		if (psElectric01.isPlaying)
 		{
 			psElectric01.Stop();
-			// r.SetShaderVertexCol();
 			ringAudioSource.Stop();
 		}
 	}
@@ -492,28 +464,14 @@ public class Ring: MonoBehaviour
 		Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
 		foreach (Renderer r in subRenderers) {
 			if (nanoWireOn) {
-				if (!r.material.name.Contains("Transparent")) {
-					// make sure transparence 1 before transitioning.
-					if (transparentMaterial.color.a != 1) {
-						Color c = transparentMaterial.color;
-						c.a = 0;
-						transparentMaterial.color = c;
-					}
-					r.material = transparentMaterial;
-				}
 				if (r.material.color.a > minTransparence) {
 					Color curColor = r.material.color;
 					Color newColor = curColor;
-						// newColor.a = 1 - ((elapsedTime / duration));
 					newColor.a = Mathf.Clamp(newColor.a - (Time.deltaTime/materialTransitionSpeed), minTransparence, maxTransparence);
 					r.material.color = newColor;
 				}
 			} else {
-				if (r.material.color.a == maxTransparence) {
-					if (r.material.name.Contains("Transparent")) {
-						r.material = opaqueMaterial;
-					}
-				} else {
+				if (r.material.color.a != maxTransparence) {
 					Color curColor = r.material.color;
 					Color newColor = curColor;
 					newColor.a = Mathf.Clamp(newColor.a + (Time.deltaTime/materialTransitionSpeed), minTransparence, maxTransparence);
@@ -522,20 +480,6 @@ public class Ring: MonoBehaviour
 			}
 		}
 	}
-
-    public void SetShaderTrans()
-    {
-		// note: currently replaced by TransitionToTransparent()
-        myMeshPart0Renderer.material.shader = shaderTrans;
-        myMeshPart1Renderer.material.shader = shaderTrans;
-    }
-
-    public void SetShaderVertexCol()
-	{
-		// note: currently replaced by TransitionToOpaque()
-        myMeshPart0Renderer.material.shader = shaderVert;
-        myMeshPart1Renderer.material.shader = shaderVert;
-    }
 
 	public void breakRing(Hand currentHand)
 	{

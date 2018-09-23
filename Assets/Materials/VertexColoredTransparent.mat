@@ -6,8 +6,8 @@ Material:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
-  m_Name: Vertex_Colored_Mat
-  m_Shader: {fileID: 4800000, guid: c90e3d03e56367344be0f4c4c8bb224e, type: 3}
+  m_Name: VertexColoredTransparent
+  m_Shader: {fileID: 4800000, guid: 0cd0679d5c4d81149b6b96656959d2e6, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -64,7 +64,7 @@ Material:
     - _Distance: 2.07
     - _DstBlend: 0
     - _GlossMapScale: 1
-    - _Glossiness: 0.4
+    - _Glossiness: 0.621
     - _GlossyReflections: 1
     - _Metallic: 0
     - _Mode: 0
@@ -78,6 +78,6 @@ Material:
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
-    - _Color: {r: 0.85294116, g: 0.73378026, b: 0.597, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _TintColor: {r: 0.9117647, g: 0.08715395, b: 0.08715395, a: 1}

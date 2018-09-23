@@ -1,4 +1,4 @@
-﻿ Shader "Custom/StandardVertexOpaque" {
+﻿ Shader "Custom/VertexColoredTransparent" {
      Properties {
          _Color ("Color", Color) = (1,1,1,1)
          _MainTex ("Albedo (RGB)", 2D) = "white" {}
@@ -6,11 +6,17 @@
          _Metallic ("Metallic", Range(0,1)) = 0.0
      }
      SubShader {
-		Tags { "RenderType"="Opaque"}
+		Tags { "RenderType"="Transparent"}
         LOD 200
+        Cull Off
+
+        Pass {
+            ZWrite On
+            ColorMask 0
+        }
          
          CGPROGRAM
-         #pragma surface surf Standard vertex:vert fullforwardshadows
+         #pragma surface surf Standard vertex:vert fullforwardshadows alpha
          #pragma target 3.0
          struct Input {
              float2 uv_MainTex;

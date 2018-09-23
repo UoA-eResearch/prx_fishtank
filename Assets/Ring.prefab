@@ -10722,8 +10722,8 @@ MonoBehaviour:
   ringInterlocked: 0
   fishtankScript: {fileID: 0}
   fishtankGO: {fileID: 0}
-  myNanoParticle: {fileID: 0}
-  myRingLight: {fileID: 0}
+  myNanoParticle: {fileID: 1271989646072626}
+  myRingLight: {fileID: 108048730391376206}
   myRingLightMaxIntensity: 0
   myRingLightCurrentIntensity: 0
   goElectric01: {fileID: 1902089067336918, guid: 4c5ac25890db3cb4b9113b3e96ff6550,
@@ -10733,14 +10733,8 @@ MonoBehaviour:
   goAccretion01: {fileID: 1562150348480682, guid: f7303a5333009d54ea9494f6f2400535,
     type: 2}
   psAccretion01: {fileID: 0}
-  shaderVert: {fileID: 0}
-  shaderTrans: {fileID: 0}
-  meshPart0: {fileID: 0}
-  meshPart1: {fileID: 0}
-  myMeshPart0Renderer: {fileID: 0}
-  myMeshPart1Renderer: {fileID: 0}
-  colorMeshPart0: {r: 0, g: 0, b: 0, a: 0}
-  colorMeshPart1: {r: 0, g: 0, b: 0, a: 0}
+  myMeshPart0Renderer: {fileID: 23550813277597144}
+  myMeshPart1Renderer: {fileID: 23819367647397898}
   sjDonorToAcceptorArr: []
   sjAcceptorToDonorArr: []
   sjRadialOffset: 0.6
@@ -10753,12 +10747,10 @@ MonoBehaviour:
   sjAcceptorToDonorOn: 0
   ringAudioSource: {fileID: 0}
   sfxRingSpawn: {fileID: 8300000, guid: ffd146fc7d429044096363f6c1adb5e3, type: 3}
-  opaqueMaterial: {fileID: 2100000, guid: 943f31fdee1036241be287b55b889862, type: 2}
-  transparentMaterial: {fileID: 2100000, guid: 2fafbef6cce9e074891cf8a4642dd290, type: 2}
   sfxElectricity01: {fileID: 8300000, guid: 706ffd57b55cd0b4bbe2d5f3367e631f, type: 3}
   sfxElectricity02: {fileID: 8300000, guid: 9174cfd9d08c7734fafbf032fbe65cc7, type: 3}
   materialTransitionSpeed: 1
-  minTransparence: 0.2
+  minTransparence: 0.3
   maxTransparence: 1
 --- !u!114 &114916512091932642
 MonoBehaviour:
