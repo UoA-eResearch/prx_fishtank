@@ -10732,7 +10732,8 @@ MonoBehaviour:
   psPartyTrail: {fileID: 198595245467681972}
   goAccretion01: {fileID: 1562150348480682, guid: f7303a5333009d54ea9494f6f2400535,
     type: 2}
-  psAccretion01: {fileID: 0}
+  psAccretion01: {fileID: 198043091036845168, guid: f7303a5333009d54ea9494f6f2400535,
+    type: 2}
   myMeshPart0Renderer: {fileID: 23550813277597144}
   myMeshPart1Renderer: {fileID: 23819367647397898}
   sjDonorToAcceptorArr: []

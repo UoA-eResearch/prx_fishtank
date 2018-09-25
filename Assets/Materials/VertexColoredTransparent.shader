@@ -6,11 +6,12 @@
          _Metallic ("Metallic", Range(0,1)) = 0.0
      }
      SubShader {
-		Tags { "RenderType"="Transparent"}
-        LOD 200
+		Tags { "RenderType"="Transparent" "Queue"="Transparent" }
+        LOD 100
         Cull Off
 
         Pass {
+            // Blend SrcAlpha OneMinusSrcAlpha
             ZWrite On
             ColorMask 0
         }

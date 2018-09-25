@@ -43,7 +43,6 @@ public class Ring: MonoBehaviour
 
 	public GameObject goAccretion01;
 	public ParticleSystem psAccretion01;
-	public ParticleSystem.MainModule psAccretion01Main;
 	public ParticleSystem.EmissionModule psAccretion01Emission;
 	private float psAccretion01EmissionRateInit = 100.0f;
 	//public float psAccretion01EmissionRateCurrent;
@@ -495,7 +494,7 @@ public class Ring: MonoBehaviour
 		var ring2DimerTransform = transform.Find("tf_ring2dimer");
 		var dimer = Instantiate(dimerPrefab, ring2DimerTransform.position, transform.rotation, fishtank);
 		//var dimer = Instantiate(dimerPrefab, transform.position, transform.rotation, fishtank);
-		dimer.GetComponent<Rigidbody>().AddForce(-dimer.transform.forward * Random.RandomRange(0.01f, 0.02f), ForceMode.Impulse);
+		dimer.GetComponent<Rigidbody>().AddForce(-dimer.transform.forward * Random.Range(0.01f, 0.02f), ForceMode.Impulse);
 		dimer.name = "dimer_" + dimer.GetInstanceID();
 		fishtankScript.SetCartoonRendering(dimer);
 
@@ -509,7 +508,7 @@ public class Ring: MonoBehaviour
 			if (child.name.StartsWith("ring"))
 			{
 				var childDimer = Instantiate(dimerPrefab, child.transform.position, child.transform.rotation, fishtank);
-				childDimer.GetComponent<Rigidbody>().AddForce(-childDimer.transform.forward * Random.RandomRange(0.01f, 0.02f), ForceMode.Impulse);
+				childDimer.GetComponent<Rigidbody>().AddForce(-childDimer.transform.forward * Random.Range(0.01f, 0.02f), ForceMode.Impulse);
 				childDimer.name = "dimer_" + dimer.GetInstanceID();
 				fishtankScript.SetCartoonRendering(childDimer);
 
@@ -532,7 +531,6 @@ public class Ring: MonoBehaviour
 			currentHand.otherHand.AttachObject(match, attachmentFlags);
 		}
 	}
-
 
 	void OnHandHoverBegin(Hand hand)
 	{
