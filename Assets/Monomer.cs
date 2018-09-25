@@ -91,6 +91,7 @@ public class Monomer : MonoBehaviour {
         // TODO: move particle system origin to the partnerPos
         Quaternion lookAt = Quaternion.LookRotation(target.transform.position - transform.position);
         psAttraction.transform.rotation = lookAt;
+
         var particleMain = psAttraction.main;
         // lifetime half distance for colour gradient transparency purposes.
         particleMain.startLifetime = (distance / particleMain.startSpeed.constantMax)/ 1.9f;

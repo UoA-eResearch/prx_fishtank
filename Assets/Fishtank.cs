@@ -817,9 +817,9 @@ public class Fishtank : MonoBehaviour
                     GameObject partner;
                     if (pairs.TryGetValue(go, out partner) && partner)
                     {
-                        Transform goBondPos = go.transform.Find("partnerPos");
-                        Transform partnerBondPos = partner.transform;
+                        Transform partnerBondPos = partner.transform.Find("partnerPos");
                         float pulseStrength = 50;
+                        Transform goBondPos = go.transform.Find("partnerPos");
                         float distanceFactor = Vector3.Distance(goBondPos.position, partnerBondPos.position);
                         // clamp distance to .1 (i.e trigger mult will be 10 at most.
                         if (distanceFactor < .1)
@@ -829,7 +829,7 @@ public class Fishtank : MonoBehaviour
                         // apply distance and pH factors
                         pulseStrength /= distanceFactor;
                         pulseStrength *= 1 + ((9 - phValue) * 0.1f);
-                        Quaternion desiredAngle = Quaternion.LookRotation(go.transform.position, partnerBondPos.position);
+                        Quaternion desiredAngle = Quaternion.LookRotation(go.transform.position - partnerBondPos.position);
                         float angleDiff = Quaternion.Angle(go.transform.rotation, desiredAngle);
                         if (angleDiff > 90)
                         {
@@ -837,8 +837,8 @@ public class Fishtank : MonoBehaviour
                             float freq = 30;
                             float offset = pulseStrength;
                             pulseStrength = (amplitude * Mathf.Sin(Time.time * freq)) + offset;
-                        }
-                        hand.controller.TriggerHapticPulse(System.Convert.ToUInt16(pulseStrength));
+                        } 
+						hand.controller.TriggerHapticPulse(System.Convert.ToUInt16(pulseStrength));
                     }
                 }
             }
@@ -860,6 +860,7 @@ public class Fishtank : MonoBehaviour
                 if (distanceFromTarget < attractionParticleThreshold)
                 {
                     // need to increase maximum particles if threshold increases too much
+					Debug.DrawLine(goMonomer.transform.Find("partnerPos").position, partnerPos.position);
                     goMonomer.ActivateAttractionParticle(partnerPos, distanceFromTarget);
                     partnerMonomer.ActivateAttractionParticle(go.transform, distanceFromTarget);
                 }
