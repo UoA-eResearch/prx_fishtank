@@ -4133,6 +4133,7 @@ MonoBehaviour:
   tractorBeamAttractionFactor: 50
   attractionParticleThreshold: 0.76
   ringsUseSpringConstraints: 0
+  debugMaterials: []
 --- !u!82 &469726002
 AudioSource:
   m_ObjectHideFlags: 0

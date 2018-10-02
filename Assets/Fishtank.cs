@@ -829,9 +829,9 @@ public class Fishtank : MonoBehaviour
                         // apply distance and pH factors
                         pulseStrength /= distanceFactor;
                         pulseStrength *= 1 + ((9 - phValue) * 0.1f);
-                        Quaternion desiredAngle = Quaternion.LookRotation(go.transform.position - partnerBondPos.position);
-                        float angleDiff = Quaternion.Angle(go.transform.rotation, desiredAngle);
-                        if (angleDiff > 90)
+						float partnerDirection = Vector3.Dot(go.transform.forward, Vector3.Normalize(go.transform.position - partnerBondPos.transform.position));
+						float orientationDifference = Vector3.Dot(go.transform.up, partnerBondPos.transform.up);
+                        if (partnerDirection > 0 || orientationDifference < 0)
                         {
                             float amplitude = pulseStrength * 1.0f;
                             float freq = 30;
