@@ -42,6 +42,7 @@ public class Ring: MonoBehaviour
 	public ParticleSystem psPartyTrail;
 
 	public GameObject goAccretion01;
+	public GameObject goAccretionDisperse;
 	public ParticleSystem psAccretion01;
 	public ParticleSystem.EmissionModule psAccretion01Emission;
 	private float psAccretion01EmissionRateInit = 100.0f;
@@ -524,6 +525,7 @@ public class Ring: MonoBehaviour
 				}
 			}
 		}
+		Instantiate(goAccretionDisperse, this.transform.position, this.transform.rotation);
 		Destroy(gameObject);
 
 		if (currentHand != null) {

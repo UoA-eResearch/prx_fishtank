@@ -2150,7 +2150,6 @@ public class Fishtank : MonoBehaviour
 		if (Input.GetKeyDown(KeyCode.UpArrow)) {
 			var curMenu = GetActiveMenu().GetComponentInChildren<IMenu>();
 			if (curMenu != null) {
-				Debug.Log("attempting to run increment value");
 				curMenu.IncrementValue();
 			}
 		}

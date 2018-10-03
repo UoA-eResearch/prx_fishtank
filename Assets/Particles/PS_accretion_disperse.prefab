@@ -21,8 +21,9 @@ GameObject:
   - component: {fileID: 4788026967807740}
   - component: {fileID: 198043091036845168}
   - component: {fileID: 199569243759826564}
+  - component: {fileID: 114975800882559000}
   m_Layer: 0
-  m_Name: PS_accretion
+  m_Name: PS_accretion_disperse
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -41,6 +42,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &114975800882559000
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1562150348480682}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 150cfa278b7c9814aa55fbfe567deaac, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!198 &198043091036845168
 ParticleSystem:
   m_ObjectHideFlags: 1
@@ -48,10 +60,10 @@ ParticleSystem:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1562150348480682}
   serializedVersion: 5
-  lengthInSec: 5
+  lengthInSec: 1
   simulationSpeed: 1
   stopAction: 0
-  looping: 1
+  looping: 0
   prewarm: 0
   playOnAwake: 1
   useUnscaledTime: 0
@@ -101,14 +113,14 @@ ParticleSystem:
   moveWithTransform: 0
   moveWithCustomTransform: {fileID: 0}
   scalingMode: 1
-  randomSeed: -1799547270
+  randomSeed: -1910969050
   InitialModule:
     serializedVersion: 3
     enabled: 1
     startLifetime:
       serializedVersion: 2
       minMaxState: 0
-      scalar: 4
+      scalar: 2
       minScalar: 5
       maxCurve:
         serializedVersion: 2
@@ -149,8 +161,8 @@ ParticleSystem:
     startSpeed:
       serializedVersion: 2
       minMaxState: 3
-      scalar: -0.3
-      minScalar: -0.15
+      scalar: 0.15
+      minScalar: 0.15
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -566,7 +578,7 @@ ParticleSystem:
     sphericalDirectionAmount: 0
     randomPositionAmount: 0
     radius:
-      value: 1
+      value: 0.5
       mode: 0
       spread: 0
       speed:
