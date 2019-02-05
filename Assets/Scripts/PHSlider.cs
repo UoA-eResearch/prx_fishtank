@@ -67,7 +67,7 @@ public class PHSlider : MonoBehaviour, IMenu
 	}
 	public string GetPhValueStr()
 	{
-		return phText.text;
+		return "" + phValue;
 	}
 
 	public void ResetPhValue()
