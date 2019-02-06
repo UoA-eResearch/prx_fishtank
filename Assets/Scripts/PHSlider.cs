@@ -108,6 +108,4 @@ public class PHSlider : MonoBehaviour, IMenu
 			Debug.Log("position was changed");
 		}
 	}
-
-	
 }

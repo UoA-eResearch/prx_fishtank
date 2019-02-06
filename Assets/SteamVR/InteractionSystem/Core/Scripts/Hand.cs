@@ -876,11 +876,7 @@ namespace Valve.VR.InteractionSystem
 
 		public bool GetHandHairTrigger()
 		{
-			if (controller != null)
-			{
-				return controller.GetHairTrigger();
-			}
-			return false;
+			return controller.GetHairTrigger();
 		}
 	}
 
