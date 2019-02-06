@@ -873,6 +873,15 @@ namespace Valve.VR.InteractionSystem
 				this.BroadcastMessage( "OnHandInitialized", index, SendMessageOptions.DontRequireReceiver ); // let child objects know we've initialized
 			}
 		}
+
+		public bool GetHandHairTrigger()
+		{
+			if (controller != null)
+			{
+				return controller.GetHairTrigger();
+			}
+			return false;
+		}
 	}
 
 #if UNITY_EDITOR
