@@ -525,7 +525,9 @@ public class Ring: MonoBehaviour
 				}
 			}
 		}
-		Instantiate(goAccretionDisperse, this.transform.position, this.transform.rotation);
+
+		// spawn dispersion particle
+		Instantiate(goAccretionDisperse, this.transform.position, this.transform.rotation).GetComponent<Accretion>();
 		Destroy(gameObject);
 
 		if (currentHand != null) {
