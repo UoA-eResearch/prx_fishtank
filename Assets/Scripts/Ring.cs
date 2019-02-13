@@ -527,14 +527,25 @@ public class Ring: MonoBehaviour
 		}
 
 		// spawn dispersion particle
-		var disperseParticle = GameObject.Instantiate(goAccretionDisperse, this.transform.position, this.transform.rotation, this.transform.parent);
-		disperseParticle.transform.localScale = this.transform.localScale;
+		if (age > 0.5f)
+		{
+			DisperseAccretion();
+		}
 		Destroy(gameObject);
 
 		if (currentHand != null) {
 			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachOthers;
 			currentHand.otherHand.AttachObject(match, attachmentFlags);
 		}
+	}
+
+	/// <summary>
+	/// spawn self-destructing accretion prefab as child of rings parent transform and set scale, position, rotation to match ring.
+	/// </summary>
+	private void DisperseAccretion()
+	{
+		var disperseParticle = GameObject.Instantiate(goAccretionDisperse, this.transform.position, this.transform.rotation, this.transform.parent);
+		disperseParticle.transform.localScale = this.transform.localScale;
 	}
 
 	void OnHandHoverBegin(Hand hand)
