@@ -334,7 +334,7 @@ public class Fishtank : MonoBehaviour
 			{
 				// breaking this object will destroy it - so detach from hand (if attached)
 				DropObjectIfAttached(a);
-				a.GetComponent<Ring>().breakRing(null);
+				a.GetComponent<Ring>().BreakRing(null);
 			}
 			else if ((Random.Range(1, 100) <= probabilityStackMake) && (a.GetComponent<Ring>().ringCanStack))
 			{

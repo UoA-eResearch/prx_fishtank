@@ -481,7 +481,7 @@ public class Ring: MonoBehaviour
 		}
 	}
 
-	public void breakRing(Hand currentHand)
+	public void BreakRing(Hand currentHand)
 	{
 		if (currentHand != null)
 		{
@@ -527,7 +527,8 @@ public class Ring: MonoBehaviour
 		}
 
 		// spawn dispersion particle
-		Instantiate(goAccretionDisperse, this.transform.position, this.transform.rotation).GetComponent<Accretion>();
+		var disperseParticle = GameObject.Instantiate(goAccretionDisperse, this.transform.position, this.transform.rotation, this.transform.parent);
+		disperseParticle.transform.localScale = this.transform.localScale;
 		Destroy(gameObject);
 
 		if (currentHand != null) {
@@ -553,7 +554,7 @@ public class Ring: MonoBehaviour
 
 			if (velocity.magnitude > 10.0 && ringAttached)
 			{
-				breakRing(hand);
+				BreakRing(hand);
 				ringAttached = false;
 			}
 		}

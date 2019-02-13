@@ -6,7 +6,7 @@ public class Accretion : MonoBehaviour {
 
 	private ParticleSystem particleSystem;
 
-	void Awake()
+	void Start()
 	{
 		particleSystem = GetComponent<ParticleSystem>();
 	}

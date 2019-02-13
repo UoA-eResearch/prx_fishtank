@@ -39,6 +39,9 @@ namespace Valve.VR.InteractionSystem
 
 		public bool allowToggleTo2D = true;
 
+		public Rigidbody playerRigidbody;
+
+		public AudioSource playerSplatSfx;
 
 		//-------------------------------------------------
 		// Singleton instance of the Player. Only one can exist at a time.
@@ -268,6 +271,11 @@ namespace Valve.VR.InteractionSystem
 			{
 				trackingOriginTransform = this.transform;
 			}
+
+			if (!playerRigidbody)
+			{
+				playerRigidbody = GetComponent<Rigidbody>();
+			}
 		}
 
 
@@ -401,6 +409,36 @@ namespace Valve.VR.InteractionSystem
 		public void PlayerShotSelf()
 		{
 			//Do something appropriate here
+		}
+
+		private void FixedUpdate() {
+			IsPlayerFalling();
+		}
+
+		/// <summary>
+		/// checks to see if the player is falling and triggers death is true
+		/// </summary>
+		private void IsPlayerFalling()
+		{
+			if (playerRigidbody)
+			{
+				if (playerRigidbody.velocity.y <  -8.0f && !playerSplatSfx.isPlaying)
+				{
+					StartCoroutine("PlayerFallDeath");
+				}
+			}
+		}
+
+		/// <summary>
+		/// plays a splat sound then restarts the scene
+		/// </summary>
+		/// <returns></returns>
+		private IEnumerator PlayerFallDeath()
+		{
+			playerSplatSfx.Play(0);
+			playerRigidbody.isKinematic = true;
+			yield return new WaitForSeconds(playerSplatSfx.clip.length);
+			Reset.ResetScene();
 		}
 	}
 }

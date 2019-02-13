@@ -12,7 +12,13 @@ public class Reset : MonoBehaviour {
 	void Update()
 	{
 		if (Input.GetKeyDown(KeyCode.R)) {
-			SceneManager.LoadScene(SceneManager.GetActiveScene().name);
+			ResetScene();
 		}
+	}
+	
+	public static void ResetScene()
+	{
+
+		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 }
