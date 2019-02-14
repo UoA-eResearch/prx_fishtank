@@ -143,7 +143,7 @@ public class Fishtank : MonoBehaviour
 	public GameObject pHSliderUI;
 	public GameObject cartoonRenderUI;
 	public GameObject fishtankScaleUI;
-	public GameObject partyModeUI;
+	public GameObject partyModeUi;
 	public GameObject simulationUI;
 	public GameObject nanoUI;
 	public GameObject menuHintUI;
@@ -1902,7 +1902,7 @@ public class Fishtank : MonoBehaviour
 				pHSliderUI.SetActive(true);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
-				partyModeUI.SetActive(false);
+				partyModeUi.SetActive(false);
 				simulationUI.SetActive(false);
 				nanoUI.SetActive(false);
 				break;
@@ -1910,7 +1910,7 @@ public class Fishtank : MonoBehaviour
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(true);
 				fishtankScaleUI.SetActive(false);
-				partyModeUI.SetActive(false);
+				partyModeUi.SetActive(false);
 				simulationUI.SetActive(false);
 				nanoUI.SetActive(false);
 				break;
@@ -1918,7 +1918,7 @@ public class Fishtank : MonoBehaviour
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(true);
-				partyModeUI.SetActive(false);
+				partyModeUi.SetActive(false);
 				simulationUI.SetActive(false);
 				nanoUI.SetActive(false);
 				break;
@@ -1926,7 +1926,7 @@ public class Fishtank : MonoBehaviour
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
-				partyModeUI.SetActive(true);
+				partyModeUi.SetActive(true);
 				simulationUI.SetActive(false);
 				nanoUI.SetActive(false);
 				break;
@@ -1934,7 +1934,7 @@ public class Fishtank : MonoBehaviour
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
-				partyModeUI.SetActive(false);
+				partyModeUi.SetActive(false);
 				simulationUI.SetActive(true);
 				nanoUI.SetActive(false);
 				break;
@@ -1942,7 +1942,7 @@ public class Fishtank : MonoBehaviour
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
-				partyModeUI.SetActive(false);
+				partyModeUi.SetActive(false);
 				simulationUI.SetActive(false);
 				nanoUI.SetActive(true);
 				break;
@@ -1950,7 +1950,7 @@ public class Fishtank : MonoBehaviour
 				pHSliderUI.SetActive(false);
 				cartoonRenderUI.SetActive(false);
 				fishtankScaleUI.SetActive(false);
-				partyModeUI.SetActive(false);
+				partyModeUi.SetActive(false);
 				simulationUI.SetActive(false);
 				nanoUI.SetActive(false);
 				break;
@@ -2121,7 +2121,7 @@ public class Fishtank : MonoBehaviour
 			pHSliderUI, 
 			cartoonRenderUI, 
 			fishtankScaleUI, 
-			partyModeUI, 
+			partyModeUi, 
 			simulationUI, 
 			nanoUI 
 		};
@@ -2158,6 +2158,23 @@ public class Fishtank : MonoBehaviour
 			if (curMenu != null) {
 				curMenu.DecrementValue();
 			}
+		}
+		if (Input.GetKeyDown(KeyCode.P)) {
+			// TODO: toggle partymode.
+		}
+		if (Input.GetKeyDown(KeyCode.S)) {
+			// TODO: hide settings menu
+			var instance = Player.instance;
+			if (instance)
+			{
+				instance.HideSettingsMenu();
+			}
+		}
+		if (Input.GetKeyDown(KeyCode.H)) {
+			// TODO: ph to highest
+		}
+		if (Input.GetKeyDown(KeyCode.L)) {
+			// TODO: ph to lowest
 		}
 	}
 

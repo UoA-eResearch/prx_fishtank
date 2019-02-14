@@ -43,6 +43,8 @@ namespace Valve.VR.InteractionSystem
 
 		public AudioSource playerSplatSfx;
 
+		private bool showSettingsItems = true;
+
 		//-------------------------------------------------
 		// Singleton instance of the Player. Only one can exist at a time.
 		//-------------------------------------------------
@@ -439,6 +441,32 @@ namespace Valve.VR.InteractionSystem
 			playerRigidbody.isKinematic = true;
 			yield return new WaitForSeconds(playerSplatSfx.clip.length);
 			Reset.ResetScene();
+		}
+
+		/// <summary>
+		/// iterate through all "hands" and deactivate 2 game objects.
+		/// </summary>
+		public void HideSettingsMenu()
+		{
+			if (Player.instance == null)
+			{
+				return;
+			}
+			showSettingsItems = !showSettingsItems;
+			Debug.Log("show settings " + showSettingsItems);
+			foreach (var hand in hands)
+			{
+				var uiSwitches = hand.transform.Find("UISwitches");
+				var uiHints = hand.transform.Find("UIHints");
+				if (uiSwitches)
+				{
+					uiSwitches.gameObject.SetActive(showSettingsItems);
+				}
+				if (uiHints)
+				{
+					uiHints.gameObject.SetActive(showSettingsItems);
+				}
+			}
 		}
 	}
 }

@@ -5057,7 +5057,7 @@ MonoBehaviour:
   pHSliderUI: {fileID: 890592589}
   cartoonRenderUI: {fileID: 1087140428}
   fishtankScaleUI: {fileID: 1088729769}
-  partyModeUI: {fileID: 1882015}
+  partyModeUi: {fileID: 1882015}
   simulationUI: {fileID: 2017324910}
   nanoUI: {fileID: 1271221871}
   menuHintUI: {fileID: 515104981}

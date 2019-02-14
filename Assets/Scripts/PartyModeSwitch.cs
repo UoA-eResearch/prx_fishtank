@@ -22,6 +22,7 @@ public class PartyModeSwitch : MonoBehaviour, IMenu
 	// Update is called once per frame
 	void Update ()
 	{
+		Debug.Log("party mode switch update playing");
 		if (linearMapping.value < .5)
 		{
 			text.text = "Party!";
@@ -42,19 +43,22 @@ public class PartyModeSwitch : MonoBehaviour, IMenu
 		}
 	}
 
-		public void IncrementValue(){
+	public void IncrementValue()
+	{
 		linearMapping.value = 1f;
 		SynchronizeHandleToValue();
-		}
+	}
 
-		public void DecrementValue() {
-			linearMapping.value = 0f;
-			SynchronizeHandleToValue();
-		}
+	public void DecrementValue()
+	{
+		linearMapping.value = 0f;
+		SynchronizeHandleToValue();
+	}
 
-		public void SynchronizeHandleToValue(){
-			myHandle.transform.position = Vector3.Lerp(start.position, end.position, linearMapping.value);
-		}
+	public void SynchronizeHandleToValue()
+	{
+		myHandle.transform.position = Vector3.Lerp(start.position, end.position, linearMapping.value);
+	}
 
 	public bool GetPartyMode()
 	{

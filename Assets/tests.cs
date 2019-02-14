@@ -10,10 +10,12 @@ public class tests : MonoBehaviour {
 
 	public bool allowWasdMovement = true;
 
+	public float fastForward = 1.0f;
 
-	#if UNITY_EDITOR
+
+#if UNITY_EDITOR
 	void Start () {
-		Time.timeScale *= 6;
+		Time.timeScale *= fastForward;
 		DecrementPh();
 	}
 	

@@ -18,7 +18,6 @@ public class Reset : MonoBehaviour {
 	
 	public static void ResetScene()
 	{
-
 		SceneManager.LoadScene(SceneManager.GetActiveScene().name);
 	}
 }
