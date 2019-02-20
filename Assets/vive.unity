@@ -5089,7 +5089,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   ft: {fileID: 469726000}
   pHSlider: {fileID: 1680598873}
-  allowWasdMovement: 1
+  allowWasdMovement: 0
+  fastForward: 1
 --- !u!82 &469726002
 AudioSource:
   m_ObjectHideFlags: 0

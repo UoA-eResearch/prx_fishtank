@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
@@ -29,38 +30,41 @@ public class PHSlider : MonoBehaviour, IMenu
 		//myLinearDrive = myHandle.GetComponent<LinearDrive>();
     }
 
-
     //-------------------------------------------------
     void Update()
     {
-        if (currentLinearMapping != linearMapping.value)
-        {
-            currentLinearMapping = linearMapping.value;
-
-            var mappedToPH = (currentLinearMapping - 0.0f) / (1.0f - 0.0f) * (9.0f - 3.0f) + 3.0f;
-			phValue = Mathf.RoundToInt (mappedToPH);
-			switch (phValue)
-			{
-
-				case 9:
-					phText.text = "pH high";
-					break;
-
-				case 8:
-				case 7:
-				case 6:
-				case 5:
-				case 4:
-					phText.text = "pH = " + phValue;
-					break;
-
-				case 3:
-					phText.text = "pH low";
-					break;
-
-			}
-        }
+		SetPhFromLinearMapping();
     }
+
+	/// <summary>
+	/// Compares linear mapping value to last update.If the value has changed then convert the value to ph value and store in public variable.
+	/// </summary>
+	private void SetPhFromLinearMapping(){
+        if (currentLinearMapping == linearMapping.value)
+        {
+			return;
+		}
+		currentLinearMapping = linearMapping.value;
+		var mappedToPH = (currentLinearMapping - 0.0f) / (1.0f - 0.0f) * (9.0f - 3.0f) + 3.0f;
+		phValue = Mathf.RoundToInt(mappedToPH);
+		switch (phValue)
+		{
+			case 9:
+				phText.text = "pH high";
+				break;
+			case 8:
+			case 7:
+			case 6:
+			case 5:
+			case 4:
+				phText.text = "pH = " + phValue;
+				break;
+
+			case 3:
+				phText.text = "pH low";
+				break;
+		}
+	}
 
 	public int GetPhValue(){
 		return phValue;
@@ -107,5 +111,17 @@ public class PHSlider : MonoBehaviour, IMenu
 		if (originalPos != newPos) {
 			Debug.Log("position was changed");
 		}
+	}
+
+	public void SetPhToMin()
+	{
+		linearMapping.value = 0;
+		SynchronizeHandleToValue();
+	}
+
+	public void SetPhToMax()
+	{
+		linearMapping.value = 1;
+		SynchronizeHandleToValue();
 	}
 }

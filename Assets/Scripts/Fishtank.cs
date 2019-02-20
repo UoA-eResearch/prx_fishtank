@@ -2172,9 +2172,19 @@ public class Fishtank : MonoBehaviour
 		}
 		if (Input.GetKeyDown(KeyCode.H)) {
 			// TODO: ph to highest
+			if (phSlider.gameObject.activeInHierarchy)
+			{
+				phSlider.gameObject.SetActive(true);
+			}
+			phSlider.SetPhToMax();
 		}
 		if (Input.GetKeyDown(KeyCode.L)) {
 			// TODO: ph to lowest
+			if (phSlider.gameObject.activeInHierarchy)
+			{
+				phSlider.gameObject.SetActive(true);
+			}
+			phSlider.SetPhToMin();
 		}
 	}
 
