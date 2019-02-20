@@ -2157,7 +2157,6 @@ public class Fishtank : MonoBehaviour
 			// TODO: toggle partymode.
 		}
 		if (Input.GetKeyDown(KeyCode.S)) {
-			// TODO: hide settings menu
 			var instance = Player.instance;
 			if (instance)
 			{
