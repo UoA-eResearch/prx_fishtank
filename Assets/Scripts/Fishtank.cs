@@ -1946,25 +1946,19 @@ public class Fishtank : MonoBehaviour
 				simulationUI.SetActive(false);
 				nanoUI.SetActive(true);
 				break;
-			case 6:
-				pHSliderUI.SetActive(false);
-				cartoonRenderUI.SetActive(false);
-				fishtankScaleUI.SetActive(false);
-				partyModeUi.SetActive(false);
-				simulationUI.SetActive(false);
-				nanoUI.SetActive(false);
-				break;
 		}
 	}
 
-	void SwitchMenuUIMode(int direction)
+	/// <summary>
+	/// switches the active menu mode.
+	/// </summary>
+	/// <param name="direction"></param>
+	void SwitchMenuUiMode(int direction)
 	{
-		var numUIModes = 7;
-
+		var numUIModes = 6;
 		if (direction > 0)
 		{
 			fishtankAudioSource.PlayOneShot(beepUpSound, 0.4f);
-			
 		}
 		else
 		{
@@ -2035,7 +2029,7 @@ public class Fishtank : MonoBehaviour
 					{
 						myHand1TouchPressedLastLastUpdate = true;
 						//Debug.Log("Pad Press left!");
-						SwitchMenuUIMode(-1);
+						SwitchMenuUiMode(-1);
 					}
 					showMenuHint = true;
 				}
@@ -2045,7 +2039,7 @@ public class Fishtank : MonoBehaviour
 					{
 						myHand1TouchPressedLastLastUpdate = true;
 						//Debug.Log("Pad Press right!");
-						SwitchMenuUIMode(1);
+						SwitchMenuUiMode(1);
 					}
 					showMenuHint = true;
 				}
@@ -2078,7 +2072,7 @@ public class Fishtank : MonoBehaviour
 			if (myHand1.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
 			{
 				//Debug.Log("Left Press Down!");
-				SwitchMenuUIMode(-1);
+				SwitchMenuUiMode(-1);
 			}
 		}
 		if (myHand2.controller != null)
@@ -2086,7 +2080,7 @@ public class Fishtank : MonoBehaviour
 			if (myHand2.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
 			{
 				//Debug.Log("Right Press Down!");
-				SwitchMenuUIMode(1);
+				SwitchMenuUiMode(1);
 			}
 		}
 
@@ -2142,10 +2136,10 @@ public class Fishtank : MonoBehaviour
 
 	void UpdateKeyboardInput() {
 		if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-			SwitchMenuUIMode(-1);
+			SwitchMenuUiMode(-1);
 		}
 		if (Input.GetKeyDown(KeyCode.RightArrow)) {
-			SwitchMenuUIMode(1);
+			SwitchMenuUiMode(1);
 		}
 		if (Input.GetKeyDown(KeyCode.UpArrow)) {
 			var curMenu = GetActiveMenu().GetComponentInChildren<IMenu>();
