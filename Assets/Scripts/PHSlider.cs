@@ -11,9 +11,17 @@ public class PHSlider : MonoBehaviour, IMenu
     public LinearMapping linearMapping;
     public LinearDrive myLinearDrive;
     private float currentLinearMapping = float.NaN;
-	private int phValue;
+	public int phValue
+	{
+		get;
+		private set;
+	}
 	private GameObject phCanvas;
-	private Text phText;
+	public Text phText
+	{
+		get;
+		private set;
+	}
 	public GameObject myHandle;
 
 	//-------------------------------------------------
@@ -66,9 +74,6 @@ public class PHSlider : MonoBehaviour, IMenu
 		}
 	}
 
-	public int GetPhValue(){
-		return phValue;
-	}
 	public string GetPhValueStr()
 	{
 		return "" + phValue;

@@ -78,7 +78,6 @@ public class Fishtank : MonoBehaviour
 	private string[] tags;
 
 	private List<GameObject> masterDimers;
-	private int phValue;
 	//public int phMonomer2Dimer;
 	//public int phDimer2Ring;
 	//public int phRing2Stack;
@@ -193,7 +192,6 @@ public class Fishtank : MonoBehaviour
 		//print(Time.realtimeSinceStartup);
 		assignProbability();
 		//Debug.Log ("Prob for" + phValue + "is " + probabilityBind + probabilityBreak);
-		phValue = phSlider.GetPhValue();
 		//Debug.Log("PH value " + phValue);
 		pairs = new Dictionary<GameObject, GameObject>();
 		pairsMyAcceptor = new Dictionary<GameObject, GameObject>();
@@ -828,7 +826,7 @@ public class Fishtank : MonoBehaviour
                         }
                         // apply distance and pH factors
                         pulseStrength /= distanceFactor;
-                        pulseStrength *= 1 + ((9 - phValue) * 0.1f);
+                        pulseStrength *= 1 + ((9 - phSlider.phValue) * 0.1f);
 						float partnerDirection = Vector3.Dot(go.transform.forward, Vector3.Normalize(go.transform.position - partnerBondPos.transform.position));
 						float orientationDifference = Vector3.Dot(go.transform.up, partnerBondPos.transform.up);
                         if (partnerDirection > 0 || orientationDifference < 0)
@@ -1218,7 +1216,7 @@ public class Fishtank : MonoBehaviour
 		col.a = fishtankAlpha;
 		col = Color.cyan;
 
-		switch (phSlider.GetPhValue())
+		switch (phSlider.phValue)
 		{
 			case 9:
 				probabilityDimerMake = 5; //1
@@ -1306,7 +1304,7 @@ public class Fishtank : MonoBehaviour
 				psHMain.startColor = particleCol;
 				psHMain.startSize = 0.012f; // slightly larger than prefab to make it more visible
 
-				psHEmission.rateOverTime = ((9 - (phSlider.GetPhValue() - 3)) ^ 2) * 50;
+				psHEmission.rateOverTime = ((9 - (phSlider.phValue - 3)) ^ 2) * 50;
 				psOHEmission.rateOverTime = 0.0f;
 				psH2OEmission.rateOverTime = 100.0f;
 
@@ -1317,8 +1315,8 @@ public class Fishtank : MonoBehaviour
 				// test B - linking solvent particle (H and OH) numbers to pH
 
 				psH2OEmission.rateOverTime = 100.0f;
-				psHEmission.rateOverTime = (6 - (phSlider.GetPhValue() - 3)) * 30;
-				psOHEmission.rateOverTime = (phSlider.GetPhValue() - 3) * 30;
+				psHEmission.rateOverTime = (6 - (phSlider.phValue - 3)) * 30;
+				psOHEmission.rateOverTime = (phSlider.phValue - 3) * 30;
 			}
 		}
 
@@ -2203,6 +2201,7 @@ public class Fishtank : MonoBehaviour
 	// Update is called once per frame
 	void Update()
 	{
+		// NOTE: theres an coroutine that runs regularly called FindPairs. 
         ClearRingDockedFlags();
 		PushTogether();
 		SetRingDockedFlags();
