@@ -1,6 +1,6 @@
 ﻿// Upgrade NOTE: replaced 'SeperateSpecular' with 'SeparateSpecular'
 
-Shader " Vertex Colored" 
+Shader "Custom/Vertex Colored" 
 {
 	Properties
 	{
