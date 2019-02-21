@@ -2152,7 +2152,7 @@ public class Fishtank : MonoBehaviour
 		}
 		if (Input.GetKeyDown(KeyCode.P)) {
 			// TODO: toggle partymode.
-			partyModeSwitch.ToggleState();
+			partyModeSwitch.TogglePartyMode();
 		}
 		if (Input.GetKeyDown(KeyCode.S)) {
 			var instance = Player.instance;
