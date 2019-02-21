@@ -1697,7 +1697,6 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
-
 	private void StartPartyMode()
 	{
 		//Party just started
@@ -1745,10 +1744,17 @@ public class Fishtank : MonoBehaviour
 		handheldTimerValue.text = "Get Ready!";
 	}
 
+	private void EndPartyMode()
+	{
+		// party has ended
+		partyModeSwitch.DisablePartyMode();
+		phSlider.SetPhToMax();
+	}
+
 	void UpdatePartyMode()
 	{
 
-		partyMode = partyModeSwitch.IsPartyModeOn();
+		partyMode = partyModeSwitch.GetPartyModeStatus();
 
 		SetBGM();
 
@@ -1790,6 +1796,11 @@ public class Fishtank : MonoBehaviour
 		else
 		{
 			SetDefaultPartyModeScore();
+		}
+
+		if (partyModeLast == true && partyMode == false)
+		{
+			EndPartyMode();
 		}
 		partyModeLast = partyMode;
 	}

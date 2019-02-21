@@ -67,7 +67,7 @@ public class PartyModeSwitch : MonoBehaviour, IMenu
 	public void TogglePartyMode()
 	{
 		// currently 1 = serious mode, 0 = party mode
-		if (linearMapping.value == 1)
+		if (linearMapping.value >= 0.5)
 		{
 			EnablePartyMode();
 			DecrementValue();
@@ -87,7 +87,7 @@ public class PartyModeSwitch : MonoBehaviour, IMenu
 		myHandle.transform.position = Vector3.Lerp(start.position, end.position, linearMapping.value);
 	}
 
-	public bool GetPartyMode()
+	public bool GetPartyModeStatus()
 	{
 		return isPartyModeOn;
 	}
