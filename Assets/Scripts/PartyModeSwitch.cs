@@ -87,7 +87,7 @@ public class PartyModeSwitch : MonoBehaviour, IMenu
 		myHandle.transform.position = Vector3.Lerp(start.position, end.position, linearMapping.value);
 	}
 
-	public bool IsPartyModeOn()
+	public bool GetPartyMode()
 	{
 		return isPartyModeOn;
 	}
