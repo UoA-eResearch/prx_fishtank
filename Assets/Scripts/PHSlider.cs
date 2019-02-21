@@ -102,6 +102,9 @@ public class PHSlider : MonoBehaviour, IMenu
 		SynchronizeHandleToValue();
 	}
 
+	/// <summary>
+	/// uses linear mapping value to set the value of the slider.
+	/// </summary>
 	public void SynchronizeHandleToValue(){
 		// Debug.Log("handle position was: " + myHandle.transform.position);
 		Vector3 originalPos = myHandle.transform.position;
@@ -116,12 +119,14 @@ public class PHSlider : MonoBehaviour, IMenu
 	public void SetPhToMin()
 	{
 		linearMapping.value = 0;
+		phValue = 3;
 		SynchronizeHandleToValue();
 	}
 
 	public void SetPhToMax()
 	{
 		linearMapping.value = 1;
+		phValue = 9;
 		SynchronizeHandleToValue();
 	}
 }

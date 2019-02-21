@@ -1220,7 +1220,6 @@ public class Fishtank : MonoBehaviour
 
 		switch (phSlider.GetPhValue())
 		{
-
 			case 9:
 				probabilityDimerMake = 5; //1
 				probabilityDimerBreak = 50;
@@ -2155,6 +2154,7 @@ public class Fishtank : MonoBehaviour
 		}
 		if (Input.GetKeyDown(KeyCode.P)) {
 			// TODO: toggle partymode.
+			Debug.Log("party mode");
 		}
 		if (Input.GetKeyDown(KeyCode.S)) {
 			var instance = Player.instance;
@@ -2164,7 +2164,7 @@ public class Fishtank : MonoBehaviour
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.H)) {
-			// TODO: ph to highest
+			// TODO: this may only work if ph slider is active.
 			if (phSlider.gameObject.activeInHierarchy)
 			{
 				phSlider.gameObject.SetActive(true);
