@@ -1699,7 +1699,7 @@ public class Fishtank : MonoBehaviour
 	void UpdatePartyMode()
 	{
 
-		partyMode = partyModeSwitch.GetPartyMode();
+		partyMode = partyModeSwitch.IsPartyModeOn();
 
 		SetBGM();
 
@@ -2152,7 +2152,7 @@ public class Fishtank : MonoBehaviour
 		}
 		if (Input.GetKeyDown(KeyCode.P)) {
 			// TODO: toggle partymode.
-			Debug.Log("party mode");
+			partyModeSwitch.ToggleState();
 		}
 		if (Input.GetKeyDown(KeyCode.S)) {
 			var instance = Player.instance;
