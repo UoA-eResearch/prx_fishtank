@@ -1142,6 +1142,8 @@ public class Fishtank : MonoBehaviour
 		}
 		InvokeRepeating("FindPairs", 0, pairingInterval);
 		InvokeRepeating("DetectAntiparallel", 0, ringAntiparallelCheckInterval);
+
+		SetDefaultPartyModeScore();
 	}
 
 	private void FixHoverlock()
@@ -1696,6 +1698,53 @@ public class Fishtank : MonoBehaviour
 	}
 
 
+	private void StartPartyMode()
+	{
+		//Party just started
+		partyStartTime = Time.timeSinceLevelLoad + 3; //extra time for intro
+		phSlider.SetPhToMax();
+		hasWon = false;
+		confettiDone = false;
+		partyIntro = true;
+	}
+
+	private void UpdatePartyTime()
+	{
+		//Party in progress
+		timePartyingD = (Time.timeSinceLevelLoad - partyStartTime);
+		double timePartyingRounded = System.Math.Round(timePartyingD, 1);
+		timePartyingF = (float)timePartyingRounded;
+		scoreboardTimerLabel.text = "";
+		scoreboardTimerValue.text = timePartyingRounded.ToString();
+		scoreboardTimerSecs.text = "secs";
+		handheldTimerValue.text = timePartyingRounded.ToString() + "s";
+	}
+
+	private void PartyModeWin()
+	{
+		//Win
+		thisWinTime = timePartyingF;
+		if (thisWinTime < bestWinTime)
+		{
+			bestWinTime = thisWinTime;
+		}
+		ConfettiOn();
+	}
+
+	private void SetDefaultPartyModeScore()
+	{
+		scoreboardBestTime.text = "???";
+	}
+
+	private void PreparePartyModeStart()
+	{
+		//Party about to start
+		scoreboardTimerLabel.text = "Get Ready!";
+		scoreboardTimerValue.text = "";
+		scoreboardTimerSecs.text = "";
+		handheldTimerValue.text = "Get Ready!";
+	}
+
 	void UpdatePartyMode()
 	{
 
@@ -1705,12 +1754,7 @@ public class Fishtank : MonoBehaviour
 
 		if (partyModeLast == false && partyMode == true)
 		{
-			//Party just started
-			partyStartTime = Time.timeSinceLevelLoad + 3; //extra time for intro
-			phSlider.ResetPhValue();
-			hasWon = false;
-			confettiDone = false;
-			partyIntro = true;
+			StartPartyMode();
 		}
 
 		if (partyModeLast == true && partyMode == false)
@@ -1721,11 +1765,7 @@ public class Fishtank : MonoBehaviour
 
 		if (Time.timeSinceLevelLoad < partyStartTime)
 		{
-			//Party about to start
-			scoreboardTimerLabel.text = "Get Ready!";
-			scoreboardTimerValue.text = "";
-			scoreboardTimerSecs.text = "";
-			handheldTimerValue.text = "Get Ready!";
+			PreparePartyModeStart();
 		}
 		else
 		{
@@ -1735,25 +1775,12 @@ public class Fishtank : MonoBehaviour
 
 		if (partyMode && !partyIntro && !hasWon)
 		{
-			//Party in progress
-			timePartyingD = (Time.timeSinceLevelLoad - partyStartTime);
-			double timePartyingRounded = System.Math.Round(timePartyingD, 1);
-			timePartyingF = (float)timePartyingRounded;
-			scoreboardTimerLabel.text = "";
-			scoreboardTimerValue.text = timePartyingRounded.ToString();
-			scoreboardTimerSecs.text = "secs";
-			handheldTimerValue.text = timePartyingRounded.ToString() + "s";
+			UpdatePartyTime();
 		}
 
 		if (partyMode && !partyIntro && hasWon && !confettiDone)
 		{
-			//Win
-			thisWinTime = timePartyingF;
-			if (thisWinTime < bestWinTime)
-			{
-				bestWinTime = thisWinTime;
-			}
-			ConfettiOn();
+			PartyModeWin();
 		}
 
 		if (bestWinTime < float.PositiveInfinity)
@@ -1762,9 +1789,8 @@ public class Fishtank : MonoBehaviour
 		}
 		else
 		{
-			scoreboardBestTime.text = "???";
+			SetDefaultPartyModeScore();
 		}
-
 		partyModeLast = partyMode;
 	}
 
@@ -2151,7 +2177,6 @@ public class Fishtank : MonoBehaviour
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.P)) {
-			// TODO: toggle partymode.
 			partyModeSwitch.TogglePartyMode();
 		}
 		if (Input.GetKeyDown(KeyCode.S)) {
@@ -2162,19 +2187,9 @@ public class Fishtank : MonoBehaviour
 			}
 		}
 		if (Input.GetKeyDown(KeyCode.H)) {
-			// TODO: this may only work if ph slider is active.
-			if (phSlider.gameObject.activeInHierarchy)
-			{
-				phSlider.gameObject.SetActive(true);
-			}
 			phSlider.SetPhToMax();
 		}
 		if (Input.GetKeyDown(KeyCode.L)) {
-			// TODO: ph to lowest
-			if (phSlider.gameObject.activeInHierarchy)
-			{
-				phSlider.gameObject.SetActive(true);
-			}
 			phSlider.SetPhToMin();
 		}
 	}

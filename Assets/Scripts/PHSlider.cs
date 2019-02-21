@@ -79,14 +79,6 @@ public class PHSlider : MonoBehaviour, IMenu
 		return "" + phValue;
 	}
 
-	public void ResetPhValue()
-	{
-		Debug.Log("ph value was: " + linearMapping.value);
-		linearMapping.value = 1;
-		Debug.Log("ph value is now: " + linearMapping.value);
-		SynchronizeHandleToValue();
-    }
-
 	public void IncrementValue() {
 		if (linearMapping.value + 0.1f > 1) {
 			linearMapping.value = 1;
