@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
 
+[RequireComponent(typeof(Interactable))]
 public class Ring: MonoBehaviour
 {
 
@@ -26,7 +27,7 @@ public class Ring: MonoBehaviour
 	public bool ringCanStack = false;
 	public bool ringInterlocked = false;
 
-	public Fishtank fishtankScript;
+	public Fishtank fishTank;
 	public GameObject fishtankGO;
 	public GameObject myNanoParticle;
 	private Vector3 myNanoParticleLocalScaleInit;
@@ -103,19 +104,19 @@ public class Ring: MonoBehaviour
 		velEst = GetComponent<VelocityEstimator>();
 		fishtank = transform.parent;
 		GameObject fishtankGO = GameObject.Find("fishtank");
-		fishtankScript = fishtankGO.GetComponent<Fishtank>();
+		fishTank = fishtankGO.GetComponent<Fishtank>();
 
 		var myElectric01 = Instantiate(goElectric01, gameObject.transform);
 	
 		psElectric01 = myElectric01.GetComponentInChildren<ParticleSystem>();
-		psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
+		psElectric01.transform.localScale = fishTank.nanowireFxScale * fishtankGO.transform.localScale;
 
 		if (true)
 		{
 			var myAccretion01 = Instantiate(goAccretion01, gameObject.transform);
 
 			psAccretion01 = myAccretion01.GetComponentInChildren<ParticleSystem>();
-			psAccretion01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
+			psAccretion01.transform.localScale = fishTank.nanowireFxScale * fishtankGO.transform.localScale;
 
 			psAccretion01Emission = psAccretion01.emission;
 			psAccretion01Emission.rateOverTime = psAccretion01EmissionRateInit;
@@ -141,7 +142,7 @@ public class Ring: MonoBehaviour
 		ringHasNanoParticle = false;
 		//myNanoParticle.transform.localScale = 0f * myNanoParticleLocalScaleInit;
 		SetNanoParticleScale(0f);
-		if (fishtankScript.doNanoParticles)
+		if (fishTank.doNanoParticles)
 		{
 			ringCanStack = false;
 		}
@@ -162,7 +163,7 @@ public class Ring: MonoBehaviour
 		UpdateRingMaterials();
 		
 
-		if (fishtankScript.doNanoParticles)
+		if (fishTank.doNanoParticles)
 		{
 			if (age < (delayToGrowNanoParticle + timeToGrowNanoParticle))
 			{
@@ -192,7 +193,7 @@ public class Ring: MonoBehaviour
 			ringCanStack = true;
 		}
 
-		if (fishtankScript.partyMode == true)
+		if (fishTank.partyMode == true)
 		{
 			if (psPartyTrail.isStopped)
 			{
@@ -498,7 +499,7 @@ public class Ring: MonoBehaviour
 		//var dimer = Instantiate(dimerPrefab, transform.position, transform.rotation, fishtank);
 		dimer.GetComponent<Rigidbody>().AddForce(-dimer.transform.forward * Random.Range(0.01f, 0.02f), ForceMode.Impulse);
 		dimer.name = "dimer_" + dimer.GetInstanceID();
-		fishtankScript.SetCartoonRendering(dimer);
+		fishTank.SetCartoonRendering(dimer);
 
 		float minDist = 0;
 		if (currentHand != null) {
@@ -512,7 +513,7 @@ public class Ring: MonoBehaviour
 				var childDimer = Instantiate(dimerPrefab, child.transform.position, child.transform.rotation, fishtank);
 				childDimer.GetComponent<Rigidbody>().AddForce(-childDimer.transform.forward * Random.Range(0.01f, 0.02f), ForceMode.Impulse);
 				childDimer.name = "dimer_" + dimer.GetInstanceID();
-				fishtankScript.SetCartoonRendering(childDimer);
+				fishTank.SetCartoonRendering(childDimer);
 
 				if (currentHand != null)
 				{
@@ -575,7 +576,7 @@ public class Ring: MonoBehaviour
 	void OnAttachedToHand(Hand hand)
 	{
 		ringAttached = true;
-		if (!fishtankScript.ringsUseSpringConstraints)
+		if (!fishTank.ringsUseSpringConstraints)
 		{
 			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachFromOtherHand;
 			if (dockedToAcceptor && !partnerAcceptor.GetComponent<Ring>().ringAttached)

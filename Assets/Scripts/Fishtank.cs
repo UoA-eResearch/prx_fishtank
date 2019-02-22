@@ -6,6 +6,7 @@ using UnityEngine.UI;
 
 public class Fishtank : MonoBehaviour
 {
+	#region variables
 	public GameSettingsManager gameSettingsManager;
 	public GameObject monomerPrefab;
 	public GameObject dimerPrefab;
@@ -171,6 +172,7 @@ public class Fishtank : MonoBehaviour
 	public bool ringsUseSpringConstraints = false; // if true, enables use of spring constraints for ring stacking
 	//public float ringMinSpringStrength = 0f; 
 
+	#endregion	
 
 	void DropObjectIfAttached(GameObject go)
 	{
@@ -359,8 +361,6 @@ public class Fishtank : MonoBehaviour
 						}
 					}
 				}
-				Debug.Log(bestDonor);
-				Debug.Log(bestAcceptor);
 				if (bestDonor != null) //(bestDonorScore < bestAcceptorScore && bestDonor != null)
 				{
 					PairWithDonor(a, bestDonor);
@@ -1116,7 +1116,6 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
-	// Use this for initialization
 	void Start()
 	{
 
@@ -1467,7 +1466,6 @@ public class Fishtank : MonoBehaviour
 
 
 	}
-
 
 	void UpdateNanoWireFx(Ring r)
 	{
@@ -2242,7 +2240,6 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
-	// Update is called once per frame
 	void Update()
 	{
 		// NOTE: theres an coroutine that runs regularly called FindPairs. 
