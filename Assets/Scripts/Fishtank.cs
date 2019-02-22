@@ -1744,7 +1744,7 @@ public class Fishtank : MonoBehaviour
 		handheldTimerValue.text = "Get Ready!";
 	}
 
-	private void EndPartyMode()
+	public void StopPartyMode()
 	{
 		// party has ended
 		partyModeSwitch.DisablePartyMode();
@@ -1800,7 +1800,7 @@ public class Fishtank : MonoBehaviour
 
 		if (partyModeLast == true && partyMode == false)
 		{
-			EndPartyMode();
+			StopPartyMode();
 		}
 		partyModeLast = partyMode;
 	}

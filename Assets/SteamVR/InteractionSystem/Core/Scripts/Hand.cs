@@ -812,6 +812,20 @@ namespace Valve.VR.InteractionSystem
 			return false;
 		}
 
+		public bool GetThumbpadButtonDown()
+		{
+			if ( noSteamVRFallbackCamera )
+			{
+				return Input.GetMouseButtonDown( 2 );
+			}
+			else if ( controller != null )
+			{
+				return controller.GetPressDown(EVRButtonId.k_EButton_SteamVR_Touchpad);
+			}
+
+			return false;
+		}
+
 
 		//-------------------------------------------------
 		// Was the standard interaction button just released? In VR, this is a trigger press. In 2D fallback, this is a mouse left-click.
