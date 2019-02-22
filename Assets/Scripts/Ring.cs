@@ -595,6 +595,22 @@ public class Ring: MonoBehaviour
 		velEst.BeginEstimatingVelocity();
 	}
 
+	private void CheckRingStackTwoHands(GameObject donorGo, GameObject firstHand)
+	{
+		while (donorGo)
+		{
+			var ringParent = donorGo.transform.parent.GetComponent<Hand>();
+			if (ringParent && ringParent.gameObject != firstHand) 
+			{
+				// break
+			}
+			else
+			{
+				CheckRingStackTwoHands(donorGo.GetComponent<Ring>().partnerDonor, firstHand);
+			}
+		}
+	}
+
 	void OnDetachedFromHand()
 	{
 		ringAttached = false;

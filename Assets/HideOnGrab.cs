@@ -23,7 +23,7 @@ public class HideOnGrab : MonoBehaviour {
 	{
 		if (parentHand.GetHandHairTrigger()) {
 			foreach (var uiElement in hidableUIElements) {
-				Debug.Log(uiElement.name);
+				// Debug.Log(uiElement.name);
 				uiElement.SetActive(false);
 			}
 		} else {
