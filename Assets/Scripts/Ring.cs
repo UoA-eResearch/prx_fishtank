@@ -123,7 +123,8 @@ public class Ring: MonoBehaviour
 
 		if (true) //(fishtankScript.ringsUseSpringConstraints)
 		{
-			InitialiseSpringJoints();
+			// warrick: disabled for now
+			// InitialiseSpringJoints();
 		}
 
 		ringAudioSource = GetComponent<AudioSource>();
