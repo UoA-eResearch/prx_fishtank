@@ -152,6 +152,11 @@ namespace Valve.VR.InteractionSystem
 
 
 		//-------------------------------------------------
+		/// <summary>
+		/// Searches hand hierarchy for transform with attachmentPoint as name
+		/// </summary>
+		/// <param name="attachmentPoint">Name of transform to be attached to</param>
+		/// <returns></returns>
 		public Transform GetAttachmentTransform( string attachmentPoint = "" )
 		{
 			Transform attachmentTransform = null;
@@ -211,6 +216,13 @@ namespace Valve.VR.InteractionSystem
 		// flags - The flags to use for attaching the object
 		// attachmentPoint - Name of the GameObject in the hierarchy of this Hand which should act as the attachment point for this GameObject
 		//-------------------------------------------------
+
+		/// <summary>
+		///	Attach a game object to this game object 
+		/// </summary>
+		/// <param name="objectToAttach">The GameObject to attach</param>
+		/// <param name="flags"> The flags to use for attaching the objec</param>
+		/// <param name="attachmentPoint">Name of the GameObject in the hierarchy of this Hand which should act as the attachment point for this GameObject</param>
 		public void AttachObject( GameObject objectToAttach, AttachmentFlags flags = defaultAttachmentFlags, string attachmentPoint = "" )
 		{
 			if ( flags == 0 )
@@ -277,6 +289,11 @@ namespace Valve.VR.InteractionSystem
 		//
 		// objectToDetach - The GameObject to detach from this Hand
 		//-------------------------------------------------
+		/// <summary>
+		/// detach the game object from this hand
+		/// </summary>
+		/// <param name="objectToDetach"></param>
+		/// <param name="restoreOriginalParent"></param>
 		public void DetachObject( GameObject objectToDetach, bool restoreOriginalParent = true )
 		{
 			int index = attachedObjects.FindIndex( l => l.attachedObject == objectToDetach );

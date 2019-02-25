@@ -5091,7 +5091,9 @@ MonoBehaviour:
   ft: {fileID: 469726000}
   pHSlider: {fileID: 1680598873}
   allowWasdMovement: 0
-  fastForward: 1
+  fastForward: 6
+  handTest: 0
+  amountToDecrementPh: 10
 --- !u!82 &469726002
 AudioSource:
   m_ObjectHideFlags: 0

@@ -46,13 +46,11 @@ public class CartoonModeSwitch : MonoBehaviour, IMenu
 	public void IncrementValue(){
 		renderCartoonLM.value = 1f;
 		SynchronizeHandleToValue();
-		// TODO: Might need to update handle position
 	}
 
 	public void DecrementValue() {
 		renderCartoonLM.value = 0f;
 		SynchronizeHandleToValue();
-		// TODO: Might need to update handle position
 	}
 
 	public void SynchronizeHandleToValue(){

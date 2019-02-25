@@ -10,8 +10,8 @@ public class Ring: MonoBehaviour
 
 	public GameObject dimerPrefab;
 	public bool shouldBreak = true;
-	private VelocityEstimator velEst;
-	private bool ringAttached = false;
+	private VelocityEstimator velocityEstimator;
+	private Hand attachedHand = null;
 	private Transform fishtank;
 
 	public GameObject partnerAcceptor;
@@ -101,7 +101,7 @@ public class Ring: MonoBehaviour
 
 	void Awake()
 	{
-		velEst = GetComponent<VelocityEstimator>();
+		velocityEstimator = GetComponent<VelocityEstimator>();
 		fishtank = transform.parent;
 		GameObject fishtankGO = GameObject.Find("fishtank");
 		fishTank = fishtankGO.GetComponent<Fishtank>();
@@ -160,7 +160,7 @@ public class Ring: MonoBehaviour
         //psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
         age = age + Time.deltaTime;
 
-		UpdateRingMaterials();
+		UpdateMaterialTransparency();
 		
 
 		if (fishTank.doNanoParticles)
@@ -462,7 +462,11 @@ public class Ring: MonoBehaviour
 		}
 	}
 
-	private void UpdateRingMaterials() {
+
+	/// <summary>
+	/// Checks nanoring flag every update call and adjusts material transparency accordingly.
+	/// </summary>
+	private void UpdateMaterialTransparency() {
 		Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
 		foreach (Renderer r in subRenderers) {
 			if (nanoWireOn) {
@@ -562,59 +566,61 @@ public class Ring: MonoBehaviour
 	{
 		if (gameObject == hand.currentAttachedObject && shouldBreak)
 		{
-			Vector3 velocity = velEst.GetVelocityEstimate();
+			Vector3 velocity = velocityEstimator.GetVelocityEstimate();
 			//Debug.Log("Velocity: " + velocity + velocity.magnitude);
 
-			if (velocity.magnitude > 10.0 && ringAttached)
+			if (velocity.magnitude > 10.0 && attachedHand)
 			{
 				BreakRing(hand);
-				ringAttached = false;
+				attachedHand = null;
 			}
 		}
 	}
 
+	/// <summary>
+	/// Recursively checks if ring has neighbours on either side and if they are attached to hand. Attaches if not yet attached
+	/// </summary>
+	/// <param name="hand"></param>
 	void OnAttachedToHand(Hand hand)
 	{
-		ringAttached = true;
-		if (!fishTank.ringsUseSpringConstraints)
+		attachedHand = hand;
+
+		if (fishTank.ringsUseSpringConstraints)
+		{
+			// something
+		}
+		else 
 		{
 			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachFromOtherHand;
-			if (dockedToAcceptor && !partnerAcceptor.GetComponent<Ring>().ringAttached)
-			{
-				hand.AttachObject(partnerAcceptor, attachmentFlags);
-			}
-			if (dockedToDonor && !partnerDonor.GetComponent<Ring>().ringAttached)
+
+			// TODO: if the stack is already attached to a different hand then find which direction the other hand is in
+			// TODO: no current way to differentiate between attachment via docking or direct contact between hand and ring
+			// if (dockedToAcceptor)
+			// {
+			// 	if (!partnerAcceptor.GetComponent<Ring>().attachedHand)
+			// 	{
+			// 		hand.AttachObject(partnerAcceptor, attachmentFlags);
+			// 	}
+			// }
+			if (dockedToDonor)
 			{
 				hand.AttachObject(partnerDonor, attachmentFlags);
+				// if (!partnerDonor.GetComponent<Ring>().attachedHand)
+				// {
+				// 	hand.AttachObject(partnerDonor, attachmentFlags);
+				// }
 			}
 			foreach (var ao in hand.AttachedObjects)
 			{
 				ao.attachedObject.SetActive(true);
 			}
 		}
-		velEst.BeginEstimatingVelocity();
-	}
-
-	private void CheckRingStackTwoHands(GameObject donorGo, GameObject firstHand)
-	{
-		while (donorGo)
-		{
-			var ringParent = donorGo.transform.parent.GetComponent<Hand>();
-			if (ringParent && ringParent.gameObject != firstHand) 
-			{
-				// break
-			}
-			else
-			{
-				CheckRingStackTwoHands(donorGo.GetComponent<Ring>().partnerDonor, firstHand);
-			}
-		}
+		velocityEstimator.BeginEstimatingVelocity();
 	}
 
 	void OnDetachedFromHand()
 	{
-		ringAttached = false;
-		velEst.FinishEstimatingVelocity();
+		attachedHand = null;
+		velocityEstimator.FinishEstimatingVelocity();
 	}
-
 }
