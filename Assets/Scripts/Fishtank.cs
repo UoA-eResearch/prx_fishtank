@@ -92,7 +92,7 @@ public class Fishtank : MonoBehaviour
 	public AudioSource bgm_party;
 
 	[Header("Particle Systems")]
-	public GameObject ringPS;
+	public GameObject donutPs;
 	public GameObject confettiFern;
 	public GameObject confettiDonut;
 	public GameObject confettiHeart;
@@ -809,7 +809,7 @@ public class Fishtank : MonoBehaviour
 
 		if (partyMode) //(partyModeSwitch.partying)
 		{
-			var ringVfx = Instantiate(ringPS, go.transform.position, Quaternion.identity);
+			var ringVfx = Instantiate(donutPs, go.transform.position, Quaternion.identity);
 			Destroy(ringVfx, 4.0f);
 		}
 
