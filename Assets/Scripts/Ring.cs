@@ -592,7 +592,6 @@ public class Ring: MonoBehaviour
 		else 
 		{
 			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachFromOtherHand;
-
 			// TODO: if the stack is already attached to a different hand then find which direction the other hand is in
 			// TODO: no current way to differentiate between attachment via docking or direct contact between hand and ring
 			// if (dockedToAcceptor)
@@ -618,9 +617,12 @@ public class Ring: MonoBehaviour
 		velocityEstimator.BeginEstimatingVelocity();
 	}
 
+	public AudioSource ringPopSfx;
 	void OnDetachedFromHand()
 	{
+
 		attachedHand = null;
+		ringPopSfx.Play(0);
 		velocityEstimator.FinishEstimatingVelocity();
 	}
 }

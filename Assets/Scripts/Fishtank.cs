@@ -539,8 +539,13 @@ public class Fishtank : MonoBehaviour
 
 	}
 
+	/// <summary>
+	/// Find all ring objects in the game. Clears the docked flags
+	/// </summary>
 	void ClearRingDockedFlags()
 	{
+		// TODO: might be able to be improved.
+		return;
 		var ringGos = GameObject.FindGameObjectsWithTag("ring");
 		foreach (var ringGo in ringGos)
 		{
@@ -550,6 +555,10 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
+
+	/// <summary>
+	/// Finds all rings, sees if acceptor and donor rings are close enough.
+	/// </summary>
 	void SetRingDockedFlags()
 	{
 		var ringGos = GameObject.FindGameObjectsWithTag("ring");
@@ -567,6 +576,9 @@ public class Fishtank : MonoBehaviour
 					// update docked flags - used for nanowires
 					ring.dockedToAcceptor = true;
 				}
+				else{
+					ring.dockedToAcceptor = false;
+				}
 			}
 			if (ring.partnerDonor)
 			{
@@ -578,6 +590,10 @@ public class Fishtank : MonoBehaviour
 				{
 					// update docked flags - used for nanowires
 					ring.dockedToDonor = true;
+				}
+				else
+				{
+					ring.dockedToDonor = false;
 				}
 			}
 
