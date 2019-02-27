@@ -7,10 +7,36 @@ using UnityEngine.UI;
 public class Fishtank : MonoBehaviour
 {
 	#region variables
+
+	[Header("Configurable Game Values")]
 	public GameSettingsManager gameSettingsManager;
+    public float tractorBeamAttractionFactor = 50;
+    public float attractionParticleThreshold = 2.0f;
+	public int numMonomers = 192;
+	public bool ringsUseSpringConstraints = false; // if true, enables use of spring constraints for ring stacking
+	public bool cheat = false;
+	public bool renderCartoon = false;
+	private bool renderCartoonLast = false;
+	public bool partyMode = false;
+
+	public bool doNanoParticles = true;
+
+
+	public float fishtankScaleFactor = 1.0f;
+	private Vector3 fishtankScaleInit = new Vector3(1f, 1f, 1f);
+    private Vector3 handObjectsScaleInit = Vector3.one;
+	private Vector3 fishtankPositionInit = new Vector3(0f, 0f, 0f);
+	private Vector3 fishtankPositionCurrent = new Vector3(0f, 0f, 0f);
+
+	public float nanowireFxScale = 0.05f;               //particle scale for nanowire electric fx
+
+	public int modeUI = 0;
+	[Header("Prefabs")]
 	public GameObject monomerPrefab;
 	public GameObject dimerPrefab;
 	public GameObject ringPrefab;
+
+	[Header("Menu UI Elements")]
 	public Text scoreboardTimerLabel;
 	public Text scoreboardTimerValue;
 	public Text scoreboardTimerSecs;
@@ -48,7 +74,6 @@ public class Fishtank : MonoBehaviour
 	private float thisWinTime = float.PositiveInfinity;
 	private float bestWinTime = float.PositiveInfinity;
 
-	public int numMonomers = 180;
 	private Dictionary<GameObject, GameObject> pairs;
 
 	private Dictionary<GameObject, GameObject> pairsMyAcceptor;
@@ -56,13 +81,17 @@ public class Fishtank : MonoBehaviour
 	private Dictionary<GameObject, GameObject> pairsMyDonor;
 	private Dictionary<GameObject, GameObject> pairsMyDonorPrev;
 
+	[Header("Audio")]
 	public AudioSource fishtankAudioSource;
 	public AudioClip beepUpSound;
 	public AudioClip beepDownSound;
 	public AudioClip sfxElectricity01;
 	public AudioClip sfxElectricity02;
 	public AudioClip sfxCheer;
+	public AudioSource bgm_serious;
+	public AudioSource bgm_party;
 
+	[Header("Particle Systems")]
 	public GameObject ringPS;
 	public GameObject confettiFern;
 	public GameObject confettiDonut;
@@ -76,7 +105,8 @@ public class Fishtank : MonoBehaviour
 	private ParticleSystem psSolventH2O;
 
 	private Bounds bounds;
-	private string[] tags;
+
+	private string[] tags = new string[] { "monomer", "dimer", "ring" };
 
 	private List<GameObject> masterDimers;
 	//public int phMonomer2Dimer;
@@ -120,26 +150,8 @@ public class Fishtank : MonoBehaviour
 
 	private int ringRotSymmetry = 6;                     // number of equivalent docking positions around ring
 
-	public bool cheat = false;
-	public bool renderCartoon = false;
-	private bool renderCartoonLast = false;
-	public bool partyMode = false;
 
-	public bool doNanoParticles = true;
-
-	public AudioSource bgm_serious;
-	public AudioSource bgm_party;
-
-	public float fishtankScaleFactor = 1.0f;
-	private Vector3 fishtankScaleInit = new Vector3(1f, 1f, 1f);
-    private Vector3 handObjectsScaleInit = Vector3.one;
-	private Vector3 fishtankPositionInit = new Vector3(0f, 0f, 0f);
-	private Vector3 fishtankPositionCurrent = new Vector3(0f, 0f, 0f);
-
-	public float nanowireFxScale = 0.05f;               //particle scale for nanowire electric fx
-
-	public int modeUI = 0;
-
+	[Header("Menu Game Objects")]
 	public GameObject pHSliderUI;
 	public GameObject cartoonRenderUI;
 	public GameObject fishtankScaleUI;
@@ -152,6 +164,7 @@ public class Fishtank : MonoBehaviour
 	public GameObject signSplash;
 	public GameObject chartStatsGO;
 
+	[Header("Custom Components")]
 	public PHSlider phSlider;
 	public PartyModeSwitch partyModeSwitch;
 	public CartoonModeSwitch cartoonModeSwitch;
@@ -161,15 +174,13 @@ public class Fishtank : MonoBehaviour
 
 	public ChartStats chartStats;
 
+	[Header("Hands")]
 	public Hand myHand1;
 	public Hand myHand2;
 
-    public float tractorBeamAttractionFactor = 50;
-    public float attractionParticleThreshold = 2.0f;
 
     private bool myHand1TouchPressedLastLastUpdate = false; // debouncing
 
-	public bool ringsUseSpringConstraints = false; // if true, enables use of spring constraints for ring stacking
 	//public float ringMinSpringStrength = 0f; 
 
 	#endregion	
@@ -229,14 +240,12 @@ public class Fishtank : MonoBehaviour
 				}
 				else if (tag == "dimer")
 				{
-
+					// warrick: assuming that if the random value is less than the compared value that means do that process since it breaks a ring when the value is below the break thresh.
 					if (Random.Range(1, 100) <= probabilityDimerBreak)
 					{
-
 						// breaking this object will destroy it - so detach from hand (if attached)
 						DropObjectIfAttached(a);
 						a.GetComponent<BreakDimer>().breakApartDimer();
-
 					}
 					else if (Random.Range(1, 100) <= probabilityRingMake)
 					{
@@ -540,33 +549,18 @@ public class Fishtank : MonoBehaviour
 	}
 
 	/// <summary>
-	/// Find all ring objects in the game. Clears the docked flags
-	/// </summary>
-	void ClearRingDockedFlags()
-	{
-		// TODO: might be able to be improved.
-		return;
-		var ringGos = GameObject.FindGameObjectsWithTag("ring");
-		foreach (var ringGo in ringGos)
-		{
-			Ring ring = ringGo.GetComponent<Ring>();
-			ring.dockedToDonor = false;
-			ring.dockedToAcceptor = false;
-		}
-	}
-
-
-	/// <summary>
 	/// Finds all rings, sees if acceptor and donor rings are close enough.
 	/// </summary>
 	void SetRingDockedFlags()
 	{
+		// TODO: Can probably just have a dictionary of rings instead of searching the full scene every update.
 		var ringGos = GameObject.FindGameObjectsWithTag("ring");
 		foreach (var ringGo in ringGos)
 		{
 			Ring ring = ringGo.GetComponent<Ring>();
 			if (ring.partnerAcceptor)
 			{
+				// TODO: Can probably change this to avoid using transform.find.
 				var acceptor = ring.partnerAcceptor.transform.Find("tf_stack/donorPos");
 				var acceptorPos = acceptor.position;
 				var targetRotation = acceptor.rotation;
@@ -702,14 +696,7 @@ public class Fishtank : MonoBehaviour
 					var partnerAttached = lh && lh.currentAttachedObject == partner || rh && rh.currentAttachedObject == partner;
 					if (distanceFromTarget < .01f && !partnerAttached && partner && go.GetInstanceID() > partner.GetInstanceID() && tag == "monomer")
 					{
-						var dimerPos = go.transform.Find("dimerPos");
-						var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
-						dimer.name = "dimer (" + go.name + " + " + partner.name + ")";
-
-						SetCartoonRendering(dimer);
-
-						Destroy(go);
-						Destroy(partner);
+						MakeDimer(go, partner);
 						continue;
 					}
 
@@ -745,29 +732,7 @@ public class Fishtank : MonoBehaviour
 							//Debug.Log(go.name + " is a master dimer, and the sum of it's child ring targets is " + totalDist);
 							if (totalDist < 0.01f)
 							{
-								var dimer2RingTransform = go.transform.Find("tf_dimer2ring");
-								//var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
-								var ring = Instantiate(ringPrefab, dimer2RingTransform.position, go.transform.rotation, transform);
-								SetCartoonRendering(ring);
-
-								if (partyMode) //(partyModeSwitch.partying)
-								{
-									var ringVfx = Instantiate(ringPS, go.transform.position, Quaternion.identity);
-									Destroy(ringVfx, 4.0f);
-								}
-
-								ring.name = "ring [ " + go.name + "]";
-								//Debug.Log(ring.name);
-								masterDimers.Remove(go);
-								Destroy(go);
-								foreach (Transform child in go.transform)
-								{
-									if (child.name.StartsWith("ring"))
-									{
-										var childTarget = pairs[child.gameObject];
-										Destroy(childTarget);
-									}
-								}
+								MakeRing(go);
 							}
 							//master dimers have pairs but do not try to move towards them
 							//but making master dimers wander seems to compromise ring formation
@@ -835,7 +800,49 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
-    void UpdateAttractionHaptics()
+	private void MakeRing(GameObject go)
+	{
+		var dimer2RingTransform = go.transform.Find("tf_dimer2ring");
+		//var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
+		var ring = Instantiate(ringPrefab, dimer2RingTransform.position, go.transform.rotation, transform);
+		SetCartoonRendering(ring);
+
+		if (partyMode) //(partyModeSwitch.partying)
+		{
+			var ringVfx = Instantiate(ringPS, go.transform.position, Quaternion.identity);
+			Destroy(ringVfx, 4.0f);
+		}
+
+		ring.name = "ring [ " + go.name + "]";
+		//Debug.Log(ring.name);
+		masterDimers.Remove(go);
+		Destroy(go);
+		foreach (Transform child in go.transform)
+		{
+			if (child.name.StartsWith("ring"))
+			{
+				var childTarget = pairs[child.gameObject];
+				Destroy(childTarget);
+			}
+		}
+	}
+
+	/// <summary>
+	/// spawns a dimer and destroys the two sacrificed monomers
+	/// </summary>
+	/// <param name="go">sacrificed monomer</param>
+	/// <param name="partner">sacrificed monomer</param>
+	private void MakeDimer(GameObject go, GameObject partner)
+	{
+		var dimerPos = go.transform.Find("dimerPos");
+		var dimer = Instantiate(dimerPrefab, dimerPos.position, dimerPos.rotation, transform);
+		dimer.name = "dimer (" + go.name + " + " + partner.name + ")";
+		SetCartoonRendering(dimer);
+		Destroy(go);
+		Destroy(partner);
+	}
+
+	void UpdateAttractionHaptics()
     {
         foreach (var hand in Player.instance.hands)
         {
@@ -1156,9 +1163,6 @@ public class Fishtank : MonoBehaviour
 
 		psHShape.scale = gameObject.transform.localScale;
 		psH2OShape.scale = gameObject.transform.localScale;
-
-		// spawn monomers
-		tags = new string[] { "monomer", "dimer", "ring" };
 
 		bounds = gameObject.GetComponent<Collider>().bounds;
 		var b = bounds.extents;
@@ -2259,7 +2263,6 @@ public class Fishtank : MonoBehaviour
 	void Update()
 	{
 		// NOTE: theres an coroutine that runs regularly called FindPairs. 
-        ClearRingDockedFlags();
 		PushTogether();
 		SetRingDockedFlags();
 		FixHoverlock();
