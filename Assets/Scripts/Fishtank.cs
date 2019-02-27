@@ -245,7 +245,7 @@ public class Fishtank : MonoBehaviour
 					{
 						// breaking this object will destroy it - so detach from hand (if attached)
 						DropObjectIfAttached(a);
-						a.GetComponent<BreakDimer>().breakApartDimer();
+						a.GetComponent<Dimer>().BreakApartDimer();
 					}
 					else if (Random.Range(1, 100) <= probabilityRingMake)
 					{

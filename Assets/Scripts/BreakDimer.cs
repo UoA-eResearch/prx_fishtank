@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
 
-public class BreakDimer : MonoBehaviour
+public class Dimer : MonoBehaviour
 {
 
 	public GameObject monomerPrefab;
@@ -18,7 +18,6 @@ public class BreakDimer : MonoBehaviour
 
 	public Fishtank fishtankScript;
 	public GameObject fishtankGO;
-
 	public ParticleSystem psPartyTrail;
 
 	void Awake()
@@ -47,14 +46,14 @@ public class BreakDimer : MonoBehaviour
 		}
 	}
 
-	void breakDimer(Hand hand)
+	void BreakDimer(Hand hand)
 	{
 		// Drop whatever you're holding
 		hand.otherHand.DetachObject(hand.otherHand.currentAttachedObject);
 		hand.DetachObject(hand.currentAttachedObject);
 		//Debug.Log(hand.otherHand.name + " is hovering over " + gameObject.name + " which is attached to " + hand.name);
 
-		breakApartDimer();
+		BreakApartDimer();
 
 		if ((monomer1 != null) && (monomer2 != null))
 		{
@@ -73,7 +72,7 @@ public class BreakDimer : MonoBehaviour
 
 	}
 
-	public void breakApartDimer()
+	public void BreakApartDimer()
 	{
 		// Make a monomer and attach it to the hand. This replaces the dimer you were just holding.
 		monomerPos = transform.Find("monomer1");
@@ -94,7 +93,7 @@ public class BreakDimer : MonoBehaviour
 	{
 		if (gameObject == hand.otherHand.currentAttachedObject && shouldBreak)
 		{
-			breakDimer(hand);
+			BreakDimer(hand);
 		}
 	}
 
@@ -107,7 +106,7 @@ public class BreakDimer : MonoBehaviour
 
 			if (velocity.magnitude > 3.0 && dimerAttached)
 			{
-				breakDimer(hand);
+				BreakDimer(hand);
 				dimerAttached = false;
 			}
 		}
