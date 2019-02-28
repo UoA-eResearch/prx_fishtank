@@ -17,7 +17,12 @@ public class tests : MonoBehaviour {
 	public int amountToDecrementPh = 0;
 
 	[Header("single run tests")]
+
+	[Tooltip("breaks all the rings in the scene and logs the before and after scores")]
 	public bool breakAllRings = false;
+
+	[Tooltip("Sums all molecules in the game and logs the score")]
+	public bool countAllMolecules = false;
 
 
 #if UNITY_EDITOR
@@ -49,11 +54,12 @@ public class tests : MonoBehaviour {
 		int moleculeScore = 0;
 		var monomerScore = moleculeScore += FindObjectsOfType<Monomer>().Length;
 		var dimerScore = moleculeScore += FindObjectsOfType<Dimer>().Length * 2;
-		var ringScore = moleculeScore += FindObjectsOfType<Ring>().Length * 6;
-		Debug.Log("monomer score count: " + monomerScore);
-		Debug.Log("dimer count: " + dimerScore);
-		Debug.Log("ring count: " + ringScore);
+		var ringScore = moleculeScore += FindObjectsOfType<Ring>().Length * 12;
+		Debug.Log("monomer score score: " + monomerScore);
+		Debug.Log("dimer score: " + dimerScore);
+		Debug.Log("ring score: " + ringScore);
 		Debug.Log(Time.time + ": " + moleculeScore);
+		countAllMolecules = false;
 	}
 
 	// Update is called once per frame
@@ -69,6 +75,10 @@ public class tests : MonoBehaviour {
 		if (breakAllRings)
 		{
 			BreakAllRings();
+		}
+		if (countAllMolecules)
+		{
+			CountAllMolecules();
 		}
 	}
 
