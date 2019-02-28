@@ -5051,6 +5051,17 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   gameSettingsManager: {fileID: 114934785}
+  tractorBeamAttractionFactor: 50
+  attractionParticleThreshold: 0.76
+  numMonomers: 192
+  ringsUseSpringConstraints: 0
+  cheat: 0
+  renderCartoon: 0
+  partyMode: 0
+  doNanoParticles: 0
+  fishtankScaleFactor: 1
+  nanowireFxScale: 0.05
+  modeUI: 0
   monomerPrefab: {fileID: 1213113439581324, guid: 50835fc1252cf2142b60d9ac690bfe3b,
     type: 2}
   dimerPrefab: {fileID: 1097768174719004, guid: ffa33f1f8341b0d4c9ab8eb68588c53b,
@@ -5069,14 +5080,15 @@ MonoBehaviour:
   stackNumberTxt: {fileID: 1607203883}
   pHValueChartStatisticsTxt: {fileID: 1653070495}
   pHValueChartFishtankLabelTxt: {fileID: 1778033739}
-  numMonomers: 192
   fishtankAudioSource: {fileID: 469726002}
   beepUpSound: {fileID: 8300000, guid: 19f89c6e740e7447f9e12a8310d3e973, type: 3}
   beepDownSound: {fileID: 8300000, guid: a84c867a78564fe4e8338816553cf704, type: 3}
   sfxElectricity01: {fileID: 8300000, guid: 706ffd57b55cd0b4bbe2d5f3367e631f, type: 3}
   sfxElectricity02: {fileID: 8300000, guid: 9174cfd9d08c7734fafbf032fbe65cc7, type: 3}
   sfxCheer: {fileID: 8300000, guid: ee6e09ad6cbd1ac48baf4a77932bc992, type: 3}
-  ringPS: {fileID: 1484392153784674, guid: d0d693bd5d104404cac722a049742c7a, type: 2}
+  bgm_serious: {fileID: 8415513}
+  bgm_party: {fileID: 219831029}
+  donutPs: {fileID: 0}
   confettiFern: {fileID: 1589140216290478, guid: bd216b1c725c5a54fb9ea8b2f2d5cd5a,
     type: 2}
   confettiDonut: {fileID: 1504802932302902, guid: d5b4b00ec6fb4d64e893d002d0816f45,
@@ -5086,15 +5098,6 @@ MonoBehaviour:
   solventH: {fileID: 1343720090702508, guid: 46d5d3d631859224aa75481c6a3579f7, type: 2}
   solventOH: {fileID: 1090510125369910, guid: 80271ce95b5108f4eb53a7e76c8e0501, type: 2}
   solventH2O: {fileID: 1390383740014688, guid: 6ee026f66212cf347b76e20e39573efd, type: 2}
-  cheat: 0
-  renderCartoon: 0
-  partyMode: 0
-  doNanoParticles: 0
-  bgm_serious: {fileID: 8415513}
-  bgm_party: {fileID: 219831029}
-  fishtankScaleFactor: 1
-  nanowireFxScale: 0.05
-  modeUI: 0
   pHSliderUI: {fileID: 890592589}
   cartoonRenderUI: {fileID: 1087140428}
   fishtankScaleUI: {fileID: 1088729769}
@@ -5114,9 +5117,6 @@ MonoBehaviour:
   chartStats: {fileID: 1411235742}
   myHand1: {fileID: 1795045923}
   myHand2: {fileID: 49516981}
-  tractorBeamAttractionFactor: 50
-  attractionParticleThreshold: 0.76
-  ringsUseSpringConstraints: 0
 --- !u!114 &469726001
 MonoBehaviour:
   m_ObjectHideFlags: 0
