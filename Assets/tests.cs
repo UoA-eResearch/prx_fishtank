@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
@@ -15,6 +16,9 @@ public class tests : MonoBehaviour {
 	public bool handTest = true;
 	public int amountToDecrementPh = 0;
 
+	[Header("single run tests")]
+	public bool breakAllRings = false;
+
 
 #if UNITY_EDITOR
 	void Start () {
@@ -25,8 +29,33 @@ public class tests : MonoBehaviour {
 		{
 			pHSlider.SetPhToMin();
 		}
+
 	}
-	
+
+	private void BreakAllRings()
+	{
+		CountAllMolecules();
+		var rings = FindObjectsOfType<Ring>();
+		foreach (var ring in rings)
+		{
+			ring.BreakRing(null);
+		}
+		breakAllRings = false;
+		CountAllMolecules();
+	}
+
+	private void CountAllMolecules()
+	{
+		int moleculeScore = 0;
+		var monomerScore = moleculeScore += FindObjectsOfType<Monomer>().Length;
+		var dimerScore = moleculeScore += FindObjectsOfType<Dimer>().Length * 2;
+		var ringScore = moleculeScore += FindObjectsOfType<Ring>().Length * 6;
+		Debug.Log("monomer score count: " + monomerScore);
+		Debug.Log("dimer count: " + dimerScore);
+		Debug.Log("ring count: " + ringScore);
+		Debug.Log(Time.time + ": " + moleculeScore);
+	}
+
 	// Update is called once per frame
 	void Update () {
 		if (allowWasdMovement)
@@ -36,6 +65,10 @@ public class tests : MonoBehaviour {
 		if (handTest)
 		{
 			HandAttachmentTest();
+		}
+		if (breakAllRings)
+		{
+			BreakAllRings();
 		}
 	}
 
@@ -100,6 +133,8 @@ public class tests : MonoBehaviour {
 		else {
 			// Debug.Log(Time.time);
 		}
-	}
+
+}
+
 #endif
 }

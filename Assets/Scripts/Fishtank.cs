@@ -732,7 +732,30 @@ public class Fishtank : MonoBehaviour
 							//Debug.Log(go.name + " is a master dimer, and the sum of it's child ring targets is " + totalDist);
 							if (totalDist < 0.01f)
 							{
-								MakeRing(go);
+								// MakeRing(go);
+								var dimer2RingTransform = go.transform.Find("tf_dimer2ring");
+								//var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
+								var ring = Instantiate(ringPrefab, dimer2RingTransform.position, go.transform.rotation, transform);
+								SetCartoonRendering(ring);
+
+								if (partyMode) //(partyModeSwitch.partying)
+								{
+									var ringVfx = Instantiate(donutPs, go.transform.position, Quaternion.identity);
+									Destroy(ringVfx, 4.0f);
+								}
+
+								ring.name = "ring [ " + go.name + "]";
+								//Debug.Log(ring.name);
+								masterDimers.Remove(go);
+								Destroy(go);
+								foreach (Transform child in go.transform)
+								{
+									if (child.name.StartsWith("ring"))
+									{
+										var childTarget = pairs[child.gameObject];
+										Destroy(childTarget);
+									}
+								}
 							}
 							//master dimers have pairs but do not try to move towards them
 							//but making master dimers wander seems to compromise ring formation
@@ -802,29 +825,30 @@ public class Fishtank : MonoBehaviour
 
 	private void MakeRing(GameObject go)
 	{
-		var dimer2RingTransform = go.transform.Find("tf_dimer2ring");
-		//var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
-		var ring = Instantiate(ringPrefab, dimer2RingTransform.position, go.transform.rotation, transform);
-		SetCartoonRendering(ring);
+		return;
+		// var dimer2RingTransform = go.transform.Find("tf_dimer2ring");
+		// //var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
+		// var ring = Instantiate(ringPrefab, dimer2RingTransform.position, go.transform.rotation, transform);
+		// SetCartoonRendering(ring);
 
-		if (partyMode) //(partyModeSwitch.partying)
-		{
-			var ringVfx = Instantiate(donutPs, go.transform.position, Quaternion.identity);
-			Destroy(ringVfx, 4.0f);
-		}
+		// if (partyMode) //(partyModeSwitch.partying)
+		// {
+		// 	var ringVfx = Instantiate(donutPs, go.transform.position, Quaternion.identity);
+		// 	Destroy(ringVfx, 4.0f);
+		// }
 
-		ring.name = "ring [ " + go.name + "]";
-		//Debug.Log(ring.name);
-		masterDimers.Remove(go);
-		Destroy(go);
-		foreach (Transform child in go.transform)
-		{
-			if (child.name.StartsWith("ring"))
-			{
-				var childTarget = pairs[child.gameObject];
-				Destroy(childTarget);
-			}
-		}
+		// ring.name = "ring [ " + go.name + "]";
+		// //Debug.Log(ring.name);
+		// masterDimers.Remove(go);
+		// Destroy(go);
+		// foreach (Transform child in go.transform)
+		// {
+		// 	if (child.name.StartsWith("ring"))
+		// 	{
+		// 		var childTarget = pairs[child.gameObject];
+		// 		Destroy(childTarget);
+		// 	}
+		// }
 	}
 
 	/// <summary>

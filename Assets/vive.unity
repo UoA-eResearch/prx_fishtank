@@ -5088,7 +5088,7 @@ MonoBehaviour:
   sfxCheer: {fileID: 8300000, guid: ee6e09ad6cbd1ac48baf4a77932bc992, type: 3}
   bgm_serious: {fileID: 8415513}
   bgm_party: {fileID: 219831029}
-  donutPs: {fileID: 0}
+  donutPs: {fileID: 1484392153784674, guid: d0d693bd5d104404cac722a049742c7a, type: 2}
   confettiFern: {fileID: 1589140216290478, guid: bd216b1c725c5a54fb9ea8b2f2d5cd5a,
     type: 2}
   confettiDonut: {fileID: 1504802932302902, guid: d5b4b00ec6fb4d64e893d002d0816f45,
@@ -5131,9 +5131,10 @@ MonoBehaviour:
   ft: {fileID: 469726000}
   pHSlider: {fileID: 1680598873}
   allowWasdMovement: 0
-  fastForward: 6
+  fastForward: 1
   handTest: 0
   amountToDecrementPh: 10
+  breakAllRings: 0
 --- !u!82 &469726002
 AudioSource:
   m_ObjectHideFlags: 0
