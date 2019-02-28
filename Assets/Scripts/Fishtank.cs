@@ -334,54 +334,52 @@ public class Fishtank : MonoBehaviour
 	{
 		// a is a Ring
 		// gos is an array of all Ring GameOjects
+		GameObject bestDonor = null;
+		GameObject bestAcceptor = null;
+		var bestDonorScore = float.PositiveInfinity;
+		var bestAcceptorScore = float.PositiveInfinity;
+		if (Random.Range(1, 100) <= probabilityRingBreak)
 		{
-			GameObject bestDonor = null;
-			GameObject bestAcceptor = null;
-			var bestDonorScore = float.PositiveInfinity;
-			var bestAcceptorScore = float.PositiveInfinity;
-			if (Random.Range(1, 100) <= probabilityRingBreak)
+			// breaking this object will destroy it - so detach from hand (if attached)
+			// DropObjectIfAttached(a);
+			a.GetComponent<Ring>().BreakRing(null);
+		}
+		else if ((Random.Range(1, 100) <= probabilityStackMake) && (a.GetComponent<Ring>().ringCanStack))
+		{
+			//var partnerPosA = a.transform.Find("partnerPos").gameObject;
+			//Debug.DrawLine(a.transform, a.transform.Find("partnerPos").gameObject.position);
+			foreach (var b in gos)
 			{
-				// breaking this object will destroy it - so detach from hand (if attached)
-				DropObjectIfAttached(a);
-				a.GetComponent<Ring>().BreakRing(null);
-			}
-			else if ((Random.Range(1, 100) <= probabilityStackMake) && (a.GetComponent<Ring>().ringCanStack))
-			{
-				//var partnerPosA = a.transform.Find("partnerPos").gameObject;
-				//Debug.DrawLine(a.transform, a.transform.Find("partnerPos").gameObject.position);
-				foreach (var b in gos)
+				if (a != b)
 				{
-					if (a != b)
+					Vector3 b2a;
+					float testPairAlignDot;
+					float testPairRelateDot;
+
+					if (a.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().ringCanStack)
+					// I don't have a donor, and b isn't already donating so far in this findPairs() call 
 					{
-						Vector3 b2a;
-						float testPairAlignDot;
-						float testPairRelateDot;
+						AcceptorLookForDonor(a, b, ref bestDonorScore, ref bestDonor, out b2a, out testPairAlignDot, out testPairRelateDot);
+					}
 
-						if (a.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().ringCanStack)
-						// I don't have a donor, and b isn't already donating so far in this findPairs() call 
-						{
-							AcceptorLookForDonor(a, b , ref bestDonorScore, ref bestDonor, out b2a, out testPairAlignDot, out testPairRelateDot);
-						}
-
-						if (a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().ringCanStack)
-						// I'm not yet a donor, and b has an acceptor slot I could fill - so far in this findPairs() call 
-						{
-							DonorLookForAcceptor(a, b , ref bestAcceptorScore, ref bestAcceptor, out b2a, out testPairAlignDot, out testPairRelateDot);
-						}
+					if (a.GetComponent<Ring>().partnerAcceptor == null && b.GetComponent<Ring>().partnerDonor == null && b.GetComponent<Ring>().ringCanStack)
+					// I'm not yet a donor, and b has an acceptor slot I could fill - so far in this findPairs() call 
+					{
+						DonorLookForAcceptor(a, b, ref bestAcceptorScore, ref bestAcceptor, out b2a, out testPairAlignDot, out testPairRelateDot);
 					}
 				}
-				if (bestDonor != null) //(bestDonorScore < bestAcceptorScore && bestDonor != null)
-				{
-					PairWithDonor(a, bestDonor);
-				}
-				if (bestAcceptor != null) //(bestAcceptorScore < bestDonorScore && bestAcceptor != null && bestDonor != bestAcceptor)
-				{
-					PairWithAcceptor(a, bestAcceptor);
-				}
-				if (bestAcceptor == null && bestDonor == null)
-				{
-					//Debug.LogError("Unable to find a donor or acceptor ring for " + a.name + "!");
-				}
+			}
+			if (bestDonor != null) //(bestDonorScore < bestAcceptorScore && bestDonor != null)
+			{
+				PairWithDonor(a, bestDonor);
+			}
+			if (bestAcceptor != null) //(bestAcceptorScore < bestDonorScore && bestAcceptor != null && bestDonor != bestAcceptor)
+			{
+				PairWithAcceptor(a, bestAcceptor);
+			}
+			if (bestAcceptor == null && bestDonor == null)
+			{
+				//Debug.LogError("Unable to find a donor or acceptor ring for " + a.name + "!");
 			}
 		}
 	}
