@@ -51,7 +51,7 @@ public class Fishtank : MonoBehaviour
 	public Text pHValueChartStatisticsTxt;
 	public Text pHValueChartFishtankLabelTxt;
 
-	private bool hasWon = false;
+	public bool hasWon = false;
 	private bool confettiDone = false;
 
 	private GameObject myConfettiFern;
@@ -149,7 +149,6 @@ public class Fishtank : MonoBehaviour
 	private int pairingForcingRotationVelocity = 50;     // rotation rate for pairing using quaternion slerp
 
 	private int ringRotSymmetry = 6;                     // number of equivalent docking positions around ring
-
 
 	[Header("Menu Game Objects")]
 	public GameObject pHSliderUI;
@@ -1777,7 +1776,7 @@ public class Fishtank : MonoBehaviour
 		handheldTimerValue.text = timePartyingRounded.ToString() + "s";
 	}
 
-	private void PartyModeWin()
+	public void PartyModeWin()
 	{
 		//Win
 		thisWinTime = timePartyingF;
@@ -2288,7 +2287,9 @@ public class Fishtank : MonoBehaviour
 		PushTogether();
 		SetRingDockedFlags();
 		FixHoverlock();
-		//RingRepel();
+
+		// RingRepel();
+
 		ClampRigidBodyDynamics();
 		UpdateStatistics();
 		UpdateCartoon();

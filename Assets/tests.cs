@@ -4,9 +4,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
 
-public class tests : MonoBehaviour {
+public class tests : MonoBehaviour
+{
 
-	public Fishtank ft;
+	public Fishtank fishtank;
 	public PHSlider pHSlider;
 
 	public bool allowWasdMovement = true;
@@ -23,11 +24,19 @@ public class tests : MonoBehaviour {
 
 	[Tooltip("Sums all molecules in the game and logs the score")]
 	public bool countAllMolecules = false;
+	public bool simulatePartyWin = false;
+
+	public bool simulatePartyModeReset = false;
 
 
 #if UNITY_EDITOR
 	void Start () {
 		Time.timeScale *= fastForward;
+
+		if (fishtank != null)
+		{
+			fishtank = GameObject.Find("fishtank").GetComponent<Fishtank>();
+		}
 		DecrementPh(amountToDecrementPh);
 
 		if (handTest)
@@ -35,6 +44,12 @@ public class tests : MonoBehaviour {
 			pHSlider.SetPhToMin();
 		}
 
+	}
+
+	private void SimulatePartyWin()
+	{
+		fishtank.PartyModeWin();
+		simulatePartyWin = false;
 	}
 
 	private void BreakAllRings()
@@ -79,6 +94,12 @@ public class tests : MonoBehaviour {
 		if (countAllMolecules)
 		{
 			CountAllMolecules();
+		}
+		if (simulatePartyWin)
+		{
+			Debug.Log("simulate party win");
+			SimulatePartyWin();
+			// StartCoroutine(SimulatePartyWin);
 		}
 	}
 
@@ -143,8 +164,8 @@ public class tests : MonoBehaviour {
 		else {
 			// Debug.Log(Time.time);
 		}
+	}
 
-}
 
 #endif
 }

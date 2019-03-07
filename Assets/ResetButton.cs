@@ -47,10 +47,18 @@ public class ResetButton : MonoBehaviour {
 	{
 		if (hand.GetThumbpadButtonDown() || ((hand.controller != null) && hand.controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_Grip)))
 		{
-			partyModeSwitch.IncrementValue();
-			fishTank.StopPartyMode();
-			// yield return null;
-			partyModeSwitch.DecrementValue();
+			ResetPartyMode();
 		}
+	}
+
+	/// <summary>
+	/// resets party mode by physically moving the linear drive position to serious mode then back to party mode.
+	/// </summary>
+	public void ResetPartyMode()
+	{
+		partyModeSwitch.IncrementValue();
+		fishTank.StopPartyMode();
+		// yield return null;
+		partyModeSwitch.DecrementValue();
 	}
 }
