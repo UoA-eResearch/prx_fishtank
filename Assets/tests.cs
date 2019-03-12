@@ -6,33 +6,25 @@ using Valve.VR.InteractionSystem;
 
 public class tests : MonoBehaviour
 {
-
 	public Fishtank fishtank;
 	public PHSlider pHSlider;
-
 	public bool allowWasdMovement = true;
-
 	public float fastForward = 1.0f;
-
 	public bool handTest = true;
 	public int amountToDecrementPh = 0;
 
-	[Header("single run tests")]
+	public ResetButton resetButton;
 
+	[Header("single run tests")]
 	[Tooltip("breaks all the rings in the scene and logs the before and after scores")]
 	public bool breakAllRings = false;
-
 	[Tooltip("Sums all molecules in the game and logs the score")]
 	public bool countAllMolecules = false;
 	public bool simulatePartyWin = false;
-
 	public bool simulatePartyModeReset = false;
-
 
 #if UNITY_EDITOR
 	void Start () {
-		Time.timeScale *= fastForward;
-
 		if (fishtank != null)
 		{
 			fishtank = GameObject.Find("fishtank").GetComponent<Fishtank>();
@@ -43,7 +35,6 @@ public class tests : MonoBehaviour
 		{
 			pHSlider.SetPhToMin();
 		}
-
 	}
 
 	private void SimulatePartyWin()
@@ -79,6 +70,10 @@ public class tests : MonoBehaviour
 
 	// Update is called once per frame
 	void Update () {
+		if (Time.timeScale != fastForward)
+		{
+			Time.timeScale = fastForward;
+		}
 		if (allowWasdMovement)
 		{
 			PollWasdMovement();
@@ -97,10 +92,19 @@ public class tests : MonoBehaviour
 		}
 		if (simulatePartyWin)
 		{
-			Debug.Log("simulate party win");
 			SimulatePartyWin();
 			// StartCoroutine(SimulatePartyWin);
 		}
+		if (simulatePartyModeReset)
+		{
+			SimulatePartyModeReset();
+			simulatePartyModeReset = false;
+		}
+	}
+
+	private void SimulatePartyModeReset()
+	{
+		resetButton.ResetPartyMode();
 	}
 
 	private void PollWasdMovement()

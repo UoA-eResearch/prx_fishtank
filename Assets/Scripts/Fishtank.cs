@@ -1754,14 +1754,21 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
-	private void StartPartyMode()
+	public void StartPartyMode()
 	{
 		//Party just started
 		partyStartTime = Time.timeSinceLevelLoad + 3; //extra time for intro
+		partyModeSwitch.EnablePartyMode();
 		phSlider.SetPhToMax();
 		hasWon = false;
 		confettiDone = false;
 		partyIntro = true;
+	}
+
+	public void StopPartyMode()
+	{
+		// party has ended
+		partyModeSwitch.DisablePartyMode();
 	}
 
 	private void UpdatePartyTime()
@@ -1801,13 +1808,6 @@ public class Fishtank : MonoBehaviour
 		handheldTimerValue.text = "Get Ready!";
 	}
 
-	public void StopPartyMode()
-	{
-		// party has ended
-		partyModeSwitch.DisablePartyMode();
-		phSlider.SetPhToMax();
-	}
-
 	void UpdatePartyMode()
 	{
 
@@ -1833,7 +1833,9 @@ public class Fishtank : MonoBehaviour
 		else
 		{
 			//Party intro over
+			// Start merging molecules
 			partyIntro = false;
+			phSlider.SetPhToMin();
 		}
 
 		if (partyMode && !partyIntro && !hasWon)

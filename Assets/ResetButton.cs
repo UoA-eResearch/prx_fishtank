@@ -56,9 +56,7 @@ public class ResetButton : MonoBehaviour {
 	/// </summary>
 	public void ResetPartyMode()
 	{
-		partyModeSwitch.IncrementValue();
 		fishTank.StopPartyMode();
-		// yield return null;
-		partyModeSwitch.DecrementValue();
+		fishTank.StartPartyMode();
 	}
 }
