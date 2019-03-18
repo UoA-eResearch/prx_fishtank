@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
 using UnityEngine.UI;
-using System;
+// using System;
 
 public class Fishtank : MonoBehaviour
 {
@@ -2133,7 +2133,7 @@ public class Fishtank : MonoBehaviour
 		// note: SteamVR/InteractionSystem/Teleport/Scripts/Teleport.cs altered to use touchpad.y threshold
 		bool showMenuHint = false;
 		Vector2 touchpad = (myHand1.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
-		if (gameSettingsManager.useTouchCycling() == false)
+		if (gameSettingsManager.UseTouchCycling() == false)
 		{
 			// determined by true or false text in Assets/StreamingAssets/config.xml
 			teleportHintUI.SetActive(true);

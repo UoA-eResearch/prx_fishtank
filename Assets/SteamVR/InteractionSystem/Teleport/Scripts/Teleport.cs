@@ -1139,7 +1139,7 @@ namespace Valve.VR.InteractionSystem
 				else
 				{
 					Vector2 touchpad = (hand.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
-					if (gameSettingsManager.getTouchCycling()) {
+					if (gameSettingsManager.UseTouchCycling()) {
 						if (touchpad.y > 0.25)
 						{
 							return hand.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad);
