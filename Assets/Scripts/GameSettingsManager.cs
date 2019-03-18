@@ -14,11 +14,16 @@ public class GameSettingsManager : MonoBehaviour {
 		string settingsPath = Application.streamingAssetsPath + "/config.xml";
 		doc.Load(settingsPath);
 		XmlNode touchCycling = doc.DocumentElement.SelectSingleNode("/root/input/touchpad-menu-cycling");
-		if (touchCycling.InnerText == "true") {
+		if (touchCycling.InnerText == "true" || touchCycling.InnerText.toLower() == "true")
+		{
 			useTouchCycling = true;
-		} else if (touchCycling.InnerText == "false") {
+		}
+		else if (touchCycling.InnerText == "false" || touchCycling.InnerText.toLower() == "false")
+		{
 			useTouchCycling = false;
-		} else {
+		}
+		else
+		{
 			useTouchCycling = true;
 		}
 	}
@@ -32,7 +37,7 @@ public class GameSettingsManager : MonoBehaviour {
 
 	}
 
-	public bool getTouchCycling() {
+	public bool useTouchCycling() {
 		return useTouchCycling;
 	}
 }

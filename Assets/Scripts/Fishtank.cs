@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR.InteractionSystem;
 using UnityEngine.UI;
+using System;
 
 public class Fishtank : MonoBehaviour
 {
@@ -2099,109 +2100,123 @@ public class Fishtank : MonoBehaviour
         laser.enabled = false;
     }
 
+
+	/// <summary>
+	/// Everything that requires update ticks and vive controllers
+	/// </summary>
 	void UpdateViveControllers()
 	{
 		var leftI = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
 		var rightI = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
-
 		//Debug.Log("leftI = " + leftI + " rightI = " + rightI);
-
-		// using 'left' myHand1 controller pad for UI menu switching
-		// note: SteamVR/InteractionSystem/Teleport/Scripts/Teleport.cs altered to use touchpad.y threshold
-		if (myHand1.controller != null)
-		{
-			bool showMenuHint = false;
-			Vector2 touchpad = (myHand1.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
-			if (gameSettingsManager.getTouchCycling() == false) {
-				// determined by true or false text in Assets/StreamingAssets/config.xml
-				teleportHintUI.SetActive(true);
-				menuHintUI.SetActive(false);
-			} else {
-				if ((touchpad.x < -0.2) && (touchpad.y < 0.2)) {
-					if (!myHand1TouchPressedLastLastUpdate &&  myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
-					{
-						myHand1TouchPressedLastLastUpdate = true;
-						//Debug.Log("Pad Press left!");
-						SwitchMenuUiMode(-1);
-					}
-					showMenuHint = true;
-				}
-				if ((touchpad.x > 0.2) && (touchpad.y < 0.2))
-				{
-					if (!myHand1TouchPressedLastLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
-					{
-						myHand1TouchPressedLastLastUpdate = true;
-						//Debug.Log("Pad Press right!");
-						SwitchMenuUiMode(1);
-					}
-					showMenuHint = true;
-				}
-				if (showMenuHint)
-				{
-					menuHintUI.SetActive(true);
-				}
-				else
-				{
-					menuHintUI.SetActive(false);
-				}
-				if (touchpad.y > 0.25) // value set in teleport.cs
-				{
-					teleportHintUI.SetActive(true);
-				}
-				else
-				{
-					teleportHintUI.SetActive(false);
-				}
-				if (!myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
-				{
-					myHand1TouchPressedLastLastUpdate = false;
-				}
-			}
-		}
 
 		// using controller application menu buttons for UI menu switching
 		if (myHand1.controller != null)
 		{
-			if (myHand1.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
-			{
-				//Debug.Log("Left Press Down!");
-				SwitchMenuUiMode(-1);
-			}
+			PollForTouchpadInputs();
+			PollForMenuSwitchInput(myHand1);
+			PollForTractorBeamInput(myHand1);
 		}
 		if (myHand2.controller != null)
 		{
-			if (myHand2.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+			PollForMenuSwitchInput(myHand2);
+			PollForTractorBeamInput(myHand2);
+		}
+	}
+
+	/// <summary>
+	/// polls for teleport or menu switch from hand1, depends on configuration file setting as well.
+	/// </summary>
+	private void PollForTouchpadInputs()
+	{
+		// using 'left' myHand1 controller pad for UI menu switching
+		// note: SteamVR/InteractionSystem/Teleport/Scripts/Teleport.cs altered to use touchpad.y threshold
+		bool showMenuHint = false;
+		Vector2 touchpad = (myHand1.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
+		if (gameSettingsManager.useTouchCycling() == false)
+		{
+			// determined by true or false text in Assets/StreamingAssets/config.xml
+			teleportHintUI.SetActive(true);
+			menuHintUI.SetActive(false);
+		}
+		else
+		{
+			if ((touchpad.x < -0.2) && (touchpad.y < 0.2))
 			{
-				//Debug.Log("Right Press Down!");
+				if (!myHand1TouchPressedLastLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+				{
+					myHand1TouchPressedLastLastUpdate = true;
+					//Debug.Log("Pad Press left!");
+					SwitchMenuUiMode(-1);
+				}
+				showMenuHint = true;
+			}
+			if ((touchpad.x > 0.2) && (touchpad.y < 0.2))
+			{
+				if (!myHand1TouchPressedLastLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+				{
+					myHand1TouchPressedLastLastUpdate = true;
+					//Debug.Log("Pad Press right!");
+					SwitchMenuUiMode(1);
+				}
+				showMenuHint = true;
+			}
+			if (showMenuHint)
+			{
+				menuHintUI.SetActive(true);
+			}
+			else
+			{
+				menuHintUI.SetActive(false);
+			}
+			if (touchpad.y > 0.25) // value set in teleport.cs
+			{
+				teleportHintUI.SetActive(true);
+			}
+			else
+			{
+				teleportHintUI.SetActive(false);
+			}
+			if (!myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+			{
+				myHand1TouchPressedLastLastUpdate = false;
+			}
+		}
+	}
+
+	private void PollForMenuSwitchInput(Hand hand)
+	{
+		if (hand.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+		{
+			//Debug.Log("Right Press Down!");
+			if (hand == myHand1)
+			{
+				SwitchMenuUiMode(-1);
+			}
+			if (hand == myHand2)
+			{
 				SwitchMenuUiMode(1);
 			}
 		}
+	}
 
-        // using grip buttons to activate tractor beam
-        ulong gripButton = SteamVR_Controller.ButtonMask.Grip;
-        if (myHand1.controller != null)
-        {
-            SteamVR_LaserPointer laserPointer = myHand1.GetComponent<SteamVR_LaserPointer>();
-            if (myHand1.controller.GetPress(gripButton))
-            {
-                ActivateTractorBeam(myHand1, laserPointer);
-            } else if (myHand1.controller.GetPressUp(gripButton)){
-                DeactivateTractorBeam(myHand1, laserPointer);
-            }
-        }
-        if (myHand2.controller != null)
-        {
-            SteamVR_LaserPointer laserPointer = myHand2.GetComponent<SteamVR_LaserPointer>();
-            if (myHand2.controller.GetPress(gripButton))
-            {
-                ActivateTractorBeam(myHand2, laserPointer);
-            }
-            else if (myHand2.controller.GetPressUp(gripButton))
-            {
-                DeactivateTractorBeam(myHand2, laserPointer);
-            }
-        }
-    }
+	private void PollForTractorBeamInput(Hand hand)
+	{
+		// using grip buttons to activate tractor beam
+		ulong gripButton = SteamVR_Controller.ButtonMask.Grip;
+		if (hand.controller != null)
+		{
+			SteamVR_LaserPointer laserPointer = hand.GetComponent<SteamVR_LaserPointer>();
+			if (hand.controller.GetPress(gripButton))
+			{
+				ActivateTractorBeam(hand, laserPointer);
+			}
+			else if (hand.controller.GetPressUp(gripButton))
+			{
+				DeactivateTractorBeam(hand, laserPointer);
+			}
+		}
+	}
 
 	private GameObject GetActiveMenu() {
 		GameObject[] menus = {
