@@ -7,25 +7,21 @@ public class GameSettingsManager : MonoBehaviour {
 
 	private bool useTouchCycling = false;
 
+	public bool useButtonHoldOverloads { get; private set; }
+
 	// Use this for initialization
 	void Awake()
 	{
-		XmlDocument doc = new XmlDocument();
+		XmlDocument configXml = new XmlDocument();
 		string settingsPath = Application.streamingAssetsPath + "/config.xml";
-		doc.Load(settingsPath);
-		XmlNode touchCycling = doc.DocumentElement.SelectSingleNode("/root/input/touchpad-menu-cycling");
-		if (touchCycling.InnerText == "true")
-		{
-			useTouchCycling = true;
-		}
-		else if (touchCycling.InnerText == "false")
-		{
-			useTouchCycling = false;
-		}
-		else
-		{
-			useTouchCycling = true;
-		}
+		configXml.Load(settingsPath);
+
+		XmlNode touchCyclingNode = configXml.DocumentElement.SelectSingleNode("/root/input/touchpad-menu-cycling");
+		useTouchCycling = touchCyclingNode.InnerText == "true" ? true : false;
+
+		XmlNode buttonHoldOverloadsNode = configXml.DocumentElement.SelectSingleNode("/root/input/button-hold-overloads");
+		useButtonHoldOverloads = buttonHoldOverloadsNode.InnerText == "true" ? true : false;
+		Debug.Log(useButtonHoldOverloads);
 	}
 
 	void Start () {

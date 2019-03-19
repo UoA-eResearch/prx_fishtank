@@ -2126,7 +2126,8 @@ public class Fishtank : MonoBehaviour
 		if (myHand1.controller != null)
 		{
 			PollForTouchpadInputs();
-			PollForMenuSwitchInput(myHand1);
+			// PollForMenuSwitchInput(myHand1);
+			StartCoroutine(PollForMenuSwitchInput(myHand1));
 			PollForTractorBeamInput(myHand1);
 		}
 		if (myHand2.controller != null)
@@ -2196,18 +2197,56 @@ public class Fishtank : MonoBehaviour
 		}
 	}
 
-	private void PollForMenuSwitchInput(Hand hand)
+	private IEnumerator PollForMenuSwitchInput(Hand hand)
 	{
-		if (hand.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu))
+		if (gameSettingsManager.useButtonHoldOverloads)
 		{
-			//Debug.Log("Right Press Down!");
-			if (hand == myHand1)
+			float timePressed = 0;
+			while (hand.controller.GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
 			{
-				SwitchMenuUiMode(-1);
+				timePressed += Time.deltaTime;
+				// Debug.Log(timePressed);
+				yield return null;
 			}
-			if (hand == myHand2)
+
+			if (hand.controller.GetPressUp(SteamVR_Controller.ButtonMask.ApplicationMenu))
 			{
-				SwitchMenuUiMode(1);
+				if (timePressed > 1.5)
+				{
+					// long press/ => hide menus
+					Debug.Log(timePressed + " long press");
+					var instance = Player.instance;
+					if (instance)
+					{
+						instance.HideSettingsMenu();
+					}
+				}
+				else
+				{
+					// short press => toggle menus
+					Debug.Log(timePressed + " short press");
+					//Debug.Log("Right Press Down!");
+					if (hand == myHand1)
+					{
+						SwitchMenuUiMode(-1);
+					}
+					if (hand == myHand2)
+					{
+						SwitchMenuUiMode(1);
+					}
+				}
+			}
+		} else {
+			if (hand.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)) {
+				Debug.Log("not using overloaded button evaluation");
+				if (hand == myHand1)
+				{
+					SwitchMenuUiMode(-1);
+				}
+				if (hand == myHand2)
+				{
+					SwitchMenuUiMode(1);
+				}
 			}
 		}
 	}

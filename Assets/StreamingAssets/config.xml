@@ -1,5 +1,6 @@
 <root>
     <input>
         <touchpad-menu-cycling>false</touchpad-menu-cycling>
+        <button-hold-overloads>true</button-hold-overloads>
     </input>
 </root>
