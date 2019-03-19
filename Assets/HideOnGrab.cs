@@ -21,13 +21,25 @@ public class HideOnGrab : MonoBehaviour {
 	// NOTE: Put in late update at the moment. Something is messing with a single teleport UI Hint. I suspect the fishtank UpdateViveControllers
 	void LateUpdate()
 	{
-		if (parentHand.GetHandHairTrigger()) {
-			foreach (var uiElement in hidableUIElements) {
+		SetInactiveIfGrabbing();
+	}
+
+	/// <summary>
+	/// hides ui elements if hand is pulling trigger.
+	/// </summary>
+	void SetInactiveIfGrabbing() {
+		if (parentHand.GetHandHairTrigger())
+		{
+			foreach (var uiElement in hidableUIElements)
+			{
 				// Debug.Log(uiElement.name);
 				uiElement.SetActive(false);
 			}
-		} else {
-			foreach (var uiElement in hidableUIElements) {
+		}
+		else
+		{
+			foreach (var uiElement in hidableUIElements)
+			{
 				uiElement.SetActive(true);
 			}
 		}

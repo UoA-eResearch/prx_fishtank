@@ -1815,12 +1815,6 @@ public class Fishtank : MonoBehaviour
 
 		partyMode = partyModeSwitch.GetPartyModeStatus();
 
-		if (!partyMode)
-		{
-			// if it's not party mode then ignore the rest of these conditions.
-			return;
-		}
-
 		SetBGM();
 
 		if (partyModeLast == false && partyMode == true)
@@ -2205,7 +2199,6 @@ public class Fishtank : MonoBehaviour
 			while (hand.controller.GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
 			{
 				timePressed += Time.deltaTime;
-				// Debug.Log(timePressed);
 				yield return null;
 			}
 
@@ -2214,7 +2207,6 @@ public class Fishtank : MonoBehaviour
 				if (timePressed > 1.5)
 				{
 					// long press/ => hide menus
-					Debug.Log(timePressed + " long press");
 					var instance = Player.instance;
 					if (instance)
 					{
@@ -2224,8 +2216,6 @@ public class Fishtank : MonoBehaviour
 				else
 				{
 					// short press => toggle menus
-					Debug.Log(timePressed + " short press");
-					//Debug.Log("Right Press Down!");
 					if (hand == myHand1)
 					{
 						SwitchMenuUiMode(-1);
@@ -2238,7 +2228,6 @@ public class Fishtank : MonoBehaviour
 			}
 		} else {
 			if (hand.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)) {
-				Debug.Log("not using overloaded button evaluation");
 				if (hand == myHand1)
 				{
 					SwitchMenuUiMode(-1);
