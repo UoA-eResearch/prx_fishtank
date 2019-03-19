@@ -180,10 +180,11 @@ public class Fishtank : MonoBehaviour
 
 
     private bool myHand1TouchPressedLastLastUpdate = false; // debouncing
+	private bool gameTimerStart = false;
 
 	//public float ringMinSpringStrength = 0f; 
 
-	#endregion	
+	#endregion
 
 	void DropObjectIfAttached(GameObject go)
 	{
@@ -1814,6 +1815,12 @@ public class Fishtank : MonoBehaviour
 
 		partyMode = partyModeSwitch.GetPartyModeStatus();
 
+		if (!partyMode)
+		{
+			// if it's not party mode then ignore the rest of these conditions.
+			return;
+		}
+
 		SetBGM();
 
 		if (partyModeLast == false && partyMode == true)
@@ -1830,13 +1837,18 @@ public class Fishtank : MonoBehaviour
 		if (Time.timeSinceLevelLoad < partyStartTime)
 		{
 			PreparePartyModeStart();
+			gameTimerStart = true;
 		}
 		else
 		{
-			//Party intro over
+			//Party intro over - game is underway
 			// Start merging molecules
 			partyIntro = false;
-			phSlider.SetPhToMin();
+			if (gameTimerStart)
+			{
+				phSlider.SetPhToMin();
+				gameTimerStart = false;
+			}
 		}
 
 		if (partyMode && !partyIntro && !hasWon)
