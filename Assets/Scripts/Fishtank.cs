@@ -179,7 +179,7 @@ public class Fishtank : MonoBehaviour
 	public Hand myHand2;
 
 
-    private bool myHand1TouchPressedLastLastUpdate = false; // debouncing
+    private bool myHand1TouchPressedLastUpdate = false; // debouncing
 	private bool gameTimerStart = false;
 
 	//public float ringMinSpringStrength = 0f; 
@@ -2155,9 +2155,9 @@ public class Fishtank : MonoBehaviour
 		{
 			if ((touchpad.x < -0.2) && (touchpad.y < 0.2))
 			{
-				if (!myHand1TouchPressedLastLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+				if (!myHand1TouchPressedLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
 				{
-					myHand1TouchPressedLastLastUpdate = true;
+					myHand1TouchPressedLastUpdate = true;
 					//Debug.Log("Pad Press left!");
 					SwitchMenuUiMode(-1);
 				}
@@ -2165,9 +2165,9 @@ public class Fishtank : MonoBehaviour
 			}
 			if ((touchpad.x > 0.2) && (touchpad.y < 0.2))
 			{
-				if (!myHand1TouchPressedLastLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
+				if (!myHand1TouchPressedLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
 				{
-					myHand1TouchPressedLastLastUpdate = true;
+					myHand1TouchPressedLastUpdate = true;
 					//Debug.Log("Pad Press right!");
 					SwitchMenuUiMode(1);
 				}
@@ -2191,7 +2191,7 @@ public class Fishtank : MonoBehaviour
 			}
 			if (!myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
 			{
-				myHand1TouchPressedLastLastUpdate = false;
+				myHand1TouchPressedLastUpdate = false;
 			}
 		}
 	}
