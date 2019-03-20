@@ -22,6 +22,7 @@ public class tests : MonoBehaviour
 	public bool countAllMolecules = false;
 	public bool simulatePartyWin = false;
 	public bool simulatePartyModeReset = false;
+	public bool testPartyModeScore = false;
 
 #if UNITY_EDITOR
 	void Start () {
@@ -100,6 +101,11 @@ public class tests : MonoBehaviour
 			SimulatePartyModeReset();
 			simulatePartyModeReset = false;
 		}
+		if (testPartyModeScore)
+		{
+			// TestPartyModeScore();
+			StartCoroutine(TestPartyModeScore());
+		}
 	}
 
 	private void SimulatePartyModeReset()
@@ -168,6 +174,18 @@ public class tests : MonoBehaviour
 		else {
 			// Debug.Log(Time.time);
 		}
+
+	}
+
+
+	private IEnumerator TestPartyModeScore()
+	{
+		Debug.Log("testing party mode score");
+		// fishtank.partyModeSwitch.IncrementValue();
+		fishtank.partyModeSwitch.EnablePartyMode();
+
+
+		testPartyModeScore = false;
 	}
 #endif
 }
