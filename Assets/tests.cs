@@ -183,9 +183,9 @@ public class tests : MonoBehaviour
 		Debug.Log("testing party mode score");
 		// fishtank.partyModeSwitch.IncrementValue();
 		fishtank.partyModeSwitch.EnablePartyMode();
-
-
+		fishtank
 		testPartyModeScore = false;
+		yield return null;
 	}
 #endif
 }

@@ -22,7 +22,6 @@ public class Fishtank : MonoBehaviour
 
 	public bool doNanoParticles = true;
 
-
 	public float fishtankScaleFactor = 1.0f;
 	private Vector3 fishtankScaleInit = new Vector3(1f, 1f, 1f);
     private Vector3 handObjectsScaleInit = Vector3.one;
@@ -191,11 +190,11 @@ public class Fishtank : MonoBehaviour
 		var lh = Player.instance.leftHand;
 		var rh = Player.instance.rightHand;
 
-		if (lh.currentAttachedObject == go)
+		if (lh?.currentAttachedObject == go)
 		{
 			lh.DetachObject(lh.currentAttachedObject);
 		}
-		if (rh.currentAttachedObject == go)
+		if (rh?.currentAttachedObject == go)
 		{
 			rh.DetachObject(rh.currentAttachedObject);
 		}
@@ -599,8 +598,8 @@ public class Fishtank : MonoBehaviour
 		foreach (var tag in tags)
 		{
 			var gos = GameObject.FindGameObjectsWithTag(tag);
-			var lh = Player.instance.leftHand;
-			var rh = Player.instance.rightHand;
+			var lh = Player.instance?.leftHand;
+			var rh = Player.instance?.rightHand;
 			foreach (var go in gos)
 			{
 				// check for gameobjects which are attached to player - we don't want to manipulate them

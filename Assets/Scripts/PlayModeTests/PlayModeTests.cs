@@ -29,7 +29,7 @@ namespace Tests
 			fishtank.fishtankScaleUI = EmptyGo();
 			fishtank.partyModeUi = EmptyGo();
 			fishtank.simulationUI = EmptyGo();
-			fishtank.nanoUI = EmptyGo();
+			fishtank.nanoUi = EmptyGo();
 
 			// creating party mode switch and setting reference to fishtank
 			partyModeSwitchGo = GameObject.Instantiate(new GameObject()); partyModeSwitch = partyModeSwitchGo.AddComponent<PartyModeSwitch>();
