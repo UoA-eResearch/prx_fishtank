@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using UnityEngine;
 using UnityEngine.TestTools;
+using UnityEngine.UI;
 
 namespace Tests
 {
@@ -25,11 +26,6 @@ namespace Tests
 			fishtank = null;
 		}
 
-		[Test]
-        public void UnitTests1SimplePasses()
-        {
-			Assert.IsTrue(1 == 1);
-		}
 
         // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
         // `yield return null;` to skip a frame.
@@ -40,5 +36,16 @@ namespace Tests
             // Use yield to skip a frame.
             yield return null;
         }
+
+        [Test]
+        public void SpawnGo()
+        {
+            var Go = GameObject.Instantiate(new GameObject());
+            Assert.IsTrue(Go != null);
+        }
+
+        private GameObject SpawnEmptyGo() {
+			return GameObject.Instantiate(new GameObject());
+		}
     }
 }

@@ -20,7 +20,7 @@ public class PHSlider : MonoBehaviour, IMenu
 	public Text phText
 	{
 		get;
-		private set;
+		set;
 	}
 	public GameObject myHandle;
 
@@ -32,10 +32,17 @@ public class PHSlider : MonoBehaviour, IMenu
             linearMapping = GetComponent<LinearMapping>();
         }
 
-		phCanvas = GameObject.Find("pHCanvas");
-		phText = phCanvas.GetComponentInChildren<Text>();
+        if (!phCanvas)
+        {
+            phCanvas = GameObject.Find("pHCanvas");
+        }
 
-		//myLinearDrive = myHandle.GetComponent<LinearDrive>();
+        if (phText == null)
+        {
+            phText = phCanvas?.GetComponentInChildren<Text>();
+        }
+
+        //myLinearDrive = myHandle.GetComponent<LinearDrive>();
     }
 
     //-------------------------------------------------

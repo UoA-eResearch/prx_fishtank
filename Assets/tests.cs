@@ -24,8 +24,11 @@ public class tests : MonoBehaviour
 	public bool simulatePartyModeReset = false;
 	public bool testPartyModeScore = false;
 
+    public bool runAllTests = false;
+
+
 #if UNITY_EDITOR
-	void Start () {
+	private void Start () {
 		if (fishtank != null)
 		{
 			fishtank = GameObject.Find("fishtank").GetComponent<Fishtank>();
@@ -79,7 +82,22 @@ public class tests : MonoBehaviour
 		{
 			PollWasdMovement();
 		}
-		if (handTest)
+	}
+
+    private void Tests()
+    {
+        if (runAllTests)
+        {
+            SimulatePartyWin();
+            TestPartyModeScore();
+            SimulatePartyModeReset();
+            CountAllMolecules();
+            BreakAllRings();
+            CountAllMolecules();
+            runAllTests = false;
+        }
+ 
+        if (handTest)
 		{
 			HandAttachmentTest();
 		}
@@ -99,18 +117,18 @@ public class tests : MonoBehaviour
 		if (simulatePartyModeReset)
 		{
 			SimulatePartyModeReset();
-			simulatePartyModeReset = false;
 		}
 		if (testPartyModeScore)
 		{
 			// TestPartyModeScore();
 			StartCoroutine(TestPartyModeScore());
 		}
-	}
+    }
 
 	private void SimulatePartyModeReset()
 	{
 		resetButton.ResetPartyMode();
+        simulatePartyModeReset = false;
 	}
 
 	private void PollWasdMovement()
@@ -131,9 +149,9 @@ public class tests : MonoBehaviour
 		{
 			Player.instance.transform.position += Time.deltaTime * Vector3.right;
 		}
-	}
+    }
 
-	private void DecrementPh(int amount) {
+    private void DecrementPh(int amount) {
 		for (int i = 0; i < amount; i++)
 		{
 			pHSlider.DecrementValue();
@@ -177,15 +195,15 @@ public class tests : MonoBehaviour
 
 	}
 
-
 	private IEnumerator TestPartyModeScore()
 	{
 		Debug.Log("testing party mode score");
 		// fishtank.partyModeSwitch.IncrementValue();
 		fishtank.partyModeSwitch.EnablePartyMode();
-		fishtank
-		testPartyModeScore = false;
+		fishtank.partyModeUi.SetActive(true);
 		yield return null;
+        Debug.Log("idk");
 	}
+
 #endif
 }

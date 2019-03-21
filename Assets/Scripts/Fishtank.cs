@@ -203,7 +203,7 @@ public class Fishtank : MonoBehaviour
 	void FindPairs()
 	{
 		//print(Time.realtimeSinceStartup);
-		assignProbability();
+		AssignProbability();
 		//Debug.Log ("Prob for" + phValue + "is " + probabilityBind + probabilityBreak);
 		//Debug.Log("PH value " + phValue);
 		pairs = new Dictionary<GameObject, GameObject>();
@@ -1270,16 +1270,18 @@ public class Fishtank : MonoBehaviour
 
 	}
 
-	void assignProbability()
+	void AssignProbability()
 	{
 		Color col;
 		Color particleCol;
 		col.a = fishtankAlpha;
+        Debug.Log("col a: " + col.a);
 		col = Color.cyan;
 
 		switch (phSlider.phValue)
 		{
 			case 9:
+                Debug.Log("case 9");
 				probabilityDimerMake = 5; //1
 				probabilityDimerBreak = 50;
 				probabilityRingMake = 0;
@@ -1334,6 +1336,7 @@ public class Fishtank : MonoBehaviour
 				break;
 
 			case 3:
+                Debug.Log("case 3");
 				probabilityDimerMake = 100;
 				probabilityDimerBreak = 0;
 				probabilityRingMake = 100;
@@ -1342,6 +1345,7 @@ public class Fishtank : MonoBehaviour
 				col = Color.yellow;
 				break;
 		}
+        Debug.Log(col);
 		col.a = fishtankAlpha;
 		gameObject.GetComponent<Renderer>().material.color = col;
 
@@ -1700,7 +1704,6 @@ public class Fishtank : MonoBehaviour
 				bestRotationDiff = testRotationDiff;
 				bestRotationOffsetAngle = (i * (360.0f / ringRotSymmetry));
 			}
-
 		}
 		//Debug.Log("bestRotationOffsetAngle (donor) is " + bestRotationOffsetAngle);
 		return bestRotationOffsetAngle;
@@ -1809,7 +1812,7 @@ public class Fishtank : MonoBehaviour
 		handheldTimerValue.text = "Get Ready!";
 	}
 
-	void UpdatePartyMode()
+	public void UpdatePartyMode()
 	{
 
 		partyMode = partyModeSwitch.GetPartyModeStatus();

@@ -5269,6 +5269,8 @@ MonoBehaviour:
   countAllMolecules: 0
   simulatePartyWin: 0
   simulatePartyModeReset: 0
+  testPartyModeScore: 0
+  runAllTests: 0
 --- !u!82 &469726002
 AudioSource:
   m_ObjectHideFlags: 0

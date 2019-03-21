@@ -29,7 +29,7 @@ namespace Tests
 			fishtank.fishtankScaleUI = EmptyGo();
 			fishtank.partyModeUi = EmptyGo();
 			fishtank.simulationUI = EmptyGo();
-			fishtank.nanoUi = EmptyGo();
+			fishtank.nanoUI = EmptyGo();
 
 			// creating party mode switch and setting reference to fishtank
 			partyModeSwitchGo = GameObject.Instantiate(new GameObject()); partyModeSwitch = partyModeSwitchGo.AddComponent<PartyModeSwitch>();
@@ -52,22 +52,5 @@ namespace Tests
 			partyModeSwitch.linearMapping.value = 1.0f;
 			Assert.IsTrue(partyModeSwitch.linearMapping.value == 1.0f);
 		}
-
-        [UnityTest]
-        public IEnumerator PreparePartyMode()
-        {
-			partyModeSwitch.IncrementValue();
-			yield return null;
-			Assert.IsTrue(fishtank.partyMode == true);
-		}
-
-
-		// [UnityTest]
-		// public IEnumerator StartingPartyModePreparesPartyModeUi()
-		// {
-		// 	fishtank.StartPartyMode();
-		// 	yield return null;
-		// 	Assert.IsTrue(fishtank.scoreboardTimerLabel.text == "Get Ready!");
-		// }
 	}
 }
