@@ -5,7 +5,7 @@ using UnityEngine;
 using Valve.VR.InteractionSystem;
 
 [RequireComponent(typeof(Interactable))]
-public class Ring: MonoBehaviour
+public class Ring : MonoBehaviour
 {
 
 	public GameObject dimerPrefab;
@@ -84,14 +84,16 @@ public class Ring: MonoBehaviour
 	void Start()
 	{
 		// scripted fail safe references to certain assets
-		if (myNanoParticle == null) {
+		if (myNanoParticle == null)
+		{
 			myNanoParticle = gameObject.transform.Find("Wire").gameObject;
 		}
 		myNanoParticle.SetActive(true);
 		myNanoParticleLocalScaleInit = myNanoParticle.transform.localScale;
 		myNanoParticle.transform.localScale = 0.0f * myNanoParticleLocalScaleInit;
 
-		if (myRingLight != null) {
+		if (myRingLight != null)
+		{
 			GameObject myRingLightGO = gameObject.transform.Find("ringLight").gameObject;
 			myRingLight = myRingLightGO.GetComponent<Light>();
 		}
@@ -107,7 +109,7 @@ public class Ring: MonoBehaviour
 		fishTank = fishtankGO.GetComponent<Fishtank>();
 
 		var myElectric01 = Instantiate(goElectric01, gameObject.transform);
-	
+
 		psElectric01 = myElectric01.GetComponentInChildren<ParticleSystem>();
 		psElectric01.transform.localScale = fishTank.nanowireFxScale * fishtankGO.transform.localScale;
 
@@ -161,7 +163,7 @@ public class Ring: MonoBehaviour
 		age = age + Time.deltaTime;
 
 		UpdateMaterialTransparency();
-		
+
 
 		if (fishTank.doNanoParticles)
 		{
@@ -184,7 +186,7 @@ public class Ring: MonoBehaviour
 			}
 			else
 			{
-					ringHasNanoParticle = true;	
+				ringHasNanoParticle = true;
 			}
 		}
 		else
@@ -227,7 +229,7 @@ public class Ring: MonoBehaviour
 
 
 
-		if (!ringCanStack) 
+		if (!ringCanStack)
 		{
 			//catch cases where manipulated rings have legacy spring constraints active
 			if (sjDonorToAcceptorOn)
@@ -424,16 +426,18 @@ public class Ring: MonoBehaviour
 		}
 	}
 
-	public void NanoWireOn(){
-		if (nanoWireOn) {
+	public void NanoWireOn()
+	{
+		if (nanoWireOn)
+		{
 			return;
 		}
 		nanoWireOn = true;
 		if (!psElectric01.isPlaying)
 		{
 			psElectric01.Play();
-            //r.SetShaderTrans(1.0f);
-            // StartCoroutine(TransitionToTransparent());
+			//r.SetShaderTrans(1.0f);
+			// StartCoroutine(TransitionToTransparent());
 
 			if (Random.value < 0.5f)
 			{
@@ -445,13 +449,14 @@ public class Ring: MonoBehaviour
 			}
 			ringAudioSource.volume = 0.05f;
 			ringAudioSource.loop = true;
-			ringAudioSource.Play();			
+			ringAudioSource.Play();
 		}
 	}
 
 	public void NanoWireOff()
 	{
-		if (!nanoWireOn) {
+		if (!nanoWireOn)
+		{
 			return;
 		}
 		nanoWireOn = false;
@@ -466,21 +471,28 @@ public class Ring: MonoBehaviour
 	/// <summary>
 	/// Checks nanoring flag every update call and adjusts material transparency accordingly.
 	/// </summary>
-	private void UpdateMaterialTransparency() {
+	private void UpdateMaterialTransparency()
+	{
 		Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
-		foreach (Renderer r in subRenderers) {
-			if (nanoWireOn) {
-				if (r.material.color.a > minTransparence) {
+		foreach (Renderer r in subRenderers)
+		{
+			if (nanoWireOn)
+			{
+				if (r.material.color.a > minTransparence)
+				{
 					Color curColor = r.material.color;
 					Color newColor = curColor;
-					newColor.a = Mathf.Clamp(newColor.a - (Time.deltaTime/materialTransitionSpeed), minTransparence, maxTransparence);
+					newColor.a = Mathf.Clamp(newColor.a - (Time.deltaTime / materialTransitionSpeed), minTransparence, maxTransparence);
 					r.material.color = newColor;
 				}
-			} else {
-				if (r.material.color.a != maxTransparence) {
+			}
+			else
+			{
+				if (r.material.color.a != maxTransparence)
+				{
 					Color curColor = r.material.color;
 					Color newColor = curColor;
-					newColor.a = Mathf.Clamp(newColor.a + (Time.deltaTime/materialTransitionSpeed), minTransparence, maxTransparence);
+					newColor.a = Mathf.Clamp(newColor.a + (Time.deltaTime / materialTransitionSpeed), minTransparence, maxTransparence);
 					r.material.color = newColor;
 				}
 			}
@@ -505,8 +517,9 @@ public class Ring: MonoBehaviour
 		fishTank.SetCartoonRendering(dimer);
 
 		float minDist = 0;
-		if (currentHand != null) {
-			minDist = Vector3.Distance (dimer.transform.position, currentHand.otherHand.hoverSphereTransform.position);
+		if (currentHand != null)
+		{
+			minDist = Vector3.Distance(dimer.transform.position, currentHand.otherHand.hoverSphereTransform.position);
 		}
 		var match = dimer;
 		foreach (Transform child in dimer.transform)
@@ -538,7 +551,8 @@ public class Ring: MonoBehaviour
 		}
 		Destroy(gameObject);
 
-		if (currentHand != null) {
+		if (currentHand != null)
+		{
 			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachOthers;
 			currentHand.otherHand.AttachObject(match, attachmentFlags);
 		}
@@ -568,6 +582,15 @@ public class Ring: MonoBehaviour
 		}
 	}
 
+	private GameObject debugSphere(Vector3 position)
+	{
+		var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+		go.transform.position = position;
+		go.transform.localScale = go.transform.localScale * 0.1f;
+		go.GetComponent<Collider>().isTrigger = true;
+		return go;
+	}
+
 	/// <summary>
 	/// Recursively checks if ring has neighbours on either side and if they are attached to hand. Attaches if not yet attached
 	/// </summary>
@@ -581,7 +604,7 @@ public class Ring: MonoBehaviour
 		{
 			// something
 		}
-		else 
+		else
 		{
 			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachFromOtherHand;
 			// TODO: if the stack is already attached to a different hand then find which direction the other hand is in
@@ -590,35 +613,40 @@ public class Ring: MonoBehaviour
 			// if ring attached one direction
 			if (dockedToAcceptor)
 			{
-				// if next ring not attached to hand
-				if (!partnerAcceptor.GetComponent<Ring>().attachedHand || indirectGrab)
+				// if next ring not attached to hand, also stops it from back-propagating
+				if (!partnerAcceptor.GetComponent<Ring>().attachedHand)
 				{
-					partnerDonor.GetComponent<Ring>().indirectGrab = true;
 
-					// DEBUG:
-					var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-					go.transform.position = partnerAcceptor.transform.position;
-					go.transform.localScale = go.transform.localScale * 0.1f;
+					// TODO:
+					debugSphere(partnerDonor.transform.position);
 
 					hand.AttachObject(partnerAcceptor, attachmentFlags);
+				}
+				if (GoDist(partnerDonor, attachedHand.gameObject) > GoDist(partnerAcceptor, attachedHand.gameObject))
+				{
+					debugSphere(partnerDonor.transform.position);
+					hand.AttachObject(partnerDonor, attachmentFlags);
 				}
 			}
 			// if ring attached one direction
 			if (dockedToDonor)
 			{
 				// if next ring not attached to hand
-				if (!partnerDonor.GetComponent<Ring>().attachedHand || indirectGrab)
+				if (!partnerDonor.GetComponent<Ring>().attachedHand)
 				{
-					partnerDonor.GetComponent<Ring>().indirectGrab = true;
+					// TODO: debugging
+					debugSphere(partnerDonor.transform.position);
 
-					// DEBUG:
-					var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-					go.transform.position = partnerDonor.transform.position;
-					go.transform.localScale = go.transform.localScale * 0.1f;
-
-					partnerDonor.transform.localScale = partnerDonor.transform.localScale * 1.1f;
 					hand.AttachObject(partnerDonor, attachmentFlags);
 				}
+				if (GoDist(partnerDonor, attachedHand.gameObject) < GoDist(partnerAcceptor, attachedHand.gameObject))
+				{
+					debugSphere(partnerDonor.transform.position);
+
+					hand.AttachObject(partnerDonor, attachmentFlags);
+				}
+				// 	hand.AttachObject(partnerDonor, attachmentFlags);
+				// }
 			}
 			foreach (var ao in hand.AttachedObjects)
 			{
@@ -628,28 +656,45 @@ public class Ring: MonoBehaviour
 		velocityEstimator.BeginEstimatingVelocity();
 	}
 
-	public bool indirectGrab = false;
-
-	Hand hoveringHand = null;
-	void OnHandHoverBegin(Hand hand)
+	/// <summary>
+	/// returns distance between two game objects
+	/// </summary>
+	/// <param name="a"></param>
+	/// <param name="b"></param>
+	/// <returns>distance</returns>
+	private float GoDist(GameObject a, GameObject b)
 	{
-		hoveringHand = hand;
-		Debug.Log("hand hovering begun");
+		return Vector3.Distance(a.transform.position, b.transform.position);
 	}
 
-	void OnHandHoverEnd(Hand hand)
-	{
-		Debug.Log("hand hovering end");
-		if (hoveringHand == hand)
-		{
-			hoveringHand = null;
-		}
-	}
+	
+	// TODO: if hit by another hand when over a certain speed - break the ring apart.
+	/// <summary>
+	/// OnTriggerEnter is called when the Collider other enters the trigger.
+	/// </summary>
+	/// <param name="other">The other Collider involved in this collision.</param>
+	// void OnTriggerEnter(Collider other)
+	// {
+	// 	if (other.gameObject.GetComponent<Hand>())
+	// 	{
+	// 		var hand = other.gameObject.GetComponent<Hand>();
+	// 		Debug.Log("hand has entered the ring");
+	// 		if (hand != attachedHand)
+	// 		{
+	// 			Debug.Log("different hand touching the ring");
+	// 			{
+	// 				if (hand.GetComponent<Rigidbody>().velocity > breakRingVelocity)
+	// 				{
+	// 					BreakRing(attachedHand);
+	// 				}
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	public AudioSource ringPopSfx;
 	void OnDetachedFromHand()
 	{
-		indirectGrab = false;
 		attachedHand = null;
 		ringPopSfx.Play(0);
 		velocityEstimator.FinishEstimatingVelocity();
