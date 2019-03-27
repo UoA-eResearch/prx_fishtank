@@ -594,14 +594,16 @@ public class Ring: MonoBehaviour
 				{
 					hand.AttachObject(partnerAcceptor, attachmentFlags);
 				}
-				else {
+				else
+				{
+					// if the next ring is already attached to a different hand and that hand is directly touching the ring (i.e. not touching from recursion, and the hovering hand is not evaluating as different due to being null)
 					if (partnerAcceptor.GetComponent<Ring>().attachedHand != hand && partnerAcceptor.GetComponent<Ring>().hoveringHand != hand && partnerAcceptor.GetComponent<Ring>().hoveringHand != null)
 					{
 						Debug.Log("stop attaching");
 					}
 					else
 					{
-					hand.AttachObject(partnerAcceptor, attachmentFlags);
+						hand.AttachObject(partnerAcceptor, attachmentFlags);
 					}
 				}
 			}
@@ -613,7 +615,8 @@ public class Ring: MonoBehaviour
 				{
 					hand.AttachObject(partnerDonor, attachmentFlags);
 				}
-				else {
+				else
+				{
 					if (partnerDonor.GetComponent<Ring>().attachedHand != hand && partnerDonor.GetComponent<Ring>().hoveringHand != hand && partnerDonor.GetComponent<Ring>().hoveringHand != null)
 					{
 						Debug.Log("stop attaching");
