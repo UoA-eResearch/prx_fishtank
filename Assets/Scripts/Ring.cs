@@ -595,7 +595,7 @@ public class Ring: MonoBehaviour
 					hand.AttachObject(partnerAcceptor, attachmentFlags);
 				}
 				else {
-					if (partnerAcceptor.GetComponent<Ring>().hoveringHand != hand && partnerAcceptor.GetComponent<Ring>().hoveringHand != null)
+					if (partnerAcceptor.GetComponent<Ring>().attachedHand != hand && partnerAcceptor.GetComponent<Ring>().hoveringHand != hand && partnerAcceptor.GetComponent<Ring>().hoveringHand != null)
 					{
 						Debug.Log("stop attaching");
 					}
@@ -614,7 +614,7 @@ public class Ring: MonoBehaviour
 					hand.AttachObject(partnerDonor, attachmentFlags);
 				}
 				else {
-					if (partnerDonor.GetComponent<Ring>().hoveringHand != hand && partnerDonor.GetComponent<Ring>().hoveringHand != null)
+					if (partnerDonor.GetComponent<Ring>().attachedHand != hand && partnerDonor.GetComponent<Ring>().hoveringHand != hand && partnerDonor.GetComponent<Ring>().hoveringHand != null)
 					{
 						Debug.Log("stop attaching");
 					}
