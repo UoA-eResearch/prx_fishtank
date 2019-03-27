@@ -597,7 +597,7 @@ public class Ring: MonoBehaviour
 
 					// DEBUG:
 					var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
-					go.transform.position = partnerDonor.transform.position;
+					go.transform.position = partnerAcceptor.transform.position;
 					go.transform.localScale = go.transform.localScale * 0.1f;
 
 					hand.AttachObject(partnerAcceptor, attachmentFlags);
