@@ -594,6 +594,12 @@ public class Ring: MonoBehaviour
 				if (!partnerAcceptor.GetComponent<Ring>().attachedHand || indirectGrab)
 				{
 					partnerDonor.GetComponent<Ring>().indirectGrab = true;
+
+					// DEBUG:
+					var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+					go.transform.position = partnerDonor.transform.position;
+					go.transform.localScale = go.transform.localScale * 0.1f;
+
 					hand.AttachObject(partnerAcceptor, attachmentFlags);
 				}
 			}
@@ -604,6 +610,13 @@ public class Ring: MonoBehaviour
 				if (!partnerDonor.GetComponent<Ring>().attachedHand || indirectGrab)
 				{
 					partnerDonor.GetComponent<Ring>().indirectGrab = true;
+
+					// DEBUG:
+					var go = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+					go.transform.position = partnerDonor.transform.position;
+					go.transform.localScale = go.transform.localScale * 0.1f;
+
+					partnerDonor.transform.localScale = partnerDonor.transform.localScale * 1.1f;
 					hand.AttachObject(partnerDonor, attachmentFlags);
 				}
 			}
