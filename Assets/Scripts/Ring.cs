@@ -588,6 +588,7 @@ public class Ring : MonoBehaviour
 		go.transform.position = position;
 		go.transform.localScale = go.transform.localScale * 0.1f;
 		go.GetComponent<Collider>().isTrigger = true;
+		Destroy(go, 5);
 		return go;
 	}
 
@@ -613,40 +614,29 @@ public class Ring : MonoBehaviour
 			// if ring attached one direction
 			if (dockedToAcceptor)
 			{
-				// if next ring not attached to hand, also stops it from back-propagating
 				if (!partnerAcceptor.GetComponent<Ring>().attachedHand)
 				{
-
-					// TODO:
-					debugSphere(partnerDonor.transform.position);
-
+					// debugSphere(partnerDonor.transform.position);
 					hand.AttachObject(partnerAcceptor, attachmentFlags);
 				}
-				if (GoDist(partnerDonor, attachedHand.gameObject) > GoDist(partnerAcceptor, attachedHand.gameObject))
+				else if (FurtherGo(partnerAcceptor, partnerDonor, partnerAcceptor.GetComponent<Ring>().attachedHand.gameObject) == partnerAcceptor)
 				{
-					debugSphere(partnerDonor.transform.position);
-					hand.AttachObject(partnerDonor, attachmentFlags);
+					// debugSphere(partnerDonor.transform.position);
+					hand.AttachObject(partnerAcceptor, attachmentFlags);
 				}
 			}
-			// if ring attached one direction
 			if (dockedToDonor)
 			{
-				// if next ring not attached to hand
 				if (!partnerDonor.GetComponent<Ring>().attachedHand)
 				{
-					// TODO: debugging
-					debugSphere(partnerDonor.transform.position);
-
+					// debugSphere(partnerDonor.transform.position);
 					hand.AttachObject(partnerDonor, attachmentFlags);
 				}
-				if (GoDist(partnerDonor, attachedHand.gameObject) < GoDist(partnerAcceptor, attachedHand.gameObject))
+				else if (FurtherGo(partnerAcceptor, partnerDonor, partnerDonor.GetComponent<Ring>().attachedHand.gameObject) == partnerDonor)
 				{
-					debugSphere(partnerDonor.transform.position);
-
+					// debugSphere(partnerDonor.transform.position);
 					hand.AttachObject(partnerDonor, attachmentFlags);
 				}
-				// 	hand.AttachObject(partnerDonor, attachmentFlags);
-				// }
 			}
 			foreach (var ao in hand.AttachedObjects)
 			{
@@ -665,6 +655,20 @@ public class Ring : MonoBehaviour
 	private float GoDist(GameObject a, GameObject b)
 	{
 		return Vector3.Distance(a.transform.position, b.transform.position);
+	}
+
+	private GameObject FurtherGo(GameObject a, GameObject b, GameObject point)
+	{
+		if (Vector3.Distance(a.transform.position, point.transform.position) > Vector3.Distance(b.transform.position, point.transform.position))
+		{
+			debugSphere(a.transform.position);
+			return a;
+		}
+		else
+		{
+			debugSphere(b.transform.position);
+			return b;
+		}
 	}
 
 	
