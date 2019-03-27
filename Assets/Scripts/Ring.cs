@@ -574,6 +574,7 @@ public class Ring: MonoBehaviour
 	/// <param name="hand"></param>
 	void OnAttachedToHand(Hand hand)
 	{
+		// if the neighbours are already attached. the only guaranteed attach is the one a hand grabs directly
 		attachedHand = hand;
 
 		if (fishTank.ringsUseSpringConstraints)
@@ -590,41 +591,20 @@ public class Ring: MonoBehaviour
 			if (dockedToAcceptor)
 			{
 				// if next ring not attached to hand
-				if (!partnerAcceptor.GetComponent<Ring>().attachedHand)
+				if (!partnerAcceptor.GetComponent<Ring>().attachedHand || indirectGrab)
 				{
+					partnerDonor.GetComponent<Ring>().indirectGrab = true;
 					hand.AttachObject(partnerAcceptor, attachmentFlags);
-				}
-				else
-				{
-					// if the next ring is already attached to a different hand and that hand is directly touching the ring (i.e. not touching from recursion, and the hovering hand is not evaluating as different due to being null)
-					if (partnerAcceptor.GetComponent<Ring>().attachedHand != hand && partnerAcceptor.GetComponent<Ring>().hoveringHand != hand && partnerAcceptor.GetComponent<Ring>().hoveringHand != null)
-					{
-						Debug.Log("stop attaching");
-					}
-					else
-					{
-						hand.AttachObject(partnerAcceptor, attachmentFlags);
-					}
 				}
 			}
 			// if ring attached one direction
 			if (dockedToDonor)
 			{
 				// if next ring not attached to hand
-				if (!partnerDonor.GetComponent<Ring>().attachedHand)
+				if (!partnerDonor.GetComponent<Ring>().attachedHand || indirectGrab)
 				{
+					partnerDonor.GetComponent<Ring>().indirectGrab = true;
 					hand.AttachObject(partnerDonor, attachmentFlags);
-				}
-				else
-				{
-					if (partnerDonor.GetComponent<Ring>().attachedHand != hand && partnerDonor.GetComponent<Ring>().hoveringHand != hand && partnerDonor.GetComponent<Ring>().hoveringHand != null)
-					{
-						Debug.Log("stop attaching");
-					}
-					else
-					{
-						hand.AttachObject(partnerAcceptor, attachmentFlags);
-					}
 				}
 			}
 			foreach (var ao in hand.AttachedObjects)
@@ -634,6 +614,8 @@ public class Ring: MonoBehaviour
 		}
 		velocityEstimator.BeginEstimatingVelocity();
 	}
+
+	public bool indirectGrab = false;
 
 	Hand hoveringHand = null;
 	void OnHandHoverBegin(Hand hand)
@@ -654,7 +636,7 @@ public class Ring: MonoBehaviour
 	public AudioSource ringPopSfx;
 	void OnDetachedFromHand()
 	{
-
+		indirectGrab = false;
 		attachedHand = null;
 		ringPopSfx.Play(0);
 		velocityEstimator.FinishEstimatingVelocity();
