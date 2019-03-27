@@ -553,14 +553,6 @@ public class Ring: MonoBehaviour
 		disperseParticle.transform.localScale = this.transform.localScale;
 	}
 
-	void OnHandHoverBegin(Hand hand)
-	{
-		//if (gameObject == hand.otherHand.currentAttachedObject && shouldBreak && hand.otherHand.AttachedObjects.Count <= 2)
-		//{
-		//	breakRing(hand);
-		//}
-	}
-
 	void HandAttachedUpdate(Hand hand)
 	{
 		if (gameObject == hand.currentAttachedObject && shouldBreak)
@@ -602,6 +594,16 @@ public class Ring: MonoBehaviour
 				{
 					hand.AttachObject(partnerAcceptor, attachmentFlags);
 				}
+				else {
+					if (partnerAcceptor.GetComponent<Ring>().hoveringHand != hand && partnerAcceptor.GetComponent<Ring>().hoveringHand != null)
+					{
+						Debug.Log("stop attaching");
+					}
+					else
+					{
+					hand.AttachObject(partnerAcceptor, attachmentFlags);
+					}
+				}
 			}
 			// if ring attached one direction
 			if (dockedToDonor)
@@ -610,6 +612,16 @@ public class Ring: MonoBehaviour
 				if (!partnerDonor.GetComponent<Ring>().attachedHand)
 				{
 					hand.AttachObject(partnerDonor, attachmentFlags);
+				}
+				else {
+					if (partnerDonor.GetComponent<Ring>().hoveringHand != hand && partnerDonor.GetComponent<Ring>().hoveringHand != null)
+					{
+						Debug.Log("stop attaching");
+					}
+					else
+					{
+						hand.AttachObject(partnerAcceptor, attachmentFlags);
+					}
 				}
 			}
 			foreach (var ao in hand.AttachedObjects)
@@ -620,20 +632,21 @@ public class Ring: MonoBehaviour
 		velocityEstimator.BeginEstimatingVelocity();
 	}
 
-	// /// <summary>
-	// /// recursively attached rings that are attached in the acceptor direction.
-	// /// </summary>
-	// private void AttachAcceptorDirection(Hand hand)
-	// {
-	// }
+	Hand hoveringHand = null;
+	void OnHandHoverBegin(Hand hand)
+	{
+		hoveringHand = hand;
+		Debug.Log("hand hovering begun");
+	}
 
-	// /// <summary>
-	// /// recursively attached rings that are attached in the donor direction.
-	// /// </summary>
-	// private void AttachDonorDirection()
-	// {
-
-	// }
+	void OnHandHoverEnd(Hand hand)
+	{
+		Debug.Log("hand hovering end");
+		if (hoveringHand == hand)
+		{
+			hoveringHand = null;
+		}
+	}
 
 	public AudioSource ringPopSfx;
 	void OnDetachedFromHand()
