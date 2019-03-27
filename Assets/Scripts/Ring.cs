@@ -157,8 +157,8 @@ public class Ring: MonoBehaviour
 
 	void Update()
 	{
-        //psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
-        age = age + Time.deltaTime;
+		//psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
+		age = age + Time.deltaTime;
 
 		UpdateMaterialTransparency();
 		
@@ -593,20 +593,24 @@ public class Ring: MonoBehaviour
 			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachFromOtherHand;
 			// TODO: if the stack is already attached to a different hand then find which direction the other hand is in
 			// TODO: no current way to differentiate between attachment via docking or direct contact between hand and ring
-			// if (dockedToAcceptor)
-			// {
-			// 	if (!partnerAcceptor.GetComponent<Ring>().attachedHand)
-			// 	{
-			// 		hand.AttachObject(partnerAcceptor, attachmentFlags);
-			// 	}
-			// }
+
+			// if ring attached one direction
+			if (dockedToAcceptor)
+			{
+				// if next ring not attached to hand
+				if (!partnerAcceptor.GetComponent<Ring>().attachedHand)
+				{
+					hand.AttachObject(partnerAcceptor, attachmentFlags);
+				}
+			}
+			// if ring attached one direction
 			if (dockedToDonor)
 			{
-				hand.AttachObject(partnerDonor, attachmentFlags);
-				// if (!partnerDonor.GetComponent<Ring>().attachedHand)
-				// {
-				// 	hand.AttachObject(partnerDonor, attachmentFlags);
-				// }
+				// if next ring not attached to hand
+				if (!partnerDonor.GetComponent<Ring>().attachedHand)
+				{
+					hand.AttachObject(partnerDonor, attachmentFlags);
+				}
 			}
 			foreach (var ao in hand.AttachedObjects)
 			{
@@ -615,6 +619,21 @@ public class Ring: MonoBehaviour
 		}
 		velocityEstimator.BeginEstimatingVelocity();
 	}
+
+	// /// <summary>
+	// /// recursively attached rings that are attached in the acceptor direction.
+	// /// </summary>
+	// private void AttachAcceptorDirection(Hand hand)
+	// {
+	// }
+
+	// /// <summary>
+	// /// recursively attached rings that are attached in the donor direction.
+	// /// </summary>
+	// private void AttachDonorDirection()
+	// {
+
+	// }
 
 	public AudioSource ringPopSfx;
 	void OnDetachedFromHand()

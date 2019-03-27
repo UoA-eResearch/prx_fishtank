@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Xml;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,29 +10,39 @@ public class GameSettingsManager : MonoBehaviour {
 
 	public bool useButtonHoldOverloads { get; private set; }
 
+    private XmlDocument configXml;
+
+    public GameSettingsManager()
+    {
+        InitSettingsFile();
+	    useTouchCycling = GetXmlNodeValue("input/touchpad-menu-cycling");
+	    useButtonHoldOverloads = GetXmlNodeValue("input/button-hold-overloads");
+    }
+
 	// Use this for initialization
 	void Awake()
 	{
-		XmlDocument configXml = new XmlDocument();
+        InitSettingsFile();
+	    useTouchCycling = GetXmlNodeValue("input/touchpad-menu-cycling");
+	    useButtonHoldOverloads = GetXmlNodeValue("input/button-hold-overloads");
+	}
+
+    public void InitSettingsFile()
+    {
+		configXml = new XmlDocument();
 		string settingsPath = Application.streamingAssetsPath + "/config.xml";
 		configXml.Load(settingsPath);
+    }
 
-		XmlNode touchCyclingNode = configXml.DocumentElement.SelectSingleNode("/root/input/touchpad-menu-cycling");
-		useTouchCycling = touchCyclingNode.InnerText == "true" ? true : false;
-
-		XmlNode buttonHoldOverloadsNode = configXml.DocumentElement.SelectSingleNode("/root/input/button-hold-overloads");
-		useButtonHoldOverloads = buttonHoldOverloadsNode.InnerText == "true" ? true : false;
-		Debug.Log(useButtonHoldOverloads);
-	}
-
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-
-	}
+    private Boolean GetXmlNodeValue(String path)
+    {
+        path = "/root/" + path;
+		XmlNode node = configXml.DocumentElement.SelectSingleNode(path);
+        var nodeValue = node.InnerText == "true" ? true : false;
+        // Debug.Log(path);
+        // Debug.Log(nodeValue);
+        return nodeValue;
+    }
 
 	public bool UseTouchCycling() {
 		return useTouchCycling;

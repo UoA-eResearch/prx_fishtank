@@ -60,7 +60,8 @@ public class Fishtank : MonoBehaviour
 	private ParticleSystem.EmissionModule emitDonut;
 	private GameObject myConfettiHeart;
 	private ParticleSystem.EmissionModule emitHeart;
-	private bool confettiOn = false;
+
+    public bool confettiOn { get; private set; }
 
 	private int stackLongest = 0;
 	private int stacks = 0;
@@ -1275,7 +1276,6 @@ public class Fishtank : MonoBehaviour
 		Color col;
 		Color particleCol;
 		col.a = fishtankAlpha;
-        Debug.Log("col a: " + col.a);
 		col = Color.cyan;
 
 		switch (phSlider.phValue)
@@ -1336,7 +1336,6 @@ public class Fishtank : MonoBehaviour
 				break;
 
 			case 3:
-                Debug.Log("case 3");
 				probabilityDimerMake = 100;
 				probabilityDimerBreak = 0;
 				probabilityRingMake = 100;
@@ -1345,7 +1344,6 @@ public class Fishtank : MonoBehaviour
 				col = Color.yellow;
 				break;
 		}
-        Debug.Log(col);
 		col.a = fishtankAlpha;
 		gameObject.GetComponent<Renderer>().material.color = col;
 
@@ -1794,6 +1792,7 @@ public class Fishtank : MonoBehaviour
 		if (thisWinTime < bestWinTime)
 		{
 			bestWinTime = thisWinTime;
+		    scoreboardBestTime.text = bestWinTime.ToString();
 		}
 		ConfettiOn();
 	}
@@ -1982,8 +1981,6 @@ public class Fishtank : MonoBehaviour
 			}
 
 		}
-
-
 	}
 
 	void UpdateSimulationMode()

@@ -21,10 +21,13 @@ public class tests : MonoBehaviour
 	[Tooltip("Sums all molecules in the game and logs the score")]
 	public bool countAllMolecules = false;
 	public bool simulatePartyWin = false;
+	public string simulatePartyWinResult = "";
 	public bool simulatePartyModeReset = false;
 	public bool testPartyModeScore = false;
 
-    public bool runAllTests = false;
+	public bool runAllTests = false;
+
+	public bool attachToHandTest;
 
 
 #if UNITY_EDITOR
@@ -43,8 +46,17 @@ public class tests : MonoBehaviour
 
 	private void SimulatePartyWin()
 	{
+	    Debug.Log("simulating party win");
 		fishtank.PartyModeWin();
 		simulatePartyWin = false;
+	    if (fishtank.confettiOn)
+	    {
+	        simulatePartyWinResult = "true";
+	    }
+        else
+        {
+	        simulatePartyWinResult = "false";
+        }
 	}
 
 	private void BreakAllRings()
@@ -82,9 +94,10 @@ public class tests : MonoBehaviour
 		{
 			PollWasdMovement();
 		}
+        RunTests();
 	}
 
-    private void Tests()
+    private void RunTests()
     {
         if (runAllTests)
         {
@@ -122,6 +135,32 @@ public class tests : MonoBehaviour
 		{
 			// TestPartyModeScore();
 			StartCoroutine(TestPartyModeScore());
+		}
+
+		if (attachToHandTest)
+		{
+			var hand = Player.instance.hands[0];
+			GameObject stackedRing = null;
+			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachFromOtherHand;
+			// var attachmentFlags = Hand.AttachmentFlags.ParentToHand;
+			GameObject nextRing = null;
+
+			foreach (var ring in UnityEngine.Object.FindObjectsOfType<Ring>())
+			{
+				if (ring.dockedToAcceptor && ring.dockedToDonor)
+				{
+					// we got a stack
+					stackedRing = ring.gameObject;
+					nextRing = ring.partnerAcceptor;
+					// break;
+				}
+			}
+			hand.AttachObject(stackedRing, attachmentFlags);
+			attachToHandTest = false;
+
+			// attach next ring to other hand
+			var nextHand = Player.instance.hands[1];
+			nextHand.AttachObject(nextRing, attachmentFlags);
 		}
     }
 

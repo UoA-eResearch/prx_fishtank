@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace Tests
 {
-    public class UnitTests1
+    public class UnitTests
     {
 		private GameObject fishtankGo;
 		Fishtank fishtank;
@@ -15,7 +15,7 @@ namespace Tests
         [SetUp]
         public void SetUpFishtank()
         {
-			fishtankGo = GameObject.Instantiate(new GameObject());
+            fishtankGo = SpawnEmptyGo();
 			fishtank = fishtankGo.AddComponent<Fishtank>();
 		}
             
@@ -26,9 +26,6 @@ namespace Tests
 			fishtank = null;
 		}
 
-
-        // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-        // `yield return null;` to skip a frame.
         [UnityTest]
         public IEnumerator UnitTests1WithEnumeratorPasses()
         {
@@ -38,14 +35,28 @@ namespace Tests
         }
 
         [Test]
-        public void SpawnGo()
+        public void SpawnGameObjectSuccessfully()
         {
-            var Go = GameObject.Instantiate(new GameObject());
+            var Go = SpawnEmptyGo();
             Assert.IsTrue(Go != null);
         }
 
+        /// <summary>
+        /// Helper for spawning game objects quicker
+        /// </summary>
+        /// <returns>empty game object</returns>
         private GameObject SpawnEmptyGo() {
-			return GameObject.Instantiate(new GameObject());
+			return Object.Instantiate(new GameObject());
 		}
+
+        /// <summary>
+        /// Tests if game settings manager returns non-null values from xml nodes.
+        /// </summary>
+        [Test]
+        public void XmlNode_Value_Not_Null()
+        {
+            GameSettingsManager gameSettingsManager = new GameSettingsManager();
+            Assert.IsNotNull(gameSettingsManager.useButtonHoldOverloads);
+        }
     }
 }
