@@ -81,7 +81,7 @@ public class Ring : MonoBehaviour
 	public float minTransparence = 0.2f;
 	public float maxTransparence = 1.0f;
 
-	public GameSettingsManager gameSettingsManager;
+	public Material legacyMaterial;
 
 	void Start()
 	{
@@ -137,6 +137,14 @@ public class Ring : MonoBehaviour
 		ringAudioSource.loop = false;
 		ringAudioSource.Play();
 
+		if (!fishTank.gameSettingsManager.transitionMaterials)
+		{
+			Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
+			foreach (var renderer in subRenderers)
+			{
+				renderer.material = legacyMaterial;
+			}
+		}
 	}
 
 	void ResetNanoParticle()
@@ -164,7 +172,10 @@ public class Ring : MonoBehaviour
 		//psElectric01.transform.localScale = fishtankScript.nanowireFxScale * fishtankGO.transform.localScale;
 		age = age + Time.deltaTime;
 
-		UpdateMaterialTransparency();
+		if (fishTank.gameSettingsManager.transitionMaterials)
+		{
+			UpdateMaterialTransparency();
+		}
 
 
 		if (fishTank.doNanoParticles)
@@ -475,6 +486,7 @@ public class Ring : MonoBehaviour
 	/// </summary>
 	private void UpdateMaterialTransparency()
 	{
+
 		Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
 		foreach (Renderer r in subRenderers)
 		{
@@ -610,22 +622,16 @@ public class Ring : MonoBehaviour
 		else
 		{
 			var attachmentFlags = Hand.AttachmentFlags.ParentToHand | Hand.AttachmentFlags.DetachFromOtherHand;
-			// TODO: if the stack is already attached to a different hand then find which direction the other hand is in
-			// TODO: no current way to differentiate between attachment via docking or direct contact between hand and ring
-
-			// if ring attached one direction
 			if (dockedToAcceptor)
 			{
 				if (!partnerAcceptor.GetComponent<Ring>().attachedHand)
 				{
-					// debugSphere(partnerDonor.transform.position);
 					hand.AttachObject(partnerAcceptor, attachmentFlags);
 				}
 				if (fishTank.gameSettingsManager.grabSplitStack)
 				{
-					if (FurtherGo(partnerAcceptor, partnerDonor, partnerAcceptor.GetComponent<Ring>().attachedHand.gameObject) == partnerAcceptor)
+					if (GetFurthestGo(partnerAcceptor, partnerDonor, partnerAcceptor.GetComponent<Ring>().attachedHand.gameObject) == partnerAcceptor)
 					{
-						// debugSphere(partnerDonor.transform.position);
 						hand.AttachObject(partnerAcceptor, attachmentFlags);
 					}
 				}
@@ -638,7 +644,7 @@ public class Ring : MonoBehaviour
 				}
 				if (fishTank.gameSettingsManager.grabSplitStack)
 				{
-					if (FurtherGo(partnerAcceptor, partnerDonor, partnerDonor.GetComponent<Ring>().attachedHand.gameObject) == partnerDonor)
+					if (GetFurthestGo(partnerAcceptor, partnerDonor, partnerDonor.GetComponent<Ring>().attachedHand.gameObject) == partnerDonor)
 					{
 						hand.AttachObject(partnerDonor, attachmentFlags);
 					}
@@ -652,16 +658,21 @@ public class Ring : MonoBehaviour
 		velocityEstimator.BeginEstimatingVelocity();
 	}
 
-	private GameObject FurtherGo(GameObject a, GameObject b, GameObject point)
+	/// <summary>
+	/// Returns the go that's furthest from a selected game objects position
+	/// </summary>
+	/// <param name="a">game object to compare</param>
+	/// <param name="b">game object to compare</param>
+	/// <param name="point">point to compare game objects to</param>
+	/// <returns>furthest game object</returns>
+	private GameObject GetFurthestGo(GameObject a, GameObject b, GameObject point)
 	{
 		if (Vector3.Distance(a.transform.position, point.transform.position) > Vector3.Distance(b.transform.position, point.transform.position))
 		{
-			debugSphere(a.transform.position);
 			return a;
 		}
 		else
 		{
-			debugSphere(b.transform.position);
 			return b;
 		}
 	}

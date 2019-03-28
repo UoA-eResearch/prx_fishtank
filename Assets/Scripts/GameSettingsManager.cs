@@ -7,10 +7,10 @@ using UnityEngine;
 public class GameSettingsManager : MonoBehaviour {
 
 	private bool useTouchCycling = false;
-
 	public bool useButtonHoldOverloads { get; private set; }
 	public bool grabSplitStack { get; private set; }
-    private XmlDocument configXml;
+	public bool transitionMaterials { get; private set; }
+	private XmlDocument configXml;
 
     public GameSettingsManager()
     {
@@ -18,6 +18,7 @@ public class GameSettingsManager : MonoBehaviour {
 	    useTouchCycling = GetXmlNodeValue("input/touchpad-menu-cycling");
 	    useButtonHoldOverloads = GetXmlNodeValue("input/button-hold-overloads");
 	    grabSplitStack = GetXmlNodeValue("input/grab-split-stack");
+	    transitionMaterials = GetXmlNodeValue("input/transition-materials");
     }
 
 	// Use this for initialization
@@ -27,6 +28,7 @@ public class GameSettingsManager : MonoBehaviour {
 	    useTouchCycling = GetXmlNodeValue("input/touchpad-menu-cycling");
 	    useButtonHoldOverloads = GetXmlNodeValue("input/button-hold-overloads");
 	    grabSplitStack = GetXmlNodeValue("input/grab-split-stack");
+	    transitionMaterials = GetXmlNodeValue("input/transition-materials");
 	}
 
     public void InitSettingsFile()
@@ -41,8 +43,6 @@ public class GameSettingsManager : MonoBehaviour {
         path = "/root/" + path;
 		XmlNode node = configXml.DocumentElement.SelectSingleNode(path);
         var nodeValue = node.InnerText == "true" ? true : false;
-        // Debug.Log(path);
-        // Debug.Log(nodeValue);
         return nodeValue;
     }
 
