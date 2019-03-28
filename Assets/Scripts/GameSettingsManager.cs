@@ -17,8 +17,8 @@ public class GameSettingsManager : MonoBehaviour {
         InitSettingsFile();
 	    useTouchCycling = GetXmlNodeValue("input/touchpad-menu-cycling");
 	    useButtonHoldOverloads = GetXmlNodeValue("input/button-hold-overloads");
-	    grabSplitStack = GetXmlNodeValue("input/grab-split-stack");
-	    transitionMaterials = GetXmlNodeValue("input/transition-materials");
+	    grabSplitStack = GetXmlNodeValue("gameplay/grab-split-stack");
+	    transitionMaterials = GetXmlNodeValue("rendering/transition-materials");
     }
 
 	// Use this for initialization
@@ -27,8 +27,8 @@ public class GameSettingsManager : MonoBehaviour {
         InitSettingsFile();
 	    useTouchCycling = GetXmlNodeValue("input/touchpad-menu-cycling");
 	    useButtonHoldOverloads = GetXmlNodeValue("input/button-hold-overloads");
-	    grabSplitStack = GetXmlNodeValue("input/grab-split-stack");
-	    transitionMaterials = GetXmlNodeValue("input/transition-materials");
+	    grabSplitStack = GetXmlNodeValue("gameplay/grab-split-stack");
+	    transitionMaterials = GetXmlNodeValue("rendering/transition-materials");
 	}
 
     public void InitSettingsFile()
