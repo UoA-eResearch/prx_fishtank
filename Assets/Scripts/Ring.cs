@@ -81,6 +81,8 @@ public class Ring : MonoBehaviour
 	public float minTransparence = 0.2f;
 	public float maxTransparence = 1.0f;
 
+	public GameSettingsManager gameSettingsManager;
+
 	void Start()
 	{
 		// scripted fail safe references to certain assets
@@ -619,23 +621,27 @@ public class Ring : MonoBehaviour
 					// debugSphere(partnerDonor.transform.position);
 					hand.AttachObject(partnerAcceptor, attachmentFlags);
 				}
-				else if (FurtherGo(partnerAcceptor, partnerDonor, partnerAcceptor.GetComponent<Ring>().attachedHand.gameObject) == partnerAcceptor)
+				if (fishTank.gameSettingsManager.grabSplitStack)
 				{
-					// debugSphere(partnerDonor.transform.position);
-					hand.AttachObject(partnerAcceptor, attachmentFlags);
+					if (FurtherGo(partnerAcceptor, partnerDonor, partnerAcceptor.GetComponent<Ring>().attachedHand.gameObject) == partnerAcceptor)
+					{
+						// debugSphere(partnerDonor.transform.position);
+						hand.AttachObject(partnerAcceptor, attachmentFlags);
+					}
 				}
 			}
 			if (dockedToDonor)
 			{
 				if (!partnerDonor.GetComponent<Ring>().attachedHand)
 				{
-					// debugSphere(partnerDonor.transform.position);
 					hand.AttachObject(partnerDonor, attachmentFlags);
 				}
-				else if (FurtherGo(partnerAcceptor, partnerDonor, partnerDonor.GetComponent<Ring>().attachedHand.gameObject) == partnerDonor)
+				if (fishTank.gameSettingsManager.grabSplitStack)
 				{
-					// debugSphere(partnerDonor.transform.position);
-					hand.AttachObject(partnerDonor, attachmentFlags);
+					if (FurtherGo(partnerAcceptor, partnerDonor, partnerDonor.GetComponent<Ring>().attachedHand.gameObject) == partnerDonor)
+					{
+						hand.AttachObject(partnerDonor, attachmentFlags);
+					}
 				}
 			}
 			foreach (var ao in hand.AttachedObjects)
@@ -644,17 +650,6 @@ public class Ring : MonoBehaviour
 			}
 		}
 		velocityEstimator.BeginEstimatingVelocity();
-	}
-
-	/// <summary>
-	/// returns distance between two game objects
-	/// </summary>
-	/// <param name="a"></param>
-	/// <param name="b"></param>
-	/// <returns>distance</returns>
-	private float GoDist(GameObject a, GameObject b)
-	{
-		return Vector3.Distance(a.transform.position, b.transform.position);
 	}
 
 	private GameObject FurtherGo(GameObject a, GameObject b, GameObject point)
@@ -670,31 +665,6 @@ public class Ring : MonoBehaviour
 			return b;
 		}
 	}
-
-	
-	// TODO: if hit by another hand when over a certain speed - break the ring apart.
-	/// <summary>
-	/// OnTriggerEnter is called when the Collider other enters the trigger.
-	/// </summary>
-	/// <param name="other">The other Collider involved in this collision.</param>
-	// void OnTriggerEnter(Collider other)
-	// {
-	// 	if (other.gameObject.GetComponent<Hand>())
-	// 	{
-	// 		var hand = other.gameObject.GetComponent<Hand>();
-	// 		Debug.Log("hand has entered the ring");
-	// 		if (hand != attachedHand)
-	// 		{
-	// 			Debug.Log("different hand touching the ring");
-	// 			{
-	// 				if (hand.GetComponent<Rigidbody>().velocity > breakRingVelocity)
-	// 				{
-	// 					BreakRing(attachedHand);
-	// 				}
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	public AudioSource ringPopSfx;
 	void OnDetachedFromHand()

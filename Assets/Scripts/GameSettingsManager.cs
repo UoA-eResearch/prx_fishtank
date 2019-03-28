@@ -9,7 +9,7 @@ public class GameSettingsManager : MonoBehaviour {
 	private bool useTouchCycling = false;
 
 	public bool useButtonHoldOverloads { get; private set; }
-
+	public bool grabSplitStack { get; private set; }
     private XmlDocument configXml;
 
     public GameSettingsManager()
@@ -17,6 +17,7 @@ public class GameSettingsManager : MonoBehaviour {
         InitSettingsFile();
 	    useTouchCycling = GetXmlNodeValue("input/touchpad-menu-cycling");
 	    useButtonHoldOverloads = GetXmlNodeValue("input/button-hold-overloads");
+	    grabSplitStack = GetXmlNodeValue("input/grab-split-stack");
     }
 
 	// Use this for initialization
@@ -25,6 +26,7 @@ public class GameSettingsManager : MonoBehaviour {
         InitSettingsFile();
 	    useTouchCycling = GetXmlNodeValue("input/touchpad-menu-cycling");
 	    useButtonHoldOverloads = GetXmlNodeValue("input/button-hold-overloads");
+	    grabSplitStack = GetXmlNodeValue("input/grab-split-stack");
 	}
 
     public void InitSettingsFile()
