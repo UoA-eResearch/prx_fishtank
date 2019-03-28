@@ -20,12 +20,23 @@ public class Dimer : MonoBehaviour
 	public GameObject fishtankGO;
 	public ParticleSystem psPartyTrail;
 
+
+	public Renderer dimerRenderer;
+	public Material legacyMaterial;
+	public Shader legacyShader;
+
 	void Awake()
 	{
 		velEst = GetComponent<VelocityEstimator>();
 		fishtank = transform.parent;
 		GameObject fishtankGO = GameObject.Find("fishtank");
 		fishtankScript = fishtankGO.GetComponent<Fishtank>();
+		
+		if (!fishtankScript.gameSettingsManager.transitionMaterials)
+		{
+			dimerRenderer.material = legacyMaterial;
+			dimerRenderer.material.shader = legacyShader;
+		}
 	}
 
 	void Update()

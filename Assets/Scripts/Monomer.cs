@@ -23,6 +23,10 @@ public class Monomer : MonoBehaviour {
     // WIP adding attraction particle.
     public ParticleSystem psAttraction;
 
+	public Renderer monomerRenderer;
+	public Material legacyMaterial;
+	public Shader legacyShader;
+
 
 	// Use this for initialization
 	void Start () {
@@ -39,6 +43,12 @@ public class Monomer : MonoBehaviour {
 	{
 		GameObject fishtankGO = GameObject.Find("fishtank");
 		fishtankScript = fishtankGO.GetComponent<Fishtank>();
+
+		if (!fishtankScript.gameSettingsManager.transitionMaterials)
+		{
+			monomerRenderer.material = legacyMaterial;
+			monomerRenderer.material.shader = legacyShader;
+		}
 	}
 
 	// Update is called once per frame
