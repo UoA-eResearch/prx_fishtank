@@ -22329,8 +22329,9 @@ MonoBehaviour:
   materialTransitionSpeed: 1
   minTransparence: 0.2
   maxTransparence: 1
-  legacyMaterial: {fileID: 2100000, guid: 207b01291dbb62c4aa16fe703c2a4db0, type: 2}
-  gameSettingsManager: {fileID: 0}
+  legacyMaterial: {fileID: 2100000, guid: b836044584d01d54696b77b7cfa74c63, type: 2}
+  vertexShader: {fileID: 4800000, guid: 47d648338e52adc4f8670c9697d02a95, type: 3}
+  transparentShader: {fileID: 30, guid: 0000000000000000f000000000000000, type: 0}
   ringPopSfx: {fileID: 82048561554977026}
 --- !u!114 &114710297751909288
 MonoBehaviour:

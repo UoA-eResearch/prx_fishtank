@@ -3,6 +3,6 @@
         <touchpad-menu-cycling>false</touchpad-menu-cycling>
         <button-hold-overloads>false</button-hold-overloads>
         <grab-split-stack>true</grab-split-stack>
-        <transition-materials>false</transition-materials>
+        <transition-materials>true</transition-materials>
     </input>
 </root>

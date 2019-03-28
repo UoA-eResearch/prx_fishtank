@@ -82,6 +82,8 @@ public class Ring : MonoBehaviour
 	public float maxTransparence = 1.0f;
 
 	public Material legacyMaterial;
+	public Shader vertexShader;
+	public Shader transparentShader;
 
 	void Start()
 	{
@@ -139,11 +141,20 @@ public class Ring : MonoBehaviour
 
 		if (!fishTank.gameSettingsManager.transitionMaterials)
 		{
-			Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
-			foreach (var renderer in subRenderers)
+			SetMaterialAndShadersToLegacy();
+		}
+	}
+
+	private void SetMaterialAndShadersToLegacy()
+	{
+		Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
+		foreach (var renderer in subRenderers)
+		{
+			if (renderer.material != legacyMaterial)
 			{
 				renderer.material = legacyMaterial;
 			}
+			renderer.material.shader = vertexShader;
 		}
 	}
 
@@ -464,6 +475,18 @@ public class Ring : MonoBehaviour
 			ringAudioSource.loop = true;
 			ringAudioSource.Play();
 		}
+
+		if (!fishTank.gameSettingsManager.transitionMaterials)
+		{
+			Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
+			foreach (var r in subRenderers)
+			{
+				if (r.material.shader != transparentShader)
+				{
+					r.material.shader = transparentShader;
+				}
+			}
+		}
 	}
 
 	public void NanoWireOff()
@@ -477,6 +500,17 @@ public class Ring : MonoBehaviour
 		{
 			psElectric01.Stop();
 			ringAudioSource.Stop();
+		}
+		if (!fishTank.gameSettingsManager.transitionMaterials)
+		{
+			Renderer[] subRenderers = { myMeshPart0Renderer, myMeshPart1Renderer };
+			foreach (var r in subRenderers)
+			{
+				if (r.material.shader != vertexShader)
+				{
+					r.material.shader = vertexShader;
+				}
+			}
 		}
 	}
 
