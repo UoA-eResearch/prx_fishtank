@@ -8,4 +8,22 @@ This visualisation shows the assembly of monomers into dimers, dimers into rings
 
 You can re-order rings, or re-pair monomers by simply moving them closer - as monomers/dimers/rings will aim to pair with the closest object of the same type.  
 
-This simulation was developed by Nick Young and Bianca Haux at the Centre for eResearch at the University of Auckland in collaboration with David Doak, Norwich University of the Arts, Juliet Gerrard, and Michael Barnett from the University of Auckland School of Biological Sciences.  
+This simulation was developed by Nick Young, Bianca Haux, and Warrick Corfe-Tan at the Centre for eResearch at the University of Auckland in collaboration with David Doak, Norwich University of the Arts, Juliet Gerrard, and Michael Barnett from the University of Auckland School of Biological Sciences.  
+
+## Instructions
+
+### Configuation Options 
+
+There are some settings for the game that may be changed outside of the game. To do this go to [Build folder]/SteamVR_Data/StreamingAssets/config.xml and change the value to "true" or "false" (case sensitive) depending on your selection.
+
+#### Configuation Options
+
+* __touchpad-menu-cycling:__ When true you can you the touchpad to swipe and change menus while the top part of the touchpad can be used to teleport. When disabled the entire touchpad acts as a teleport button.
+
+* __button-hold-overloads:__ When true holding down the top menu button for 2 seconds will hide all menus. This also changes menu cycling to occur on the release of the button rather than the downwards press.
+
+* __transition-materials__: When true the rings will gradually fade to a transparent material when they form a stack. Monomers, Dimers, and Rings will also look slightly different due to using different shaders. If false the rings will immediately transform to transparent when a stack is formed.
+
+* __grab-split-stack__: When true, grabbing a stack with two hands will split in the position of the second hand to grab the stack and attach the new separated stack to the new hand.
+
+* __smooth-stack-rotation__: When true, ring stacks rotation will be scaled based on the distance. The further they are from the ring they are partnered to, the less magnitude will be used for the rotation. If false, the ring stacks will rotate at a constant speed.
