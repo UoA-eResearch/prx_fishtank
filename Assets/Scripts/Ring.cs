@@ -664,9 +664,13 @@ public class Ring : MonoBehaviour
 				}
 				if (fishTank.gameSettingsManager.grabSplitStack)
 				{
-					if (GetFurthestGo(partnerAcceptor, partnerDonor, partnerAcceptor.GetComponent<Ring>().attachedHand.gameObject) == partnerAcceptor)
+					// if it's the end one then we don't want to attach anymore
+					if (partnerDonor)
 					{
-						hand.AttachObject(partnerAcceptor, attachmentFlags);
+						if (GetFurthestGo(partnerAcceptor, partnerDonor, partnerAcceptor.GetComponent<Ring>().attachedHand.gameObject) == partnerAcceptor)
+						{
+							hand.AttachObject(partnerAcceptor, attachmentFlags);
+						}
 					}
 				}
 			}
@@ -678,9 +682,13 @@ public class Ring : MonoBehaviour
 				}
 				if (fishTank.gameSettingsManager.grabSplitStack)
 				{
-					if (GetFurthestGo(partnerAcceptor, partnerDonor, partnerDonor.GetComponent<Ring>().attachedHand.gameObject) == partnerDonor)
+					// if it's the end one then we don't want to attach anymore
+					if (partnerAcceptor)
 					{
-						hand.AttachObject(partnerDonor, attachmentFlags);
+						if (GetFurthestGo(partnerAcceptor, partnerDonor, partnerDonor.GetComponent<Ring>().attachedHand.gameObject) == partnerDonor)
+						{
+							hand.AttachObject(partnerDonor, attachmentFlags);
+						}
 					}
 				}
 			}

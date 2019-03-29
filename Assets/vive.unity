@@ -5253,7 +5253,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 469725995}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 92742bcec1693304e99dfe7a728551b5, type: 3}
   m_Name: 
@@ -5268,9 +5268,11 @@ MonoBehaviour:
   breakAllRings: 0
   countAllMolecules: 0
   simulatePartyWin: 0
+  simulatePartyWinResult: 
   simulatePartyModeReset: 0
   testPartyModeScore: 0
   runAllTests: 0
+  attachToHandTest: 0
 --- !u!82 &469726002
 AudioSource:
   m_ObjectHideFlags: 0
@@ -20775,6 +20777,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: PS_accretion (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 198043091036845168, guid: f7303a5333009d54ea9494f6f2400535,
+        type: 3}
+      propertyPath: randomSeed
+      value: 1463989429
+      objectReference: {fileID: 0}
     - target: {fileID: 4788026967807740, guid: f7303a5333009d54ea9494f6f2400535, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0.511
@@ -20818,11 +20825,6 @@ PrefabInstance:
     - target: {fileID: 4788026967807740, guid: f7303a5333009d54ea9494f6f2400535, type: 3}
       propertyPath: m_LocalScale.z
       value: 0.03
-      objectReference: {fileID: 0}
-    - target: {fileID: 198043091036845168, guid: f7303a5333009d54ea9494f6f2400535,
-        type: 3}
-      propertyPath: randomSeed
-      value: 1463989429
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f7303a5333009d54ea9494f6f2400535, type: 3}

@@ -8,5 +8,6 @@
     </rendering>
     <gameplay>
         <grab-split-stack>true</grab-split-stack>
+        <smooth-stack-rotation>true</smooth-stack-rotation>
     </gameplay>
 </root>

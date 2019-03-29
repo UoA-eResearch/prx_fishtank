@@ -670,7 +670,6 @@ public class Fishtank : MonoBehaviour
 							}
 						}
 					}
-
 				}
 
 
@@ -820,34 +819,6 @@ public class Fishtank : MonoBehaviour
 				}
 			}
 		}
-	}
-
-	private void MakeRing(GameObject go)
-	{
-		return;
-		// var dimer2RingTransform = go.transform.Find("tf_dimer2ring");
-		// //var ring = Instantiate(ringPrefab, go.transform.position, go.transform.rotation, transform);
-		// var ring = Instantiate(ringPrefab, dimer2RingTransform.position, go.transform.rotation, transform);
-		// SetCartoonRendering(ring);
-
-		// if (partyMode) //(partyModeSwitch.partying)
-		// {
-		// 	var ringVfx = Instantiate(donutPs, go.transform.position, Quaternion.identity);
-		// 	Destroy(ringVfx, 4.0f);
-		// }
-
-		// ring.name = "ring [ " + go.name + "]";
-		// //Debug.Log(ring.name);
-		// masterDimers.Remove(go);
-		// Destroy(go);
-		// foreach (Transform child in go.transform)
-		// {
-		// 	if (child.name.StartsWith("ring"))
-		// 	{
-		// 		var childTarget = pairs[child.gameObject];
-		// 		Destroy(childTarget);
-		// 	}
-		// }
 	}
 
 	/// <summary>
@@ -1043,11 +1014,14 @@ public class Fishtank : MonoBehaviour
 		GameObject.Destroy(myLine, duration);
 	}
 
+	/// <summary>
+	/// Pushes rings containing pairs together
+	/// </summary>
+	/// <param name="go"></param>
 	void PushRingsDirectly(GameObject go)
 	{
 		// original implementation of fishtank - uses RB forces and transform lerps to move rings
 		{
-			
 			float bestRotationOffsetAngle = 0.0f;
 			var ring = go.GetComponent<Ring>();
 			//ring.dockedToDonor = false;
@@ -1057,7 +1031,6 @@ public class Fishtank : MonoBehaviour
 				// set approriate drag values
 				rb.drag = 1;
 				rb.angularDrag = 1;
-
 				// switch all spring constraints off
 				ring.RingSwitchOffDonorToAcceptorConstraints();
 				ring.RingSwitchOffAcceptorToDonorConstraints();
@@ -1085,14 +1058,25 @@ public class Fishtank : MonoBehaviour
 				}
 				*/
 
+
 				if (distanceFromAcceptorPos > minDistApplyRBForcesRing) // use rigidbody forces to push paired game objects together
 				{
 					float maxPush = Mathf.Min(distanceFromAcceptorPos * 5.0f, 0.5f); //
 					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((acceptorPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
-					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+					if (gameSettingsManager.smoothStackRotation)
+					{
+						// rotatation magnitude based on approximity to pair
+						var rotationScalar = Mathf.Clamp(minDistApplyRBForcesRing / distanceFromAcceptorPos, 0, 1);
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity * rotationScalar);
+					}
+					else
+					{
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+					}
 				}
 				else if (distanceFromAcceptorPos > stackForceDistance)
 				{
+					// move together via position
 					go.transform.position = Vector3.MoveTowards(go.transform.position, acceptorPos, Time.deltaTime * pairingVelocity);
 					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
 				}
@@ -1135,7 +1119,17 @@ public class Fishtank : MonoBehaviour
 				{
 					float maxPush = Mathf.Min(distanceFromDonorPos * 5.0f, 0.5f); //
 					go.GetComponent<Rigidbody>().AddForce(Vector3.Normalize((donorPos - go.transform.position) + (Random.onUnitSphere * 0.01f)) * Time.deltaTime * Random.Range(0.0f, maxPush), ForceMode.Impulse);
-					go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+
+					if (gameSettingsManager.smoothStackRotation)
+					{
+						// rotatation magnitude based on approximity to pair
+						var rotationScalar = Mathf.Clamp(minDistApplyRBForcesRing / distanceFromDonorPos, 0, 1);
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity * rotationScalar);
+					}
+					else 
+					{
+						go.transform.rotation = Quaternion.RotateTowards(go.transform.rotation, targetRotation, Time.deltaTime * Random.Range(0.1f, 0.5f) * pairingRotationVelocity);
+					}
 				}
 				else if (distanceFromDonorPos > stackForceDistance)
 				{
@@ -1281,7 +1275,6 @@ public class Fishtank : MonoBehaviour
 		switch (phSlider.phValue)
 		{
 			case 9:
-                Debug.Log("case 9");
 				probabilityDimerMake = 5; //1
 				probabilityDimerBreak = 50;
 				probabilityRingMake = 0;

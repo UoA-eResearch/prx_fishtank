@@ -10,6 +10,7 @@ public class GameSettingsManager : MonoBehaviour {
 	public bool useButtonHoldOverloads { get; private set; }
 	public bool grabSplitStack { get; private set; }
 	public bool transitionMaterials { get; private set; }
+	public bool smoothStackRotation { get; private set; }
 	private XmlDocument configXml;
 
     public GameSettingsManager()
@@ -19,6 +20,7 @@ public class GameSettingsManager : MonoBehaviour {
 	    useButtonHoldOverloads = GetXmlNodeValue("input/button-hold-overloads");
 	    grabSplitStack = GetXmlNodeValue("gameplay/grab-split-stack");
 	    transitionMaterials = GetXmlNodeValue("rendering/transition-materials");
+	    smoothStackRotation = GetXmlNodeValue("gameplay/smooth-stack-rotation");
     }
 
 	// Use this for initialization
@@ -29,6 +31,13 @@ public class GameSettingsManager : MonoBehaviour {
 	    useButtonHoldOverloads = GetXmlNodeValue("input/button-hold-overloads");
 	    grabSplitStack = GetXmlNodeValue("gameplay/grab-split-stack");
 	    transitionMaterials = GetXmlNodeValue("rendering/transition-materials");
+	    smoothStackRotation = GetXmlNodeValue("gameplay/smooth-stack-rotation");
+
+		Debug.Log("using touch cycling: " + useTouchCycling);
+		Debug.Log("useButtonHoldOverloads: " + useButtonHoldOverloads);
+		Debug.Log("grabSplitStack : " + grabSplitStack );
+		Debug.Log("transitionMaterials: " + transitionMaterials);
+		Debug.Log("smooth stack rotaiton: " + smoothStackRotation);
 	}
 
     public void InitSettingsFile()
