@@ -14,13 +14,13 @@ This simulation was developed by Nick Young, Bianca Haux, and Warrick Corfe-Tan 
 
 ### Configuation Options 
 
-There are some settings for the game that may be changed outside of the game. To do this go to [Build folder]/SteamVR_Data/StreamingAssets/config.xml and change the value to "true" or "false" (case sensitive) depending on your selection.
+There are some settings for the game that may be changed outside of the game. To change configurations go to [Build folder]/SteamVR_Data/StreamingAssets/config.xml and change the value to "true" or "false" (case sensitive) depending on your selection.
 
 #### Configuation Options
 
-* __touchpad-menu-cycling:__ When true you can you the touchpad to swipe and change menus while the top part of the touchpad can be used to teleport. When disabled the entire touchpad acts as a teleport button.
+* __touchpad-menu-cycling:__ When true, you can you the touchpad to swipe and change menus while the top part of the touchpad can be used to teleport. When disabled the entire touchpad acts as a teleport button.
 
-* __button-hold-overloads:__ When true holding down the top menu button for 2 seconds will hide all menus. This also changes menu cycling to occur on the release of the button rather than the downwards press.
+* __button-hold-overloads:__ When true, holding down the top menu button for 2 seconds will hide all menus. This also changes menu cycling to occur on the release of the button rather than the downwards press.
 
 * __transition-materials__: When true the rings will gradually fade to a transparent material when they form a stack. Monomers, Dimers, and Rings will also look slightly different due to using different shaders. If false the rings will immediately transform to transparent when a stack is formed.
 
