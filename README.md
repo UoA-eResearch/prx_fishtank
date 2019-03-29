@@ -18,12 +18,10 @@ There are some settings for the game that may be changed outside of the game. To
 
 #### Configuation Options
 
-* __touchpad-menu-cycling:__ When true, you can you the touchpad to swipe and change menus while the top part of the touchpad can be used to teleport. When disabled the entire touchpad acts as a teleport button.
-
-* __button-hold-overloads:__ When true, holding down the top menu button for 2 seconds will hide all menus. This also changes menu cycling to occur on the release of the button rather than the downwards press.
-
-* __transition-materials__: When true the rings will gradually fade to a transparent material when they form a stack. Monomers, Dimers, and Rings will also look slightly different due to using different shaders. If false the rings will immediately transform to transparent when a stack is formed.
-
-* __grab-split-stack__: When true, grabbing a stack with two hands will split in the position of the second hand to grab the stack and attach the new separated stack to the new hand.
-
-* __smooth-stack-rotation__: When true, ring stacks rotation will be scaled based on the distance. The further they are from the ring they are partnered to, the less magnitude will be used for the rotation. If false, the ring stacks will rotate at a constant speed.
+| option | true | false |
+| --- | --- | --- |
+| touchpad-menu-cycling | When true, you can you the touchpad to swipe and change menus while the top part of the touchpad can be used to teleport | When disabled the entire touchpad acts as a teleport button. |
+| button-hold-overloads | When true, holding down the top menu button for 2 seconds will hide all menus.  This also changes menu cycling to occur on the release of the button rather than the downwards press. | No menu hiding functionality within the menu button, menu cycling occurs on downwards press. |
+| transition-materials | When true the rings will gradually fade to a transparent material when they form a stack. Monomers, Dimers, and Rings will also look slightly different due to using different shaders. | If false the rings will immediately transform to transparent when a stack is formed. |
+| grab-split-stack | When true, grabbing a stack with two hands will split in the position of the second hand to grab the stack and attach the new separated stack to the new hand. | When false, removing a ring from a stack will only displace the ring directly grabbed and the stack will remain attached to the original hand. |
+| smooth-stack-rotation | When true, ring stacks rotation will be scaled based on the distance. The further they are from the ring they are partnered to, the less magnitude will be used for the rotation. | If false, the ring stacks will rotate at a constant speed. |
