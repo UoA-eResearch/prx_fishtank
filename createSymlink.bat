@@ -17,13 +17,13 @@ set i=1
 call set f=%%FOLDER_!i!%%
 if defined f (
   rem echo Create symbolic link !f!
-  mklink /D Assets\!f! ..\MRTKExtensionForOculusQuest\External\MixedRealityToolkit-Unity\Assets\!f!
-  mklink Assets\!f!.meta ..\MRTKExtensionForOculusQuest\External\MixedRealityToolkit-Unity\Assets\!f!.meta
+  mklink /D Assets\!f! ..\MRTK-Quest\External\MixedRealityToolkit-Unity\Assets\!f!
+  mklink Assets\!f!.meta ..\MRTK-Quest\External\MixedRealityToolkit-Unity\Assets\!f!.meta
   set /A i+=1
   goto :BEGIN
 )
 
-mklink /D Assets\MixedRealityToolkit.ThirdParty ..\MRTKExtensionForOculusQuest\Assets\MixedRealityToolkit.ThirdParty
-mklink Assets\MixedRealityToolkit.ThirdParty.meta ..\MRTKExtensionForOculusQuest\Assets\MixedRealityToolkit.ThirdParty.meta
+mklink /D Assets\MixedRealityToolkit.ThirdParty ..\MRTK-Quest\Assets\MixedRealityToolkit.ThirdParty
+mklink Assets\MixedRealityToolkit.ThirdParty.meta ..\MRTK-Quest\Assets\MixedRealityToolkit.ThirdParty.meta
 
 pause
