@@ -104,6 +104,7 @@ PlayerSettings:
   xboxOneMonoLoggingLevel: 0
   xboxOneLoggingLevel: 1
   xboxOneDisableEsram: 0
+  xboxOneEnableTypeOptimization: 0
   xboxOnePresentImmediateThreshold: 0
   switchQueueCommandMemory: 0
   switchQueueControlMemory: 16384
@@ -143,7 +144,7 @@ PlayerSettings:
     oculus:
       sharedDepthBuffer: 1
       dashSupport: 1
-      lowOverheadMode: 0
+      lowOverheadMode: 1
       protectedContext: 0
       v2Signing: 1
     enable360StereoCapture: 0
