@@ -19,15 +19,15 @@ public class HandManager : MonoBehaviour
 
     void UpdateHand(OVRHand hand, string handType) {
         if (hand.IsPointerPoseValid) {
-            var origin = hand.PointerPose.position;
+            var origin = transform.TransformPoint(hand.PointerPose.position);
             var direction = hand.PointerPose.forward;
             var endPoint = origin + direction * 100000;
             
             RaycastHit hit;
             if (Physics.Raycast(origin,direction,out hit)) {
                 endPoint = hit.point;
-                if (hit.transform.tag == "Grabbable") {
-                    if (hand.GetFingerIsPinching(OVRHand.HandFinger.Index)) {
+                if (hand.GetFingerIsPinching(OVRHand.HandFinger.Index)) {
+                    if (hit.transform.tag == "Grabbable") {
                         if (handType == "left") {
                             leftHeld = hit.transform;
                             hit.transform.parent = hand.transform;
@@ -35,9 +35,9 @@ public class HandManager : MonoBehaviour
                             rightHeld = hit.transform;
                             hit.transform.parent = hand.transform;
                         }
+                    } else if (hit.transform.name == "Ground") {
+                        transform.Translate(direction.x * Time.deltaTime, 0, direction.z * Time.deltaTime);
                     }
-                } else if (hit.transform.name == "Ground") {
-
                 }
             }
             
