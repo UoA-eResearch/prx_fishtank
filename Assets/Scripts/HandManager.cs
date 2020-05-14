@@ -39,6 +39,7 @@ public class HandManager : MonoBehaviour
                         {
                             heldObject = hit.transform;
                             heldObject.parent = handTransform;
+                            heldObject.GetComponent<Rigidbody>().isKinematic = true;
                         }
                         else if (hit.transform.name == "Ground")
                         {
@@ -58,6 +59,7 @@ public class HandManager : MonoBehaviour
             if (!ovrHand.GetFingerIsPinching(OVRHand.HandFinger.Index) && heldObject != null)
             {
                 heldObject.parent = null;
+                heldObject.GetComponent<Rigidbody>().isKinematic = false;
                 heldObject = null;
             }
         }
