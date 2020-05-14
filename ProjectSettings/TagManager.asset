@@ -8,6 +8,7 @@ TagManager:
   - dimer
   - ring
   - pairParent
+  - Grabbable
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - 
   - 
   - TeleportArea
-  - 
+  - Protein
   - 
   - 
   - 
