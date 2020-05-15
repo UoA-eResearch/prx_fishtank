@@ -14,41 +14,9 @@ public class ResetButton : MonoBehaviour {
 		
 	}
 	
-	void OnCollisionEnter(Collision other)
+	void OnTriggerEnter()
 	{
-		if (other.transform != transform && other.transform.GetComponent<Hand>())
-		{
-			Debug.Log("colliding with a hand" + other.transform.name);
-		}
-	}
-
-	private void OnHandHoverEnd(Hand hand)
-	{
-		Debug.Log(hand.transform.name);
-	}
-
-	// private void OnHandHoverBegin(Hand hand)
-	// {
-	// 	Debug.Log(hand.transform.name);
-	// 	Debug.Log(transform.name);
-	// }
-
-	// private IEnumerator HandHoverUpdate(Hand hand)
-	// {
-	// 	if (hand.GetThumbpadButtonDown() || ((hand.controller != null) && hand.controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_Grip)))
-	// 	{
-	// 		partyModeSwitch.IncrementValue();
-	// 		yield return null;
-	// 		partyModeSwitch.DecrementValue();
-	// 	}
-	// }
-
-	private void HandHoverUpdate(Hand hand)
-	{
-		if (hand.GetThumbpadButtonDown() || ((hand.controller != null) && hand.controller.GetPressDown(Valve.VR.EVRButtonId.k_EButton_Grip)))
-		{
-			ResetPartyMode();
-		}
+		ResetPartyMode();
 	}
 
 	/// <summary>

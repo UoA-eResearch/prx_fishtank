@@ -22,7 +22,8 @@ public class PartyModeSwitch : MonoBehaviour, IMenu
 	// Update is called once per frame
 	void Update ()
 	{
-		if (linearMapping.value < .5)
+		linearMapping.value = myHandle.transform.localPosition.x;
+		if (linearMapping.value < 0)
 		{
 			EnablePartyMode();
 		}
