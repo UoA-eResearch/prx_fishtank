@@ -310,7 +310,7 @@ MonoBehaviour:
   chartStatsGO: {fileID: 937953198}
   phSlider: {fileID: 835496610}
   partyModeSwitch: {fileID: 1456642547}
-  cartoonModeSwitch: {fileID: 1811268376}
+  cartoonModeSwitch: {fileID: 1221088272}
   scaleModeSlider: {fileID: 1477628955}
   simulationSwitch: {fileID: 66263761}
   nanoSwitch: {fileID: 1481408589}
@@ -13971,7 +13971,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &821483000
 Transform:
   m_ObjectHideFlags: 0
