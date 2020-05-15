@@ -298,7 +298,7 @@ MonoBehaviour:
   solventH: {fileID: 1343720090702508, guid: 46d5d3d631859224aa75481c6a3579f7, type: 3}
   solventOH: {fileID: 1090510125369910, guid: 80271ce95b5108f4eb53a7e76c8e0501, type: 3}
   solventH2O: {fileID: 1390383740014688, guid: 6ee026f66212cf347b76e20e39573efd, type: 3}
-  pHSliderUI: {fileID: 1237218702}
+  pHSliderUI: {fileID: 527419595}
   cartoonRenderUI: {fileID: 760903932}
   fishtankScaleUI: {fileID: 2068685010}
   partyModeUi: {fileID: 931881754}
@@ -308,7 +308,7 @@ MonoBehaviour:
   teleportHintUI: {fileID: 365914744}
   signSplash: {fileID: 1530878140}
   chartStatsGO: {fileID: 937953198}
-  phSlider: {fileID: 471172488}
+  phSlider: {fileID: 835496610}
   partyModeSwitch: {fileID: 1456642547}
   cartoonModeSwitch: {fileID: 1811268376}
   scaleModeSlider: {fileID: 1477628955}

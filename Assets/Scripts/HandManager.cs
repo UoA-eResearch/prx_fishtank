@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class HandManager : MonoBehaviour
@@ -12,6 +13,8 @@ public class HandManager : MonoBehaviour
         OVRHand.Hand handType;
         LineRenderer laser;
         Transform heldObject;
+
+        string[] grabbableTags = { "Grabbable", "monomer", "dimer", "ring" };
 
         public Hand(GameObject gameObject, OVRHand.Hand handType, Transform playerTransform)
         {
@@ -35,7 +38,7 @@ public class HandManager : MonoBehaviour
                     endPoint = hit.point;
                     if (ovrHand.GetFingerIsPinching(OVRHand.HandFinger.Index))
                     {
-                        if (hit.transform.tag == "Grabbable" && heldObject == null)
+                        if (grabbableTags.Contains(hit.transform.tag) && heldObject == null)
                         {
                             heldObject = hit.transform;
                             heldObject.parent = handTransform;
