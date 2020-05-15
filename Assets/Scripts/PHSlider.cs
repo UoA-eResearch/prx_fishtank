@@ -43,6 +43,7 @@ public class PHSlider : MonoBehaviour, IMenu
         }
 
         //myLinearDrive = myHandle.GetComponent<LinearDrive>();
+		SynchronizeHandleToValue();
     }
 
     //-------------------------------------------------
@@ -112,13 +113,9 @@ public class PHSlider : MonoBehaviour, IMenu
 	/// </summary>
 	public void SynchronizeHandleToValue(){
 		// Debug.Log("handle position was: " + myHandle.transform.position);
-		Vector3 originalPos = myHandle.transform.position;
-		myHandle.transform.position = Vector3.Lerp(myLinearDrive.startPosition.position, myLinearDrive.endPosition.position, linearMapping.value);
-		Vector3 newPos = myHandle.transform.position;
-		// Debug.Log("handle position is now: " + myHandle.transform.position);
-		if (originalPos != newPos) {
-			Debug.Log("position was changed");
-		}
+		Vector3 pos = myHandle.transform.localPosition;
+		pos.y = linearMapping.value * 5;
+		myHandle.transform.localPosition = pos;
 	}
 
 	public void SetPhToMin()
