@@ -23,7 +23,14 @@ public class PartyModeSwitch : MonoBehaviour, IMenu
 	void Update ()
 	{
 		linearMapping.value = myHandle.transform.localPosition.x;
-		if (linearMapping.value < 0)
+		if (linearMapping.value < -.2) {
+			linearMapping.value = 0;
+			SynchronizeHandleToValue();
+		} else if (linearMapping.value > .2) {
+			linearMapping.value = 1;
+			SynchronizeHandleToValue();
+		}
+		if (linearMapping.value <= 0)
 		{
 			EnablePartyMode();
 		}

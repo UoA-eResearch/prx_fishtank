@@ -26,7 +26,14 @@ public class CartoonModeSwitch : MonoBehaviour, IMenu
 	void Update ()
 	{
 		renderCartoonLM.value = myHandle.transform.localPosition.x;
-		if (renderCartoonLM.value < 0)
+		if (renderCartoonLM.value < -.2) {
+			renderCartoonLM.value = 0;
+			SynchronizeHandleToValue();
+		} else if (renderCartoonLM.value > .2) {
+			renderCartoonLM.value = 1;
+			SynchronizeHandleToValue();
+		}
+		if (renderCartoonLM.value <= 0)
 		{
 			renderCartoonText.text = "internal structure";
 			renderCartoon = true;

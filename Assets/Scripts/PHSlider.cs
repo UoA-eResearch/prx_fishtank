@@ -57,6 +57,13 @@ public class PHSlider : MonoBehaviour, IMenu
 	/// </summary>
 	private void SetPhFromLinearMapping(){
 		linearMapping.value = myHandle.transform.localPosition.y / 5;
+		if (linearMapping.value < 0) {
+			linearMapping.value = 0;
+			SynchronizeHandleToValue();
+		} else if (linearMapping.value > 1) {
+			linearMapping.value = 1;
+			SynchronizeHandleToValue();
+		}
         if (currentLinearMapping == linearMapping.value)
         {
 			return;
