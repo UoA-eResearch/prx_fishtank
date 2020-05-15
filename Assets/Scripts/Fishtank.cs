@@ -1970,7 +1970,7 @@ public class Fishtank : MonoBehaviour
 	/// switches the active menu mode.
 	/// </summary>
 	/// <param name="direction"></param>
-	void SwitchMenuUiMode(int direction)
+	public void SwitchMenuUiMode(int direction)
 	{
 		var numUIModes = 6;
 		if (direction > 0)

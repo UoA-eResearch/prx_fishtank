@@ -13,16 +13,19 @@ public class HandManager : MonoBehaviour
         OVRHand.Hand handType;
         LineRenderer laser;
         Transform heldObject;
+        Fishtank fishtank;
+        bool isPinching = false;
 
         string[] grabbableTags = { "Grabbable", "monomer", "dimer", "ring" };
 
-        public Hand(GameObject gameObject, OVRHand.Hand handType, Transform playerTransform)
+        public Hand(GameObject gameObject, OVRHand.Hand handType, Transform playerTransform, Fishtank fishtank)
         {
             handTransform = gameObject.transform;
             ovrHand = gameObject.GetComponent<OVRHand>();
             laser = gameObject.GetComponent<LineRenderer>();
             this.handType = handType;
             this.playerTransform = playerTransform;
+            this.fishtank = fishtank;
         }
         public void Update()
         {
@@ -65,6 +68,19 @@ public class HandManager : MonoBehaviour
                 heldObject.GetComponent<Rigidbody>().isKinematic = false;
                 heldObject = null;
             }
+            if (ovrHand.GetFingerIsPinching(OVRHand.HandFinger.Middle)) {
+                if (!isPinching) {
+                    fishtank.SwitchMenuUiMode(-1);
+                    isPinching = true;
+                }
+            } else if (ovrHand.GetFingerIsPinching(OVRHand.HandFinger.Ring)) {
+                if (!isPinching) {
+                    fishtank.SwitchMenuUiMode(1);
+                    isPinching = true;
+                }
+            } else {
+                isPinching = false;
+            }
         }
     }
 
@@ -74,8 +90,9 @@ public class HandManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        leftHand = new Hand(GameObject.Find("OVRCustomHandPrefab_L"), OVRHand.Hand.HandLeft, transform);
-        rightHand = new Hand(GameObject.Find("OVRCustomHandPrefab_R"), OVRHand.Hand.HandRight, transform);
+        Fishtank fishtank = GameObject.Find("fishtank").GetComponent<Fishtank>();
+        leftHand = new Hand(GameObject.Find("OVRCustomHandPrefab_L"), OVRHand.Hand.HandLeft, transform, fishtank);
+        rightHand = new Hand(GameObject.Find("OVRCustomHandPrefab_R"), OVRHand.Hand.HandRight, transform, fishtank);
     }
 
     // Update is called once per frame

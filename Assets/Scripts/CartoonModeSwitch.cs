@@ -25,7 +25,8 @@ public class CartoonModeSwitch : MonoBehaviour, IMenu
 	// Update is called once per frame
 	void Update ()
 	{
-		if (renderCartoonLM.value < .5)
+		renderCartoonLM.value = myHandle.transform.localPosition.x;
+		if (renderCartoonLM.value < 0)
 		{
 			renderCartoonText.text = "internal structure";
 			renderCartoon = true;
