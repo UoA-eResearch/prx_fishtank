@@ -14,6 +14,7 @@ public class HandManager : MonoBehaviour
         LineRenderer laser;
         Transform heldObject;
         Fishtank fishtank;
+        Transform heldObjectOriginalParent;
         bool isPinching = false;
 
         string[] grabbableTags = { "Grabbable", "monomer", "dimer", "ring" };
@@ -44,6 +45,7 @@ public class HandManager : MonoBehaviour
                         if (grabbableTags.Contains(hit.transform.tag) && heldObject == null)
                         {
                             heldObject = hit.transform;
+                            heldObjectOriginalParent = heldObject.parent;
                             heldObject.parent = handTransform;
                             heldObject.GetComponent<Rigidbody>().isKinematic = true;
                         }
@@ -64,7 +66,7 @@ public class HandManager : MonoBehaviour
 
             if (!ovrHand.GetFingerIsPinching(OVRHand.HandFinger.Index) && heldObject != null)
             {
-                heldObject.parent = null;
+                heldObject.parent = heldObjectOriginalParent;
                 heldObject.GetComponent<Rigidbody>().isKinematic = false;
                 heldObject = null;
             }
