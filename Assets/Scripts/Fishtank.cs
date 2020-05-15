@@ -186,21 +186,6 @@ public class Fishtank : MonoBehaviour
 
 	#endregion
 
-	void DropObjectIfAttached(GameObject go)
-	{
-		var lh = Player.instance.leftHand;
-		var rh = Player.instance.rightHand;
-
-		if (lh?.currentAttachedObject == go)
-		{
-			lh.DetachObject(lh.currentAttachedObject);
-		}
-		if (rh?.currentAttachedObject == go)
-		{
-			rh.DetachObject(rh.currentAttachedObject);
-		}
-	}
-
 	void FindPairs()
 	{
 		//print(Time.realtimeSinceStartup);
@@ -245,7 +230,6 @@ public class Fishtank : MonoBehaviour
 					if (Random.Range(1, 100) <= probabilityDimerBreak)
 					{
 						// breaking this object will destroy it - so detach from hand (if attached)
-						DropObjectIfAttached(a);
 						a.GetComponent<Dimer>().BreakApartDimer();
 					}
 					else if (Random.Range(1, 100) <= probabilityRingMake)
@@ -342,7 +326,6 @@ public class Fishtank : MonoBehaviour
 		if (Random.Range(1, 100) <= probabilityRingBreak)
 		{
 			// breaking this object will destroy it - so detach from hand (if attached)
-			// DropObjectIfAttached(a);
 			a.GetComponent<Ring>().BreakRing(null);
 		}
 		else if ((Random.Range(1, 100) <= probabilityStackMake) && (a.GetComponent<Ring>().ringCanStack))
@@ -599,12 +582,10 @@ public class Fishtank : MonoBehaviour
 		foreach (var tag in tags)
 		{
 			var gos = GameObject.FindGameObjectsWithTag(tag);
-			var lh = Player.instance?.leftHand;
-			var rh = Player.instance?.rightHand;
 			foreach (var go in gos)
 			{
 				// check for gameobjects which are attached to player - we don't want to manipulate them
-				var thisGoAttached = lh && lh.currentAttachedObject == go || rh && rh.currentAttachedObject == go;
+				var thisGoAttached = go.transform.parent.tag == "Hand";
 				if (thisGoAttached || !go)
 				{
 					if (ringsUseSpringConstraints == true && tag == "ring")
@@ -691,7 +672,7 @@ public class Fishtank : MonoBehaviour
 
 					var distanceFromTarget = Vector3.Distance(go.transform.position, targetPos);
 
-					var partnerAttached = lh && lh.currentAttachedObject == partner || rh && rh.currentAttachedObject == partner;
+					var partnerAttached = partner.transform.parent.tag == "Hand";
 					if (distanceFromTarget < .01f && !partnerAttached && partner && go.GetInstanceID() > partner.GetInstanceID() && tag == "monomer")
 					{
 						MakeDimer(go, partner);
@@ -720,7 +701,7 @@ public class Fishtank : MonoBehaviour
 									}
 									var childDist = Vector3.Distance(child.position, childTarget.transform.position);
 									totalDist += childDist;
-									var childTargetHeld = lh && lh.currentAttachedObject == childTarget || rh && rh.currentAttachedObject == childTarget;
+									var childTargetHeld = childTarget.transform.parent.tag == "Hand";
 									if (childTargetHeld)
 									{
 										totalDist += float.PositiveInfinity;
@@ -836,47 +817,6 @@ public class Fishtank : MonoBehaviour
 		Destroy(partner);
 	}
 
-	void UpdateAttractionHaptics()
-    {
-        foreach (var hand in Player.instance.hands)
-        {
-            GameObject go;
-            if (hand.currentAttachedObject != null)
-            {
-                go = hand.currentAttachedObject;
-                if (go.tag == "monomer")
-                {
-                    // check for partner, if present, vibrate based on distance + acidity.
-                    GameObject partner;
-                    if (pairs.TryGetValue(go, out partner) && partner)
-                    {
-                        Transform partnerBondPos = partner.transform.Find("partnerPos");
-                        float pulseStrength = 50;
-                        Transform goBondPos = go.transform.Find("partnerPos");
-                        float distanceFactor = Vector3.Distance(goBondPos.position, partnerBondPos.position);
-                        // clamp distance to .1 (i.e trigger mult will be 10 at most.
-                        if (distanceFactor < .1)
-                        {
-                            distanceFactor = .1f;
-                        }
-                        // apply distance and pH factors
-                        pulseStrength /= distanceFactor;
-                        pulseStrength *= 1 + ((9 - phSlider.phValue) * 0.1f);
-						float partnerDirection = Vector3.Dot(go.transform.forward, Vector3.Normalize(go.transform.position - partnerBondPos.transform.position));
-						float orientationDifference = Vector3.Dot(go.transform.up, partnerBondPos.transform.up);
-                        if (partnerDirection > 0 || orientationDifference < 0)
-                        {
-                            float amplitude = pulseStrength * 1.0f;
-                            float freq = 30;
-                            float offset = pulseStrength;
-                            pulseStrength = (amplitude * Mathf.Sin(Time.time * freq)) + offset;
-                        } 
-						hand.controller.TriggerHapticPulse(System.Convert.ToUInt16(pulseStrength));
-                    }
-                }
-            }
-        }
-    }
 
     void UpdateMonomerAttractionParticle()
     {
@@ -1200,21 +1140,6 @@ public class Fishtank : MonoBehaviour
 		SetDefaultPartyModeScore();
 	}
 
-	private void FixHoverlock()
-	{
-		var lh = Player.instance.leftHand;
-		var rh = Player.instance.rightHand;
-		if (lh && lh.currentAttachedObject == null && lh.hoverLocked)
-		{
-			Debug.LogError("Left hand hoverlocked!!! Forcing off");
-			lh.HoverUnlock(null);
-		}
-		if (rh && rh.currentAttachedObject == null && rh.hoverLocked)
-		{
-			Debug.LogError("Right hand hoverlocked!!! Forcing off");
-			rh.HoverUnlock(null);
-		}
-	}
 
 	private void AddRandomMotion(GameObject go)
 	{
@@ -2099,156 +2024,7 @@ public class Fishtank : MonoBehaviour
     }
 
 
-	/// <summary>
-	/// Everything that requires update ticks and vive controllers
-	/// </summary>
-	void UpdateViveControllers()
-	{
-		var leftI = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Leftmost);
-		var rightI = SteamVR_Controller.GetDeviceIndex(SteamVR_Controller.DeviceRelation.Rightmost);
-		//Debug.Log("leftI = " + leftI + " rightI = " + rightI);
 
-		// using controller application menu buttons for UI menu switching
-		if (myHand1.controller != null)
-		{
-			PollForTouchpadInputs();
-			// PollForMenuSwitchInput(myHand1);
-			StartCoroutine(PollForMenuSwitchInput(myHand1));
-			PollForTractorBeamInput(myHand1);
-		}
-		if (myHand2.controller != null)
-		{
-			PollForMenuSwitchInput(myHand2);
-			PollForTractorBeamInput(myHand2);
-		}
-	}
-
-	/// <summary>
-	/// polls for teleport or menu switch from hand1, depends on configuration file setting as well.
-	/// </summary>
-	private void PollForTouchpadInputs()
-	{
-		// using 'left' myHand1 controller pad for UI menu switching
-		// note: SteamVR/InteractionSystem/Teleport/Scripts/Teleport.cs altered to use touchpad.y threshold
-		bool showMenuHint = false;
-		Vector2 touchpad = (myHand1.controller.GetAxis(Valve.VR.EVRButtonId.k_EButton_Axis0));
-		if (gameSettingsManager.UseTouchCycling() == false)
-		{
-			// determined by true or false text in Assets/StreamingAssets/config.xml
-			teleportHintUI.SetActive(true);
-			menuHintUI.SetActive(false);
-		}
-		else
-		{
-			if ((touchpad.x < -0.2) && (touchpad.y < 0.2))
-			{
-				if (!myHand1TouchPressedLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
-				{
-					myHand1TouchPressedLastUpdate = true;
-					//Debug.Log("Pad Press left!");
-					SwitchMenuUiMode(-1);
-				}
-				showMenuHint = true;
-			}
-			if ((touchpad.x > 0.2) && (touchpad.y < 0.2))
-			{
-				if (!myHand1TouchPressedLastUpdate && myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
-				{
-					myHand1TouchPressedLastUpdate = true;
-					//Debug.Log("Pad Press right!");
-					SwitchMenuUiMode(1);
-				}
-				showMenuHint = true;
-			}
-			if (showMenuHint)
-			{
-				menuHintUI.SetActive(true);
-			}
-			else
-			{
-				menuHintUI.SetActive(false);
-			}
-			if (touchpad.y > 0.25) // value set in teleport.cs
-			{
-				teleportHintUI.SetActive(true);
-			}
-			else
-			{
-				teleportHintUI.SetActive(false);
-			}
-			if (!myHand1.controller.GetPress(SteamVR_Controller.ButtonMask.Touchpad))
-			{
-				myHand1TouchPressedLastUpdate = false;
-			}
-		}
-	}
-
-	private IEnumerator PollForMenuSwitchInput(Hand hand)
-	{
-		if (gameSettingsManager.useButtonHoldOverloads)
-		{
-			float timePressed = 0;
-			while (hand.controller.GetPress(SteamVR_Controller.ButtonMask.ApplicationMenu))
-			{
-				timePressed += Time.deltaTime;
-				yield return null;
-			}
-
-			if (hand.controller.GetPressUp(SteamVR_Controller.ButtonMask.ApplicationMenu))
-			{
-				if (timePressed > 1.5)
-				{
-					// long press/ => hide menus
-					var instance = Player.instance;
-					if (instance)
-					{
-						instance.HideSettingsMenu();
-					}
-				}
-				else
-				{
-					// short press => toggle menus
-					if (hand == myHand1)
-					{
-						SwitchMenuUiMode(-1);
-					}
-					if (hand == myHand2)
-					{
-						SwitchMenuUiMode(1);
-					}
-				}
-			}
-		} else {
-			if (hand.controller.GetPressDown(SteamVR_Controller.ButtonMask.ApplicationMenu)) {
-				if (hand == myHand1)
-				{
-					SwitchMenuUiMode(-1);
-				}
-				if (hand == myHand2)
-				{
-					SwitchMenuUiMode(1);
-				}
-			}
-		}
-	}
-
-	private void PollForTractorBeamInput(Hand hand)
-	{
-		// using grip buttons to activate tractor beam
-		ulong gripButton = SteamVR_Controller.ButtonMask.Grip;
-		if (hand.controller != null)
-		{
-			SteamVR_LaserPointer laserPointer = hand.GetComponent<SteamVR_LaserPointer>();
-			if (hand.controller.GetPress(gripButton))
-			{
-				ActivateTractorBeam(hand, laserPointer);
-			}
-			else if (hand.controller.GetPressUp(gripButton))
-			{
-				DeactivateTractorBeam(hand, laserPointer);
-			}
-		}
-	}
 
 	private GameObject GetActiveMenu() {
 		GameObject[] menus = {
@@ -2297,11 +2073,6 @@ public class Fishtank : MonoBehaviour
 			partyModeSwitch.TogglePartyMode();
 		}
 		if (Input.GetKeyDown(KeyCode.S)) {
-			var instance = Player.instance;
-			if (instance)
-			{
-				instance.HideSettingsMenu();
-			}
 		}
 		if (Input.GetKeyDown(KeyCode.H)) {
 			phSlider.SetPhToMax();
@@ -2335,7 +2106,6 @@ public class Fishtank : MonoBehaviour
 		// NOTE: theres an coroutine that runs regularly called FindPairs. 
 		PushTogether();
 		SetRingDockedFlags();
-		FixHoverlock();
 
 		// RingRepel();
 
@@ -2347,10 +2117,8 @@ public class Fishtank : MonoBehaviour
 		UpdateSimulationMode();
 		UpdateNanoMode();
 		//UpdateUIMode();
-		UpdateViveControllers();
 		UpdateKeyboardInput();
 		UpdateSigns();
-        UpdateAttractionHaptics();
         UpdateMonomerAttractionParticle();
 	}
 }

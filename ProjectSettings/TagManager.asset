@@ -9,6 +9,7 @@ TagManager:
   - ring
   - pairParent
   - Grabbable
+  - Hand
   layers:
   - Default
   - TransparentFX
@@ -20,7 +21,7 @@ TagManager:
   - 
   - TeleportArea
   - Protein
-  - 
+  - PhHandle
   - 
   - 
   - 
