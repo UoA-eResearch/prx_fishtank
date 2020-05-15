@@ -55,6 +55,7 @@ public class PHSlider : MonoBehaviour, IMenu
 	/// Compares linear mapping value to last update.If the value has changed then convert the value to ph value and store in public variable.
 	/// </summary>
 	private void SetPhFromLinearMapping(){
+		linearMapping.value = myHandle.transform.localPosition.y / 5;
         if (currentLinearMapping == linearMapping.value)
         {
 			return;
