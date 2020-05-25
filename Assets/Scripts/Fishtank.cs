@@ -1109,22 +1109,6 @@ public class Fishtank : MonoBehaviour
 
 		SetMenuUIComponents(modeUI);
 
-		// initialise solvent particle systems
-		var mysolventH = Instantiate(solventH, gameObject.transform); // gameObject.transform.position, Quaternion.identity);
-		var mysolventOH = Instantiate(solventOH, gameObject.transform); //gameObject.transform.position, Quaternion.identity);
-		var mysolventH2O = Instantiate(solventH2O, gameObject.transform); //gameObject.transform.position, Quaternion.identity);
-
-		psSolventH = mysolventH.GetComponentInChildren<ParticleSystem>();
-		psSolventOH = mysolventOH.GetComponentInChildren<ParticleSystem>();
-		psSolventH2O = mysolventH2O.GetComponentInChildren<ParticleSystem>();
-
-		ParticleSystem.MainModule psHMain = psSolventH.main;
-		ParticleSystem.ShapeModule psHShape = psSolventH.shape;
-		ParticleSystem.ShapeModule psH2OShape = psSolventH2O.shape;
-
-		psHShape.scale = gameObject.transform.localScale;
-		psH2OShape.scale = gameObject.transform.localScale;
-
 		bounds = gameObject.GetComponent<Collider>().bounds;
 		var b = bounds.extents;
 		for (int i = 0; i < numMonomers; i++)
@@ -1271,39 +1255,6 @@ public class Fishtank : MonoBehaviour
 
 		pHValueChartStatisticsTxt.text = phSlider.GetPhValueStr();
 		pHValueChartFishtankLabelTxt.text = phSlider.GetPhValueStr();
-
-		{
-			// visualise pH in solvent particle systems
-			ParticleSystem.MainModule psHMain = psSolventH.main;
-			ParticleSystem.MainModule psOHMain = psSolventOH.main;
-			ParticleSystem.EmissionModule psHEmission = psSolventH.emission;
-			ParticleSystem.EmissionModule psOHEmission = psSolventOH.emission;
-			ParticleSystem.EmissionModule psH2OEmission = psSolventH2O.emission;
-
-			if (true)
-			{
-				// test A - linking solvent particle (H) colours to pH
-
-				particleCol = col;
-				particleCol.a = 1.0f;
-				psHMain.startColor = particleCol;
-				psHMain.startSize = 0.012f; // slightly larger than prefab to make it more visible
-
-				psHEmission.rateOverTime = ((9 - (phSlider.phValue - 3)) ^ 2) * 50;
-				psOHEmission.rateOverTime = 0.0f;
-				psH2OEmission.rateOverTime = 100.0f;
-
-			}
-
-			if (false)
-			{
-				// test B - linking solvent particle (H and OH) numbers to pH
-
-				psH2OEmission.rateOverTime = 100.0f;
-				psHEmission.rateOverTime = (6 - (phSlider.phValue - 3)) * 30;
-				psOHEmission.rateOverTime = (phSlider.phValue - 3) * 30;
-			}
-		}
 
 	}
 
@@ -1882,11 +1833,6 @@ public class Fishtank : MonoBehaviour
                 }
             }
 
-            //particles
-            ParticleSystem.ShapeModule psHShape = psSolventH.shape;
-			ParticleSystem.ShapeModule psH2OShape = psSolventH2O.shape;
-			psHShape.scale = gameObject.transform.localScale;
-			psH2OShape.scale = gameObject.transform.localScale;
 
 			bounds = gameObject.GetComponent<Collider>().bounds;
 
