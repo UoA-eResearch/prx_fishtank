@@ -44,10 +44,12 @@ public class HandManager : MonoBehaviour
                     {
                         if (grabbableTags.Contains(hit.transform.tag) && heldObject == null)
                         {
-                            heldObject = hit.transform;
-                            heldObjectOriginalParent = heldObject.parent;
-                            heldObject.parent = handTransform;
-                            heldObject.GetComponent<Rigidbody>().isKinematic = true;
+                            if (hit.transform.parent == null || hit.transform.parent.tag != "Hand") {
+                                heldObject = hit.transform;
+                                heldObjectOriginalParent = heldObject.parent;
+                                heldObject.parent = handTransform;
+                                heldObject.GetComponent<Rigidbody>().isKinematic = true;
+                            }
                         }
                         else if (hit.transform.name == "Ground")
                         {
