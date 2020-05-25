@@ -117,16 +117,6 @@ public class Ring : MonoBehaviour
 		psElectric01 = myElectric01.GetComponentInChildren<ParticleSystem>();
 		psElectric01.transform.localScale = fishTank.nanowireFxScale * fishtankGO.transform.localScale;
 
-		if (true)
-		{
-			var myAccretion01 = Instantiate(goAccretion01, gameObject.transform);
-
-			psAccretion01 = myAccretion01.GetComponentInChildren<ParticleSystem>();
-			psAccretion01.transform.localScale = fishTank.nanowireFxScale * fishtankGO.transform.localScale;
-
-			psAccretion01Emission = psAccretion01.emission;
-			psAccretion01Emission.rateOverTime = psAccretion01EmissionRateInit;
-		}
 
 		if (true) //(fishtankScript.ringsUseSpringConstraints)
 		{
@@ -161,7 +151,6 @@ public class Ring : MonoBehaviour
 	void ResetNanoParticle()
 	{
 		age = 0f;
-		psAccretion01Emission.rateOverTime = 0.0f;
 		ringHasNanoParticle = false;
 		//myNanoParticle.transform.localScale = 0f * myNanoParticleLocalScaleInit;
 		SetNanoParticleScale(0f);
@@ -204,7 +193,6 @@ public class Ring : MonoBehaviour
 				//myRingLightCurrentIntensity = myRingLightMaxIntensity * scaleRelativeF;
 				//myRingLight.intensity = myRingLightCurrentIntensity;
 
-				psAccretion01Emission.rateOverTime = psAccretion01EmissionRateInit * (1.05f - scaleRelativeF);
 
 				ringHasNanoParticle = false;
 			}

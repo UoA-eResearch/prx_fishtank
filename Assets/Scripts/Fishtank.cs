@@ -1625,7 +1625,7 @@ public class Fishtank : MonoBehaviour
 			ring.transform.Find("Ring_MeshPart1").gameObject.SetActive(!renderCartoon);
 			ring.transform.Find("mesh_cartoon").gameObject.SetActive(renderCartoon);
 
-			ring.transform.Find("ringLight").gameObject.SetActive(!renderCartoon);
+			//ring.transform.Find("ringLight").gameObject.SetActive(!renderCartoon);
 		}
 	}
 
