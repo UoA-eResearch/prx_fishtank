@@ -36,7 +36,56 @@ public class HandManager : MonoBehaviour
                 renderer.enabled = true;
             } else {
                 renderer.enabled = false;
-                laser.enabled = false;
+                Vector2 axis = Vector2.zero;
+                if (handType == OVRHand.Hand.HandLeft) {
+                    axis = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
+                    if (OVRInput.GetDown(OVRInput.RawButton.Y)) {
+                        fishtank.SwitchMenuUiMode(-1);
+                    } else if (OVRInput.GetDown(OVRInput.RawButton.X)) {
+                        fishtank.SwitchMenuUiMode(1);
+                    }
+                } else {
+                    axis = OVRInput.Get(OVRInput.Axis2D.SecondaryThumbstick);
+                    if (OVRInput.GetDown(OVRInput.RawButton.B)) {
+                        fishtank.SwitchMenuUiMode(-1);
+                    } else if (OVRInput.GetDown(OVRInput.RawButton.A)) {
+                        fishtank.SwitchMenuUiMode(1);
+                    }
+                }
+                Vector3 moveDir = Vector3.zero;
+                moveDir += handTransform.forward * axis.y * Time.deltaTime;
+                moveDir += handTransform.right * axis.x * Time.deltaTime;
+                moveDir.y = 0;
+                playerTransform.Translate(moveDir);
+
+                var origin = handTransform.position;
+                var direction = handTransform.forward;
+                var endPoint = origin + direction * 100000;
+
+                RaycastHit hit;
+                if (Physics.Raycast(origin, direction, out hit))
+                {
+                    endPoint = hit.point;
+                    if ((handType == OVRHand.Hand.HandLeft && OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger | OVRInput.Button.PrimaryHandTrigger) || 
+                            handType == OVRHand.Hand.HandRight && OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger | OVRInput.Button.SecondaryHandTrigger)) && 
+                            grabbableTags.Contains(hit.transform.tag) &&
+                            heldObject == null &&
+                            (hit.transform.parent == null || hit.transform.parent.tag != "Hand")) {
+                        heldObject = hit.transform;
+                        heldObjectOriginalParent = heldObject.parent;
+                        heldObject.parent = handTransform;
+                        heldObject.GetComponent<Rigidbody>().isKinematic = true;
+                    }
+                }
+                laser.enabled = true;
+                laser.SetPosition(1, handTransform.InverseTransformPoint(endPoint));
+                if ((handType == OVRHand.Hand.HandLeft && !OVRInput.Get(OVRInput.Button.PrimaryIndexTrigger | OVRInput.Button.PrimaryHandTrigger) || 
+                        handType == OVRHand.Hand.HandRight && !OVRInput.Get(OVRInput.Button.SecondaryIndexTrigger | OVRInput.Button.SecondaryHandTrigger)) && 
+                        heldObject != null) {
+                    heldObject.parent = heldObjectOriginalParent;
+                    heldObject.GetComponent<Rigidbody>().isKinematic = false;
+                    heldObject = null;
+                }
                 return;
             }
             if (ovrHand.IsPointerPoseValid)
