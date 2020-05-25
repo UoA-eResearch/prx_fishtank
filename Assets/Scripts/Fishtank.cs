@@ -786,7 +786,11 @@ public class Fishtank : MonoBehaviour
 				{
 					if (ringsUseSpringConstraints)
 					{
-						PushRingsWithSprings(go);
+						try {
+							PushRingsWithSprings(go);
+						} catch {
+							Debug.LogError("PushRingsWithSprings error on " + go.name);
+						}
 					}
 					else
 					{
