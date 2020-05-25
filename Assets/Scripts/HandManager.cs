@@ -16,6 +16,7 @@ public class HandManager : MonoBehaviour
         Fishtank fishtank;
         Transform heldObjectOriginalParent;
         bool isPinching = false;
+        SkinnedMeshRenderer renderer;
 
         string[] grabbableTags = { "Grabbable", "monomer", "dimer", "ring" };
 
@@ -27,9 +28,17 @@ public class HandManager : MonoBehaviour
             this.handType = handType;
             this.playerTransform = playerTransform;
             this.fishtank = fishtank;
+            renderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
         }
         public void Update()
         {
+            if (ovrHand.IsTracked) {
+                renderer.enabled = true;
+            } else {
+                renderer.enabled = false;
+                laser.enabled = false;
+                return;
+            }
             if (ovrHand.IsPointerPoseValid)
             {
                 var origin = handTransform.TransformPoint(laser.GetPosition(0));
