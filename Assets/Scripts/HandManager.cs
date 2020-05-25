@@ -17,6 +17,8 @@ public class HandManager : MonoBehaviour
         Transform heldObjectOriginalParent;
         bool isPinching = false;
         SkinnedMeshRenderer renderer;
+        Transform uiSwitches;
+        Transform uiSwitchesOriginalParent;
 
         string[] grabbableTags = { "Grabbable", "monomer", "dimer", "ring" };
 
@@ -29,13 +31,25 @@ public class HandManager : MonoBehaviour
             this.playerTransform = playerTransform;
             this.fishtank = fishtank;
             renderer = gameObject.GetComponentInChildren<SkinnedMeshRenderer>();
+            uiSwitches = GameObject.Find("UISwitches").transform;
+            uiSwitchesOriginalParent = uiSwitches.parent;
         }
         public void Update()
         {
             if (ovrHand.IsTracked) {
                 renderer.enabled = true;
+                if (handType == OVRHand.Hand.HandLeft && uiSwitches.parent != uiSwitchesOriginalParent) {
+                    uiSwitches.parent = uiSwitchesOriginalParent;
+                    uiSwitches.localEulerAngles = new Vector3(0, -90, 0);
+                    uiSwitches.localPosition = Vector3.zero;
+                }
             } else {
                 renderer.enabled = false;
+                if (handType == OVRHand.Hand.HandLeft && uiSwitches.parent == uiSwitchesOriginalParent) {
+                    uiSwitches.parent = handTransform.parent;
+                    uiSwitches.localEulerAngles = new Vector3(0, 0, 0);
+                    uiSwitches.localPosition = Vector3.zero;
+                }
                 Vector2 axis = Vector2.zero;
                 if (handType == OVRHand.Hand.HandLeft) {
                     axis = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick);
