@@ -21,6 +21,15 @@ public class ScaleSlider : MonoBehaviour, IMenu {
 	
 	// Update is called once per frame
 	void Update () {
+		fishtankScaleLM.value = (myHandle.transform.localPosition.x + .2f) * 2.5f;
+		if (fishtankScaleLM.value < 0) {
+			fishtankScaleLM.value = 0;
+			SynchronizeHandleToValue();
+		} else if (fishtankScaleLM.value > 1) {
+			fishtankScaleLM.value = 1;
+			SynchronizeHandleToValue();
+		}
+		
 		fishtankScale = 1.0f - ((1.0f - fishtankScaleLM.value) / 2.5f);
 		//fishtankScale = 1.2f - ((1.0f - fishtankScaleLM.value) / 1.5f);
 		double _scaleD = System.Math.Round(fishtankScale, 1);

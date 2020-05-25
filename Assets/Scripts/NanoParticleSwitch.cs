@@ -21,7 +21,15 @@ public class NanoParticleSwitch : MonoBehaviour, IMenu {
 	// Update is called once per frame
 	void Update()
 	{
-		if (nanoLM.value < .5)
+		nanoLM.value = myHandle.transform.localPosition.x;
+		if (nanoLM.value < -.2) {
+			nanoLM.value = 0;
+			SynchronizeHandleToValue();
+		} else if (nanoLM.value > .2) {
+			nanoLM.value = 1;
+			SynchronizeHandleToValue();
+		}
+		if (nanoLM.value <= 0)
 		{
 			nanoText.color = Color.red;
 			nanoText.text = "OFF";

@@ -20,7 +20,15 @@ public class SimulationSwitch : MonoBehaviour, IMenu {
 	
 	// Update is called once per frame
 	void Update () {
-		if (simulationLM.value < .5)
+		simulationLM.value = myHandle.transform.localPosition.x;
+		if (simulationLM.value < -0.2) {
+			simulationLM.value = 0;
+			SynchronizeHandleToValue();
+		} else if (simulationLM.value > .2) {
+			simulationLM.value = 1;
+			SynchronizeHandleToValue();
+		}
+		if (simulationLM.value <= 0)
 		{
 			simulationText.text = "spring constraints";
 			simulationUsesSprings = true;
