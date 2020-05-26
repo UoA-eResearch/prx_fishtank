@@ -252,7 +252,7 @@ MonoBehaviour:
   gameSettingsManager: {fileID: 2032482270}
   tractorBeamAttractionFactor: 50
   attractionParticleThreshold: 0.76
-  numMonomers: 192
+  numMonomers: 96
   ringsUseSpringConstraints: 0
   cheat: 0
   renderCartoon: 0
